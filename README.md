@@ -42,10 +42,6 @@ If you encounter any issues while using the Rinfo Recommendation App or have any
 
 At Rinfo, we take your privacy and security seriously. We adhere to strict data protection practices, and your personal information will never be shared with third parties without your consent. For more details, please read our Privacy Policy on the app or website.
 
-## Contribute
-
-Rinfo is an open-source project, and we welcome contributions from developers and designers alike. If you're interested in contributing to the app's development or reporting issues, head over to our GitHub repository at [github.com/rinfo/recommendation-app](https://github.com/rinfo/recommendation-app).
-
 ## Spread the Word
 
 If you love using the Rinfo Recommendation App, help us grow by sharing it with your friends and family. The more users we have, the better the recommendations become!
