@@ -1,0 +1,72 @@
+package com.danotech.rinfo.ui.screens.Account
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.components.HeadingText
+import com.danotech.rinfo.ui.components.RinfoButton
+import com.danotech.rinfo.ui.components.SubHeadingText
+import com.danotech.rinfo.ui.components.TextInput
+import com.example.compose.AppTheme
+
+@Composable
+fun LoginScreen(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(dimensionResource(id = R.dimen.body_padding)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        // page title
+        HeadingText(text = R.string.login)
+
+        // page sub title
+        SubHeadingText(text = R.string.sign_in)
+
+        TextInput(
+            labelText = "Email",
+            leadingIcon = Icons.Default.Person
+        )
+
+        TextInput(
+            labelText = "Password",
+            leadingIcon = Icons.Default.Lock
+        )
+
+        RinfoButton(
+            name = R.string.login,
+            onClicked = { /*TODO*/ },
+            modifier = modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    AppTheme {
+        LoginScreen()
+    }
+}
+
+@Preview
+@Composable
+fun LoginScreenPreviewDark() {
+    AppTheme(
+        darkTheme = true
+    ) {
+        LoginScreen()
+    }
+}

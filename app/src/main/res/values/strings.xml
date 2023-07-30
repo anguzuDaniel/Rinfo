@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">Rinfo</string>
+    <string name="create_account">Create Account</string>
+    <string name="login">Login</string>
+    <string name="register_here">Already have an account register here</string>
+    <string name="sign_in">Sign in to continue</string>
+    <string name="have_an_account">Already have an account register here</string>
+    <string name="search">search</string>
+    <string name="all">All</string>
+    <string name="bars">Bars</string>
+    <plurals name="number_of_stars">
+        <item quantity="one">%d star</item>
+        <item quantity="other">%d stars</item>
+    </plurals>
+
+
+    <string name="restaurants">Restaurants</string>
+    <string name="hotels">Hotels</string>
+    <string name="others">Others</string>
+    <string name="newest">Newest</string>
+    <string name="trend">Trend</string>
+    <string name="popular">Popular</string>
+    <string name="view_all">view all</string>
 </resources>

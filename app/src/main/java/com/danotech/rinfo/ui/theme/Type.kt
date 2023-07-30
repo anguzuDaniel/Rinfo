@@ -9,18 +9,18 @@ import androidx.compose.ui.unit.sp
 import com.danotech.rinfo.R
 
 val OPEN_SANS = FontFamily(
-    Font(R.font.open_sans_bold),
-    Font(R.font.open_sans_light),
-    Font(R.font.open_sans_regular),
+    Font(R.font.open_sans_bold, FontWeight.Bold),
+    Font(R.font.open_sans_light, FontWeight.Light),
+    Font(R.font.open_sans_regular, FontWeight.Normal),
 )
 
 val ROBOTO = FontFamily(
-    Font(R.font.roboto_bold),
-    Font(R.font.roboto_medium),
+    Font(R.font.roboto_bold, FontWeight.Bold),
+    Font(R.font.roboto_medium, FontWeight.Medium),
 )
 
 val Montserrat = FontFamily(
-    Font(R.font.montserrat_bold),
+    Font(R.font.montserrat_bold, FontWeight.Bold),
 )
 
 // Set of Material typography styles to start with
@@ -46,7 +46,7 @@ val Typography = Typography(
     ),
     labelSmall = TextStyle(
         fontFamily = OPEN_SANS,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Light,
         fontSize = 14.sp
     ),
 )
