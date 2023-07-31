@@ -78,11 +78,21 @@ fun TextInputPreview() {
     )
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun CreateAccountScreenPreview() {
     AppTheme(
         darkTheme = false,
+    ) {
+        CreateAccountScreen()
+    }
+}
+
+@Preview
+@Composable
+fun CreateAccountScreenDarkPreview() {
+    AppTheme(
+        darkTheme = true,
     ) {
         CreateAccountScreen()
     }

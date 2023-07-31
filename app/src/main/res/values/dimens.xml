@@ -2,4 +2,6 @@
 <resources>
     <dimen name="body_padding">16dp</dimen>
     <dimen name="button_padding_bottom">5dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="text_spacer">5dp</dimen>
 </resources>
