@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,11 +32,15 @@ import com.example.compose.AppTheme
 
 @Composable
 fun ReviewScreen() {
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
         Image(
             painter = painterResource(id = R.drawable.cafe_javas),
             contentDescription = null,
-            modifier = Modifier.fillMaxWidth().height(250.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp),
             contentScale = ContentScale.Crop
         )
 
@@ -60,7 +65,7 @@ fun ReviewScreen() {
                 Row {
                     RatingStars(rating = 3)
 
-                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.text_spacer)))
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacer_medium)))
 
                     Text(
                         text = "4.9",
@@ -76,15 +81,16 @@ fun ReviewScreen() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.text_spacer)))
+            Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "This is a very good restaurant.",
+                text = "We're committed to great food, great coffee, great service, an experience that will make your time with us fabulous. All visuals are serving suggestions only.\n" +
+                        "Prices are quoted in Uganda Shillings and inclusive of VAT.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_medium)))
 
             Row(
                 modifier = Modifier
@@ -97,7 +103,7 @@ fun ReviewScreen() {
                     color = MaterialTheme.colorScheme.onSurface,
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_medium)))
 
                 Text(
                     text = stringResource(R.string.view_all),
@@ -106,7 +112,7 @@ fun ReviewScreen() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_medium)))
 
             ReviewCard(
                 review = CustomerReview(
@@ -181,7 +187,7 @@ fun ReviewScreenPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun ReviewScreenPreviewDark() {
     AppTheme(

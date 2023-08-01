@@ -22,4 +22,5 @@
     <string name="popular">Popular</string>
     <string name="view_all">view all</string>
     <string name="add_to_favorite">Add to favorite</string>
+    <string name="back_button">back</string>
 </resources>
