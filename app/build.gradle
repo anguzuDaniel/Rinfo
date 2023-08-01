@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'com.danotech.rinfo'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.danotech.rinfo"
-        minSdk 24
-        targetSdk 33
+        minSdk 25
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -44,10 +44,14 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    buildscript {
+        dependencies {
+            classpath "com.android.tools.build:gradle:7.1.0"
+        }
+    }
 }
 
 dependencies {
-//    val nav_version = "2.6.0"
 
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')

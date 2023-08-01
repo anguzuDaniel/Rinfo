@@ -27,32 +27,17 @@ fun TextInput(
     leadingIcon: ImageVector? = null,
     labelText: String,
     modifier: Modifier = Modifier,
-    search: Boolean = false,
     onValueChanged: () -> Unit = {},
 ) {
     OutlinedTextField(
         value = "",
         onValueChange = { onValueChanged },
         leadingIcon = {
-            if (!search && leadingIcon != null) {
-                Icon(
-                    imageVector = leadingIcon!!,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    contentDescription = null
-                )
-            }
-        },
-        trailingIcon = {
-            // if search is true, show the close icon
-            if (search) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    contentDescription = null
-                )
-            } else {
-                null
-            }
+            Icon(
+                imageVector = leadingIcon!!,
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = null
+            )
         },
         label = {
             Text(

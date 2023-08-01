@@ -58,20 +58,21 @@ fun ReviewScreen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row {
-                    RatingStars(rating = 5)
+                    RatingStars(rating = 3)
 
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.text_spacer)))
 
                     Text(
                         text = "4.9",
-                        style = MaterialTheme.typography.titleSmall
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = stringResource(id = R.string.add_to_favorite),
-                    tint = MaterialTheme.colorScheme.surfaceTint
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
