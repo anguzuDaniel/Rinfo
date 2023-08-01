@@ -14,13 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.danotech.rinfo.ui.components.TextInput
+import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.danotech.rinfo.ui.screens.notification.NotificationList
 import com.example.compose.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -35,7 +35,7 @@ fun SearchPage() {
             .fillMaxSize(),
         topBar = {
             RinfoTopAppBar(
-                title = "Search",
+                title = "search",
                 isShowingHomePage = false,
                 onBackButtonClicked = {
                     // Back button clicked
@@ -91,13 +91,13 @@ fun SearchTextField(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.Search,
-                contentDescription = "Search Icon",
+                contentDescription = stringResource(R.string.search),
                 modifier = Modifier.size(24.dp)
             )
         },
         placeholder = {
             Text(
-                text = "Search by location or keyword",
+                text = stringResource(R.string.search_by_location_or_business_name),
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.padding(start = 8.dp)
             )

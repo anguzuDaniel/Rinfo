@@ -1,6 +1,8 @@
 package com.danotech.rinfo.ui.screens.appbars
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,10 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.screens.search.SearchTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +33,9 @@ fun RinfoTopAppBar(
                     title
                 } else {
                     stringResource(id = R.string.app_name)
-                }
+                },
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         },
         navigationIcon = if (!isShowingHomePage) {
@@ -54,4 +58,23 @@ fun RinfoTopAppBar(
         ),
         modifier = modifier
     )
+}
+
+// centered bottom bar layout
+@Composable
+fun CenteredBottomBarLayout(
+    bottomBar: @Composable () -> Unit,
+    fab: @Composable () -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.Bottom
+    ) {
+        Box(contentAlignment = Alignment.BottomCenter) {
+            Column {
+                // Your content above the BottomBar
+                bottomBar()
+            }
+            fab()
+        }
+    }
 }

@@ -3,6 +3,7 @@ package com.danotech.rinfo.ui.screens.notification
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
-import com.danotech.rinfo.ui.screens.Home.CenteredBottomBarLayout
+import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
+import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.example.compose.AppTheme
 
 
@@ -41,6 +43,15 @@ fun NotificationPage() {
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
+        topBar = {
+            RinfoTopAppBar(
+                title = stringResource(id = R.string.notifications),
+                isShowingHomePage = false,
+                onBackButtonClicked = {
+                    // Back button clicked
+                },
+            )
+        },
         bottomBar = {
             CenteredBottomBarLayout(
                 bottomBar = { RinfoBottomNavigation() },
@@ -68,14 +79,22 @@ fun NotificationPage() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            NotificationList()
+            NotificationList(
+                innerPadding = innerPadding
+            )
         }
     }
 }
 
+
 @Composable
-fun NotificationList() {
-    LazyColumn {
+fun NotificationList(
+    innerPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        contentPadding = innerPadding
+    ) {
         items(10) { index ->
             NotificationItem(index)
             Divider()
@@ -100,12 +119,6 @@ fun NotificationItem(index: Int) {
             )
         }
     )
-}
-
-@Preview
-@Composable
-fun PreviewNotificationPage() {
-    NotificationPage()
 }
 
 @Composable
@@ -141,6 +154,16 @@ data class Notifications(
 fun NotificationCardPreview() {
     AppTheme(
         darkTheme = false
+    ) {
+        NotificationPage()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NotificationCardDarkPreview() {
+    AppTheme(
+        darkTheme = true
     ) {
         NotificationPage()
     }

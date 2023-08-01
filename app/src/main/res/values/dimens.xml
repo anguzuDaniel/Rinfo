@@ -5,4 +5,5 @@
     <dimen name="card_padding">16dp</dimen>
     <dimen name="text_spacer">5dp</dimen>
     <dimen name="spacer_medium">20dp</dimen>
+    <dimen name="category_item_padding">5dp</dimen>
 </resources>

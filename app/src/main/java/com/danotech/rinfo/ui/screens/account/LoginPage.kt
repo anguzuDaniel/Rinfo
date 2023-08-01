@@ -1,21 +1,18 @@
-package com.danotech.rinfo.ui.screens.Account
+package com.danotech.rinfo.ui.screens.account
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.HeadingText
 import com.danotech.rinfo.ui.components.RinfoButton
@@ -23,77 +20,56 @@ import com.danotech.rinfo.ui.components.SubHeadingText
 import com.danotech.rinfo.ui.components.TextInput
 import com.example.compose.AppTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateAccountScreen(
-    modifier: Modifier = Modifier
-) {
+fun LoginPage() {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(dimensionResource(id = R.dimen.body_padding)),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // page title
         HeadingText(
-            text = R.string.create_account,
-            modifier = modifier.padding(5.dp)
-        )
+            text = R.string.login,
 
-        // sub title
-        SubHeadingText(text = R.string.have_an_account)
+            )
 
-        Spacer(modifier = modifier.height(20.dp))
-
-        TextInput(
-            labelText = "Name",
-            leadingIcon = Icons.Default.Person,
-        )
+        // page sub title
+        SubHeadingText(text = R.string.sign_in)
 
         TextInput(
             labelText = "Email",
-            leadingIcon = Icons.Default.Email,
+            leadingIcon = Icons.Default.Person
         )
 
         TextInput(
             labelText = "Password",
-            leadingIcon = Icons.Default.Lock,
+            leadingIcon = Icons.Default.Lock
         )
 
         RinfoButton(
-            name = R.string.create_account,
-            modifier = modifier.fillMaxWidth()
+            name = R.string.login,
+            onClicked = { /*TODO*/ },
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun TextInputPreview() {
-    TextInput(
-        labelText = "First Name",
-        leadingIcon = Icons.Default.Person,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp)
-    )
-}
-
 @Preview
 @Composable
-fun CreateAccountScreenPreview() {
-    AppTheme(
-        darkTheme = false,
-    ) {
-        CreateAccountScreen()
+fun LoginScreenPreview() {
+    AppTheme {
+        LoginPage()
     }
 }
 
 @Preview
 @Composable
-fun CreateAccountScreenDarkPreview() {
+fun LoginScreenDarkPreview() {
     AppTheme(
-        darkTheme = true,
+        darkTheme = true
     ) {
-        CreateAccountScreen()
+        LoginPage()
     }
 }

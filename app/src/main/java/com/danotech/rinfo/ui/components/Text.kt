@@ -22,6 +22,8 @@ fun HeadingText(
     )
 }
 
+
+
 @Composable
 fun SubHeadingText(
     @StringRes text: Int,
