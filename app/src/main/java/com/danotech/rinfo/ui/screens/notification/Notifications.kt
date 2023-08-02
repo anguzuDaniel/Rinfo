@@ -1,6 +1,7 @@
 package com.danotech.rinfo.ui.screens.notification
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -43,17 +44,21 @@ import com.example.compose.AppTheme
 @Composable
 fun NotificationPage(
     rinfoAppUiState: RinfoAppUiState,
-    onBackPressed: () -> Unit = {}, onFabClicked: () -> Unit = {}
+    onBackPressed: () -> Unit = {},
+    onFabClicked: () -> Unit = {},
+    onTabSelected: (RInfoScreen) -> Unit = {},
 ) {
+    BackHandler {
+        onBackPressed()
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             RinfoTopAppBar(
                 title = stringResource(id = R.string.notifications),
                 isShowingHomePage = false,
-                onBackButtonClicked = {
-                    onBackPressed
-                },
+                onBackButtonClicked = onBackPressed,
             )
         },
         bottomBar = {
@@ -61,7 +66,7 @@ fun NotificationPage(
                 RinfoBottomNavigation(
                     rinfoAppUiState = rinfoAppUiState,
                     currentScreen = RInfoScreen.Notification,
-                    onTabSelected = {},
+                    onTabSelected = onTabSelected,
                     modifier = Modifier.fillMaxWidth()
                 )
             }, fab = {
@@ -155,7 +160,7 @@ fun NotificationCardPreview() {
     ) {
         NotificationPage(
             rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Start
+                currentScreen = RInfoScreen.Home
             ),
         )
     }
@@ -169,7 +174,7 @@ fun NotificationCardDarkPreview() {
     ) {
         NotificationPage(
             rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Start
+                currentScreen = RInfoScreen.Home
             ),
         )
     }

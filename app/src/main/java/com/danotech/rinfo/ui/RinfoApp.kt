@@ -1,19 +1,31 @@
 package com.danotech.rinfo.ui
 
+import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.danotech.rinfo.RinfoViewModel
 import com.danotech.rinfo.ui.screens.Home.HomeScreen
+import com.danotech.rinfo.ui.screens.RInfoScreen
+import com.danotech.rinfo.ui.screens.account.CreateAccountPage
+import com.danotech.rinfo.ui.screens.account.LoginPage
+import com.danotech.rinfo.ui.screens.favorites.FavoriteScreen
+import com.danotech.rinfo.ui.screens.notification.NotificationPage
+import com.danotech.rinfo.ui.screens.review.ReviewScreen
+import com.danotech.rinfo.ui.screens.search.SearchPage
+import com.danotech.rinfo.ui.screens.settings.SettingPage
 
 @Composable
 fun RinfoApp(
     navController: NavHostController = rememberNavController()
 ) {
+    val activity = LocalContext.current as Activity
+
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
@@ -57,8 +69,73 @@ fun RinfoApp(
 //            ReviewScreen()
 //        }
 //    }
-    HomeScreen(
-        rinfoAppUiState = rinfoAppUiState,
-        currentPage = rinfoAppUiState.currentScreen
-    )
+
+    when (rinfoAppUiState.currentScreen.name) {
+        RInfoScreen.Login.name -> {
+            LoginPage(
+                rinfoAppUiState = rinfoAppUiState
+            )
+        }
+
+        RInfoScreen.Account.name -> {
+            CreateAccountPage()
+        }
+
+        RInfoScreen.Search.name -> {
+            SearchPage()
+        }
+
+        RInfoScreen.Favourites.name -> {
+            FavoriteScreen(
+                rinfoAppUiState = rinfoAppUiState,
+                onBackPressed = {
+                    viewModel.popBackStack()
+                },
+                onTabSelected = { screen ->
+                    viewModel.onScreenSelected(screen)
+                },
+            )
+        }
+
+        RInfoScreen.Notification.name -> {
+            NotificationPage(
+                rinfoAppUiState = rinfoAppUiState,
+                onBackPressed = {
+                    viewModel.popBackStack()
+                },
+                onTabSelected = { screen ->
+                    viewModel.onScreenSelected(screen)
+                },
+            )
+        }
+
+        RInfoScreen.Settings.name -> {
+            SettingPage(
+                rinfoAppUiState = rinfoAppUiState,
+                onBackPressed = {
+                    viewModel.popBackStack()
+                },
+                onTabSelected = { screen ->
+                    viewModel.onScreenSelected(screen)
+                },
+            )
+        }
+
+        RInfoScreen.Review.name -> {
+            ReviewScreen()
+        }
+
+        else -> {
+            HomeScreen(
+                rinfoAppUiState = rinfoAppUiState,
+                currentPage = rinfoAppUiState.currentScreen,
+                onTabSelected = { screen ->
+                    viewModel.onScreenSelected(screen)
+                },
+                onBackPressed = {
+                    activity.finish()
+                }
+            )
+        }
+    }
 }

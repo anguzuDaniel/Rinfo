@@ -1,6 +1,7 @@
 package com.danotech.rinfo.ui.screens.Home
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -46,7 +47,12 @@ import com.example.compose.AppTheme
 fun HomeScreen(
     rinfoAppUiState: RinfoAppUiState,
     currentPage: RInfoScreen,
+    onTabSelected: (RInfoScreen) -> Unit = {},
+    onBackPressed: () -> Unit = {},
 ) {
+    BackHandler {
+        onBackPressed()
+    }
 
     Scaffold(
         modifier = Modifier
@@ -54,9 +60,7 @@ fun HomeScreen(
         topBar = {
             RinfoTopAppBar(
                 isShowingHomePage = true,
-                onBackButtonClicked = {
-                    // Back button clicked
-                },
+                onBackButtonClicked = {},
             )
         },
         bottomBar = {
@@ -64,8 +68,8 @@ fun HomeScreen(
                 bottomBar = {
                     RinfoBottomNavigation(
                         rinfoAppUiState = rinfoAppUiState,
-                        currentScreen = RInfoScreen.Start,
-                        onTabSelected = {},
+                        currentScreen = RInfoScreen.Home,
+                        onTabSelected = onTabSelected,
                         modifier = Modifier.fillMaxWidth()
                     )
                 },
@@ -292,9 +296,9 @@ fun HomeScreenPreview() {
     AppTheme {
         HomeScreen(
             rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Start
+                currentScreen = RInfoScreen.Home
             ),
-            currentPage = RInfoScreen.Start
+            currentPage = RInfoScreen.Home
         )
     }
 }
@@ -307,9 +311,9 @@ fun HomeScreenDarkPreview() {
     ) {
         HomeScreen(
             rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Start
+                currentScreen = RInfoScreen.Home
             ),
-            currentPage = RInfoScreen.Start
+            currentPage = RInfoScreen.Home
         )
     }
 }

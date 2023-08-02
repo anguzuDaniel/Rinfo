@@ -14,15 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.components.HeadingText
 import com.danotech.rinfo.ui.components.RinfoButton
 import com.danotech.rinfo.ui.components.SubHeadingText
 import com.danotech.rinfo.ui.components.TextInput
+import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.example.compose.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage() {
+fun LoginPage(
+    rinfoAppUiState: RinfoAppUiState,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,7 +64,11 @@ fun LoginPage() {
 @Composable
 fun LoginScreenPreview() {
     AppTheme {
-        LoginPage()
+        LoginPage(
+            rinfoAppUiState = RinfoAppUiState(
+                currentScreen = RInfoScreen.Login,
+            )
+        )
     }
 }
 
@@ -70,6 +78,10 @@ fun LoginScreenDarkPreview() {
     AppTheme(
         darkTheme = true
     ) {
-        LoginPage()
+        LoginPage(
+            rinfoAppUiState = RinfoAppUiState(
+                currentScreen = RInfoScreen.Login,
+            )
+        )
     }
 }

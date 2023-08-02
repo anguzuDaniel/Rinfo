@@ -76,7 +76,7 @@ fun ReviewScreen() {
 
                 Icon(
                     imageVector = Icons.Default.Favorite,
-                    contentDescription = stringResource(id = R.string.add_to_favorite),
+                    contentDescription = stringResource(id = R.string.favorites),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

@@ -1,6 +1,5 @@
 package com.danotech.rinfo.ui.components
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -18,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.BottomMenuItem
@@ -118,15 +116,15 @@ private fun prepareBottomMenu(): List<BottomMenuItem> {
     // add menu items
     bottomMenuItemsList.add(
         BottomMenuItem(
-            rinfoScreen = RInfoScreen.Start,
+            rinfoScreen = RInfoScreen.Home,
             label = R.string.home,
             icon = Icons.Filled.Home
         )
     )
     bottomMenuItemsList.add(
         BottomMenuItem(
-            rinfoScreen = RInfoScreen.Search,
-            label = R.string.add_to_favorite,
+            rinfoScreen = RInfoScreen.Favourites,
+            label = R.string.favorites,
             icon = Icons.Filled.Favorite
         )
     )
@@ -144,8 +142,6 @@ private fun prepareBottomMenu(): List<BottomMenuItem> {
             label = R.string.settings
         )
     )
-
-
     return bottomMenuItemsList
 }
 
