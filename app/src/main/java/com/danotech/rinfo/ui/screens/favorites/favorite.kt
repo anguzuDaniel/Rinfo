@@ -15,7 +15,9 @@ import com.danotech.rinfo.ui.components.ReviewCard
 import com.example.compose.AppTheme
 
 @Composable
-fun FavoriteScreen() {
+fun FavoriteScreen(
+    onBackPressed: () -> Unit = {}
+) {
     val reviews = listOf(
         Review(
             id = 1,

@@ -71,8 +71,6 @@ fun ReviewCard(
             }
         }
     }
-
-    Spacer(modifier = Modifier.height(16.dp))
 }
 
 

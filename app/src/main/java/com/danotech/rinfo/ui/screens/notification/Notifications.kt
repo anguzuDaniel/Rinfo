@@ -30,7 +30,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
+import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.example.compose.AppTheme
@@ -39,43 +41,48 @@ import com.example.compose.AppTheme
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationPage() {
+fun NotificationPage(
+    rinfoAppUiState: RinfoAppUiState,
+    onBackPressed: () -> Unit = {}, onFabClicked: () -> Unit = {}
+) {
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             RinfoTopAppBar(
                 title = stringResource(id = R.string.notifications),
                 isShowingHomePage = false,
                 onBackButtonClicked = {
-                    // Back button clicked
+                    onBackPressed
                 },
             )
         },
         bottomBar = {
-            CenteredBottomBarLayout(
-                bottomBar = { RinfoBottomNavigation() },
-                fab = {
-                    FloatingActionButton(
-                        onClick = {
-                            // FAB onClick
-                        },
-                        modifier = Modifier.padding(bottom = 10.dp),
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = stringResource(id = R.string.search)
-                        )
-                    }
+            CenteredBottomBarLayout(bottomBar = {
+                RinfoBottomNavigation(
+                    rinfoAppUiState = rinfoAppUiState,
+                    currentScreen = RInfoScreen.Notification,
+                    onTabSelected = {},
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }, fab = {
+                FloatingActionButton(
+                    onClick = {
+                        onFabClicked
+                    },
+                    modifier = Modifier.padding(bottom = 10.dp),
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(id = R.string.search)
+                    )
                 }
-            )
+            })
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -89,8 +96,7 @@ fun NotificationPage() {
 
 @Composable
 fun NotificationList(
-    innerPadding: PaddingValues,
-    modifier: Modifier = Modifier
+    innerPadding: PaddingValues, modifier: Modifier = Modifier
 ) {
     LazyColumn(
         contentPadding = innerPadding
@@ -105,20 +111,16 @@ fun NotificationList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationItem(index: Int) {
-    ListItem(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+    ListItem(modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp),
         headlineText = { Text("Notification $index") },
         supportingText = { Text("This is a sample notification message.") },
         trailingContent = {
             Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = null,
-                tint = Color.Red
+                imageVector = Icons.Default.Favorite, contentDescription = null, tint = Color.Red
             )
-        }
-    )
+        })
 }
 
 @Composable
@@ -136,17 +138,13 @@ fun NotificationCard(notification: Notifications) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Notification Example",
-            style = MaterialTheme.typography.titleSmall
+            text = "Notification Example", style = MaterialTheme.typography.titleSmall
         )
     }
 }
 
 data class Notifications(
-    val title: String,
-    val text: String,
-    val time: String,
-    val icon: Int
+    val title: String, val text: String, val time: String, val icon: Int
 )
 
 @Preview(showBackground = true)
@@ -155,7 +153,11 @@ fun NotificationCardPreview() {
     AppTheme(
         darkTheme = false
     ) {
-        NotificationPage()
+        NotificationPage(
+            rinfoAppUiState = RinfoAppUiState(
+                currentScreen = RInfoScreen.Start
+            ),
+        )
     }
 }
 
@@ -165,6 +167,10 @@ fun NotificationCardDarkPreview() {
     AppTheme(
         darkTheme = true
     ) {
-        NotificationPage()
+        NotificationPage(
+            rinfoAppUiState = RinfoAppUiState(
+                currentScreen = RInfoScreen.Start
+            ),
+        )
     }
 }

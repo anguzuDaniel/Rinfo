@@ -8,8 +8,8 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,13 +20,45 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import com.danotech.rinfo.R
-import com.example.compose.AppTheme
+import com.danotech.rinfo.ui.BottomMenuItem
+import com.danotech.rinfo.ui.RinfoAppUiState
+import com.danotech.rinfo.ui.screens.RInfoScreen
 
+/**
+ * Bottom menu item
+ * @param rinfoScreen
+ * @param label
+ * @param icon
+ * @param enabled
+ * @constructor Create empty Bottom menu item
+ * @property rinfoScreen
+ * @property label
+ * @property icon
+ * @property enabled
+ * @property onClick
+ * @property selected
+ * @property modifier
+ * @property contentColor
+ * @property contentDescription
+ * @property tint
+ * @property onClick
+ * @property selected
+ * @property modifier
+ * @property contentColor
+ *
+ * uses the bottom menu items created in the prepareBottomMenu() function
+ * loops through the items and adds them to the bottom menu
+ *
+ * takes the current screen and sets it to the selected item
+ *
+ */
 @Composable
 fun RinfoBottomNavigation(
-    modifier: Modifier = Modifier
+    rinfoAppUiState: RinfoAppUiState,
+    currentScreen: RInfoScreen,
+    onTabSelected: ((RInfoScreen) -> Unit) = {},
+    modifier: Modifier = Modifier,
 ) {
 
     // items list
@@ -39,7 +71,7 @@ fun RinfoBottomNavigation(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        BottomAppBar(
+        NavigationBar(
             modifier = Modifier.align(alignment = Alignment.BottomCenter)
         ) {
 
@@ -55,9 +87,9 @@ fun RinfoBottomNavigation(
                 }
 
                 NavigationBarItem(
-                    selected = (selectedItem == navigationItemContent.label.toString()),
+                    selected = currentScreen == navigationItemContent.rinfoScreen,
                     onClick = {
-                        selectedItem = navigationItemContent.label.toString()
+                        onTabSelected(navigationItemContent.rinfoScreen)
                     },
                     icon = {
                         Icon(
@@ -72,45 +104,49 @@ fun RinfoBottomNavigation(
     }
 }
 
-public fun prepareBottomMenu(): List<BottomMenuItem> {
+/**
+ * Used to prepare the bottom menu
+ * @return
+ *  returns a list of bottom menu items
+ *  adds the menu items to the list
+ *  returns the list
+ * @constructor Create empty Prepare bottom menu
+ */
+private fun prepareBottomMenu(): List<BottomMenuItem> {
     val bottomMenuItemsList = arrayListOf<BottomMenuItem>()
 
     // add menu items
     bottomMenuItemsList.add(
         BottomMenuItem(
+            rinfoScreen = RInfoScreen.Start,
             label = R.string.home,
             icon = Icons.Filled.Home
         )
     )
     bottomMenuItemsList.add(
         BottomMenuItem(
+            rinfoScreen = RInfoScreen.Search,
             label = R.string.add_to_favorite,
             icon = Icons.Filled.Favorite
         )
     )
     bottomMenuItemsList.add(
         BottomMenuItem(
+            rinfoScreen = RInfoScreen.Notification,
             icon = Icons.Filled.Notifications,
             label = R.string.notifications
         )
     )
-    bottomMenuItemsList.add(BottomMenuItem(icon = Icons.Filled.Settings, label = R.string.settings))
+    bottomMenuItemsList.add(
+        BottomMenuItem(
+            rinfoScreen = RInfoScreen.Settings,
+            icon = Icons.Filled.Settings,
+            label = R.string.settings
+        )
+    )
 
 
     return bottomMenuItemsList
 }
 
 
-data class BottomMenuItem(
-    val selected: Boolean = false,
-    val icon: ImageVector,
-    @StringRes val label: Int
-)
-
-@Preview
-@Composable
-fun RinfoBottomNavigationPreview() {
-    AppTheme {
-        RinfoBottomNavigation()
-    }
-}

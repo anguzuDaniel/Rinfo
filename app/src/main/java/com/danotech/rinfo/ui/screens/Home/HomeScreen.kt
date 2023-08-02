@@ -28,21 +28,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.components.CategoryIconButton
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.components.ReviewCard
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.components.ShowOptionButton
 import com.danotech.rinfo.ui.components.TextInput
+import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.example.compose.AppTheme
-import com.google.android.material.internal.ViewUtils.RelativePadding
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    rinfoAppUiState: RinfoAppUiState,
+    currentPage: RInfoScreen,
+) {
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -56,7 +61,14 @@ fun HomeScreen() {
         },
         bottomBar = {
             CenteredBottomBarLayout(
-                bottomBar = { RinfoBottomNavigation() },
+                bottomBar = {
+                    RinfoBottomNavigation(
+                        rinfoAppUiState = rinfoAppUiState,
+                        currentScreen = RInfoScreen.Start,
+                        onTabSelected = {},
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
                 fab = {
                     FloatingActionButton(
                         onClick = {
@@ -278,7 +290,12 @@ fun ShowOptionRow() {
 @Composable
 fun HomeScreenPreview() {
     AppTheme {
-        HomeScreen()
+        HomeScreen(
+            rinfoAppUiState = RinfoAppUiState(
+                currentScreen = RInfoScreen.Start
+            ),
+            currentPage = RInfoScreen.Start
+        )
     }
 }
 
@@ -288,6 +305,11 @@ fun HomeScreenDarkPreview() {
     AppTheme(
         darkTheme = true,
     ) {
-        HomeScreen()
+        HomeScreen(
+            rinfoAppUiState = RinfoAppUiState(
+                currentScreen = RInfoScreen.Start
+            ),
+            currentPage = RInfoScreen.Start
+        )
     }
 }
