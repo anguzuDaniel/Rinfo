@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.danotech.rinfo.RinfoViewModel
+import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.Home.HomeScreen
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccountPage
@@ -91,9 +92,17 @@ fun RinfoApp(
                 onBackPressed = {
                     viewModel.popBackStack()
                 },
+                onFabClicked = {
+                    viewModel.onScreenSelected(RInfoScreen.Search)
+                },
                 onTabSelected = { screen ->
                     viewModel.onScreenSelected(screen)
                 },
+                onReviewCardClicked = { review: Review ->
+                    viewModel.showBusinessDetails(
+                        review = review,
+                    )
+                }
             )
         }
 
@@ -102,6 +111,9 @@ fun RinfoApp(
                 rinfoAppUiState = rinfoAppUiState,
                 onBackPressed = {
                     viewModel.popBackStack()
+                },
+                onFabClicked = {
+                    viewModel.onScreenSelected(RInfoScreen.Search)
                 },
                 onTabSelected = { screen ->
                     viewModel.onScreenSelected(screen)
@@ -115,6 +127,9 @@ fun RinfoApp(
                 onBackPressed = {
                     viewModel.popBackStack()
                 },
+                onFabClicked = {
+                    viewModel.onScreenSelected(RInfoScreen.Search)
+                },
                 onTabSelected = { screen ->
                     viewModel.onScreenSelected(screen)
                 },
@@ -122,7 +137,12 @@ fun RinfoApp(
         }
 
         RInfoScreen.Review.name -> {
-            ReviewScreen()
+            ReviewScreen(
+                rinfoAppUiState = rinfoAppUiState,
+                onBackPressed = {
+                    viewModel.popBackStack()
+                },
+            )
         }
 
         else -> {
@@ -134,7 +154,21 @@ fun RinfoApp(
                 },
                 onBackPressed = {
                     activity.finish()
-                }
+                },
+                onReviewCardClicked = { review: Review ->
+                    viewModel.showBusinessDetails(
+                        review = review,
+                    )
+                },
+                onFabClicked = {
+                    viewModel.onScreenSelected(RInfoScreen.Search)
+                },
+                onCategoryClicked = {
+                    viewModel.onScreenSelected(RInfoScreen.Category)
+                },
+                onSearchInputClicked = {
+                    viewModel.onScreenSelected(RInfoScreen.Search)
+                },
             )
         }
     }

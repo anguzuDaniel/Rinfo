@@ -37,6 +37,7 @@ fun FavoriteScreen(
     rinfoAppUiState: RinfoAppUiState,
     onBackPressed: () -> Unit = {},
     onFabClicked: () -> Unit = {},
+    onReviewCardClicked: (Review) -> Unit = {},
     onTabSelected: (RInfoScreen) -> Unit = {},
 ) {
     BackHandler {
@@ -103,7 +104,10 @@ fun FavoriteScreen(
             contentPadding = innerPadding
         ) {
             items(reviews, key = { review -> review.id }) { review ->
-                ReviewCard(review = review)
+                ReviewCard(
+                    review = review,
+                    onReviewCardClicked = onReviewCardClicked
+                )
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.body_padding)))
             }
         }

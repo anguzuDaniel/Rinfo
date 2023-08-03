@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
+import com.danotech.rinfo.data.LocalReviewProvider
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.example.compose.AppTheme
 
@@ -41,19 +42,6 @@ data class Category(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoreCategoriesPage() {
-    val categories = listOf(
-        Category("Hotels", Icons.Default.Home),
-        Category("Restaurants", Icons.Default.Home),
-        Category("Cafes", Icons.Default.Home),
-        Category("Spas", Icons.Default.Home),
-        Category("Parks", Icons.Default.Home),
-        Category("Museums", Icons.Default.Home),
-        Category("Fitness Centers", Icons.Default.Home),
-        Category("Bookstores", Icons.Default.Home),
-        Category("Beaches", Icons.Default.Home),
-        Category("Movie Theaters", Icons.Default.Home),
-    )
-
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -69,7 +57,7 @@ fun MoreCategoriesPage() {
     ) { innerPadding ->
         CategoriesList(
             innerPadding = innerPadding,
-            categories = categories
+            categories = LocalReviewProvider.categories
         )
     }
 }

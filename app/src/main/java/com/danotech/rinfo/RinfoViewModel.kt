@@ -2,6 +2,7 @@ package com.danotech.rinfo
 
 import androidx.lifecycle.ViewModel
 import com.danotech.rinfo.ui.RinfoAppUiState
+import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +26,23 @@ class RinfoViewModel : ViewModel() {
                 _uiState.update {
                     it.copy(
                         currentScreen = RInfoScreen.Home
+                    )
+                }
+            }
+
+            RInfoScreen.Review -> {
+                _uiState.update {
+                    it.copy(
+                        currentScreen = RInfoScreen.Review
+                    )
+                }
+            }
+
+            RInfoScreen.Category -> {
+                _uiState.update {
+                    it.copy(
+                        currentScreen = RInfoScreen.Category,
+                        isShowingBottomBar = false
                     )
                 }
             }
@@ -61,6 +79,14 @@ class RinfoViewModel : ViewModel() {
                 }
             }
 
+            RInfoScreen.Search -> {
+                _uiState.update {
+                    it.copy(
+                        currentScreen = RInfoScreen.Search
+                    )
+                }
+            }
+
             RInfoScreen.Favourites -> {
                 _uiState.update {
                     it.copy(
@@ -83,6 +109,15 @@ class RinfoViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 currentScreen = RInfoScreen.Home
+            )
+        }
+    }
+
+    fun showBusinessDetails(review: Review) {
+        _uiState.update {
+            it.copy(
+                currentReview = review,
+                currentScreen = RInfoScreen.Review
             )
         }
     }

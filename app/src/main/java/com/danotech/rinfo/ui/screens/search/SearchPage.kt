@@ -1,32 +1,26 @@
 package com.danotech.rinfo.ui.screens.search
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.components.SearchTextField
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.example.compose.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchPage() {
+fun SearchPage(
+
+) {
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
     var searchResults by remember { mutableStateOf(emptyList<String>()) }
 
@@ -37,9 +31,17 @@ fun SearchPage() {
             RinfoTopAppBar(
                 title = "search",
                 isShowingHomePage = false,
+                isSearchPage = true,
                 onBackButtonClicked = {
                     // Back button clicked
-                },
+                }, actions = {
+                    SearchTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = R.string.search_by_location_or_business_name,
+                        modifier = Modifier,
+                    )
+                }
             )
         },
     ) { innerPadding ->
@@ -49,16 +51,6 @@ fun SearchPage() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                modifier = Modifier.background(MaterialTheme.colorScheme.primary)
-            ) {
-                SearchTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-
             SearchResults(results = searchResults)
         }
     }
@@ -73,50 +65,19 @@ fun SearchPage() {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+
+
 @Composable
-fun SearchTextField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
+fun SearchResults(
+    results: List<String>,
     modifier: Modifier = Modifier
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val searchIcon = Icons.Default.Search
-
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        textStyle = MaterialTheme.typography.labelSmall,
-        singleLine = true,
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Filled.Search,
-                contentDescription = stringResource(R.string.search),
-                modifier = Modifier.size(24.dp)
-            )
-        },
-        placeholder = {
-            Text(
-                text = stringResource(R.string.search_by_location_or_business_name),
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(start = 8.dp)
-            )
-        },
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
-        modifier = modifier.fillMaxWidth()
-    )
-}
-
-@Composable
-fun SearchResults(results: List<String>) {
     LazyColumn {
         items(results.size) { index ->
             Text(
                 text = results[index],
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
             )
             Divider()
         }

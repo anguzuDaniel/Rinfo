@@ -3,7 +3,10 @@ package com.danotech.rinfo.ui.screens.settings
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,14 +15,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -30,9 +35,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,12 +49,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.RinfoAppUiState
+import com.danotech.rinfo.ui.components.ProfileImage
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
+import com.danotech.rinfo.ui.components.SettingSwitch
 import com.danotech.rinfo.ui.components.SubHeadingText
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.example.compose.AppTheme
+
+enum class SettingType {
+    switch,
+    redirect,
+    text,
+    button,
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,7 +112,8 @@ fun SettingPage(
         },
     ) { innerPadding ->
         EditAccountContent(
-            innerPadding = innerPadding
+            innerPadding = innerPadding,
+            settingType = SettingType.text,
         )
     }
 }
@@ -102,20 +121,21 @@ fun SettingPage(
 @Composable
 fun EditAccountContent(
     innerPadding: PaddingValues,
+    settingType: SettingType,
     modifier: Modifier = Modifier
 ) {
 
     LazyColumn(
         modifier = modifier
-            .fillMaxSize()
             .padding(dimensionResource(id = R.dimen.body_padding)),
         contentPadding = innerPadding,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
-            Image(
-                imageVector = Icons.Default.Person,
-                contentDescription = stringResource(id = R.string.profile_image)
+            Spacer(modifier = Modifier.height(20.dp))
+            ProfileImage(
+                size = 100.dp,
+                imageUrI = R.drawable.cafe_javas
             )
         }
 
@@ -126,6 +146,7 @@ fun EditAccountContent(
             ) {
                 SubHeadingText(
                     text = R.string.personal_account,
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.body_padding))
                 )
 
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.body_padding)))
@@ -146,10 +167,26 @@ fun EditAccountContent(
                     // here you can do anything - navigate - open other settings, ...
                 }
 
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.body_padding)))
+
+                Divider()
+
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.body_padding)))
+
                 SettingsClickableComp(
                     name = R.string.account,
                     icon = Icons.Rounded.FavoriteBorder,
                     iconDesc = R.string.account,
+                    settingType = settingType,
+                ) {
+                    // here you can do anything - navigate - open other settings, ...
+                }
+
+                SettingsClickableComp(
+                    name = R.string.about,
+                    icon = Icons.Rounded.FavoriteBorder,
+                    iconDesc = R.string.about,
+                    settingType = settingType,
                 ) {
                     // here you can do anything - navigate - open other settings, ...
                 }
@@ -158,6 +195,7 @@ fun EditAccountContent(
                     name = R.string.logout,
                     icon = Icons.Rounded.FavoriteBorder,
                     iconDesc = R.string.logout,
+                    settingType = settingType,
                 ) {
                     // here you can do anything - navigate - open other settings, ...
                 }
@@ -172,6 +210,7 @@ fun SettingsClickableComp(
     icon: ImageVector,
     @StringRes iconDesc: Int,
     @StringRes name: Int,
+    settingType: SettingType = SettingType.switch,
     onClick: () -> Unit
 ) {
     Surface(
@@ -205,11 +244,18 @@ fun SettingsClickableComp(
                         overflow = TextOverflow.Ellipsis,
                     )
                     Spacer(modifier = Modifier.weight(1.0f))
-                    Icon(
-                        Icons.Rounded.KeyboardArrowRight,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = stringResource(id = R.string.arrow_forward)
-                    )
+                    if (settingType == SettingType.switch) {
+                        SettingSwitch(
+                            switchOn = false,
+                            onSwitchChanged = {},
+                        )
+                    } else {
+                        Icon(
+                            Icons.Rounded.KeyboardArrowRight,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            contentDescription = stringResource(id = R.string.arrow_forward)
+                        )
+                    }
                 }
             }
         }

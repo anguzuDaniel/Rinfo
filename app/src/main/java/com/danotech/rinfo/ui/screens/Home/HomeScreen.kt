@@ -22,20 +22,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
+import com.danotech.rinfo.data.LocalReviewProvider
 import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.components.CategoryIconButton
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.components.ReviewCard
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
+import com.danotech.rinfo.ui.components.SearchTextField
 import com.danotech.rinfo.ui.components.ShowOptionButton
-import com.danotech.rinfo.ui.components.TextInput
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
@@ -49,10 +55,17 @@ fun HomeScreen(
     currentPage: RInfoScreen,
     onTabSelected: (RInfoScreen) -> Unit = {},
     onBackPressed: () -> Unit = {},
+    onFabClicked: () -> Unit = {},
+    onReviewCardClicked: (Review) -> Unit = {},
+    onCategoryClicked: () -> Unit = {},
+    onSearchInputClicked: () -> Unit = {},
 ) {
     BackHandler {
         onBackPressed()
     }
+
+    var searchQuery by remember { mutableStateOf(TextFieldValue()) }
+    var searchResults by remember { mutableStateOf(emptyList<String>()) }
 
     Scaffold(
         modifier = Modifier
@@ -61,6 +74,17 @@ fun HomeScreen(
             RinfoTopAppBar(
                 isShowingHomePage = true,
                 onBackButtonClicked = {},
+                isSearchPage = true,
+                actions = {
+                    SearchTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = R.string.search_by_location_or_business_name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                    )
+                }
             )
         },
         bottomBar = {
@@ -76,7 +100,7 @@ fun HomeScreen(
                 fab = {
                     FloatingActionButton(
                         onClick = {
-                            // FAB onClick
+                            onFabClicked
                         },
                         modifier = Modifier.padding(bottom = 10.dp),
                         contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -93,7 +117,11 @@ fun HomeScreen(
         floatingActionButtonPosition = FabPosition.Center,
     ) { innerPadding ->
         HomePageContent(
-            innerPadding = innerPadding
+            rinfoAppUiState = rinfoAppUiState,
+            innerPadding = innerPadding,
+            onReviewCardClicked = onReviewCardClicked,
+            onCategoryClicked = onCategoryClicked,
+            onSearchInputClicked = onSearchInputClicked,
         )
     }
 }
@@ -115,27 +143,15 @@ fun HomeScreen(
  */
 @Composable
 fun HomePageContent(
+    rinfoAppUiState: RinfoAppUiState,
     innerPadding: PaddingValues,
+    onReviewCardClicked: (Review) -> Unit = {},
+    onBackPressed: () -> Unit = {},
+    onCategoryClicked: () -> Unit = {},
+    onSearchInputClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val reviews = listOf(
-        Review(
-            id = 1,
-            avatarResource = R.drawable.baseline_person_24,
-            imageUrl = R.drawable.cafe_javas,
-            businessName = "Cafe Javas",
-            rating = 4,
-            comment = "This place has the best coffee and sandwiches in town!"
-        ),
-        Review(
-            id = 2,
-            avatarResource = R.drawable.baseline_person_24,
-            imageUrl = R.drawable.kfc,
-            businessName = "KFC",
-            rating = 3,
-            comment = "This kitchen place in town!"
-        )
-    )
+    val reviews = LocalReviewProvider.reviews
 
     LazyColumn(
         modifier = modifier.padding(dimensionResource(id = R.dimen.body_padding)),
@@ -143,16 +159,10 @@ fun HomePageContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = innerPadding,
     ) {
-        // Search bar
         item {
-            TextInput(
-                labelText = "Search",
-                leadingIcon = Icons.Default.Search
+            CategoryOptionRow(
+                onCategoryClicked = onCategoryClicked
             )
-        }
-
-        item {
-            CategoryOptionRow()
         }
 
         item {
@@ -164,7 +174,10 @@ fun HomePageContent(
         }
 
         items(reviews, key = { review -> review.id }) { review ->
-            ReviewCard(review = review)
+            ReviewCard(
+                review = review,
+                onReviewCardClicked = onReviewCardClicked
+            )
         }
     }
 }
@@ -201,7 +214,9 @@ fun FilterRow(
  * shows the category options
  */
 @Composable
-fun CategoryOptionRow() {
+fun CategoryOptionRow(
+    onCategoryClicked: () -> Unit = {}
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -211,35 +226,40 @@ fun CategoryOptionRow() {
             description = "Category",
             icon = R.drawable.baseline_view_module_24,
             name = R.string.all,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onCategoryClick = onCategoryClicked
         )
 
         CategoryIconButton(
             description = "Category",
             icon = R.drawable.baseline_dining_24,
             name = R.string.restaurants,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onCategoryClick = onCategoryClicked
         )
 
         CategoryIconButton(
             description = "Category",
             icon = R.drawable.baseline_sports_bar_24,
             name = R.string.bars,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onCategoryClick = onCategoryClicked
         )
 
         CategoryIconButton(
             description = "Category",
             icon = R.drawable.baseline_local_hotel_24,
             name = R.string.hotels,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onCategoryClick = onCategoryClicked
         )
 
         CategoryIconButton(
             description = "Category",
             icon = R.drawable.baseline_more_horiz_24,
             name = R.string.others,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onCategoryClick = onCategoryClicked
         )
     }
 }

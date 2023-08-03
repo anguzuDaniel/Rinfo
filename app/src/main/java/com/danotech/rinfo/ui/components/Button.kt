@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,18 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
-import androidx.compose.material3.ButtonDefaults.outlinedButtonBorder
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +40,7 @@ import com.example.compose.AppTheme
 fun RinfoButton(
     @StringRes name: Int,
     onClicked: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = { onClicked },
@@ -83,6 +81,7 @@ fun CategoryIconButton(
     description: String,
     @DrawableRes icon: Int,
     @StringRes name: Int,
+    onCategoryClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -94,14 +93,21 @@ fun CategoryIconButton(
             modifier = Modifier
                 .clip(shape = MaterialTheme.shapes.medium)
         ) {
-            Icon(
-                painter = painterResource(id = icon),
+            IconButton(
+                onClick = { onCategoryClick() },
                 modifier = modifier
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .padding(8.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                contentDescription = description
-            )
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
+                Icon(
+                    painter = painterResource(id = icon),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    contentDescription = description
+                )
+            }
         }
 
         Spacer(modifier = Modifier.padding(5.dp))
@@ -110,7 +116,6 @@ fun CategoryIconButton(
             text = stringResource(id = name),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 10.sp
         )
     }
 }
@@ -141,10 +146,6 @@ fun ShowOptionButton(
             contentColor = contentColor,
         ),
         enabled = active,
-        border = BorderStroke(
-            width = 1.dp,
-            color = contentColor
-        ),
         modifier = modifier
     ) {
         Text(

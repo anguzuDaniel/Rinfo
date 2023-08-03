@@ -22,4 +22,5 @@ enum class RInfoScreen(@StringRes val title: Int) {
     Search(title = R.string.search),
     Login(title = R.string.login),
     Register(title = R.string.create_account),
+    Category(title = R.string.categories),
 }

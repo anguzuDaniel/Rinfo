@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.RatingStars
+import com.danotech.rinfo.ui.components.SearchTextField
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.example.compose.AppTheme
 
@@ -58,9 +59,18 @@ fun SearchCategory() {
             RinfoTopAppBar(
                 title = "search",
                 isShowingHomePage = false,
+                isSearchPage = true,
                 onBackButtonClicked = {
                     // Back button clicked
                 },
+                actions = {
+                    SearchTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = R.string.search,
+                        modifier = Modifier
+                    )
+                }
             )
         },
     ) { innerPadding ->
@@ -68,18 +78,6 @@ fun SearchCategory() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .background(MaterialTheme.colorScheme.primary),
-            ) {
-                SearchTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-
             SearchCategoryContent(
                 innerPadding = innerPadding
             )
@@ -237,7 +235,7 @@ fun createBusinessList(): List<Business> {
             "Restaurant A",
             "123 Main St",
             "(123) 456-7890",
-            "www.restauranta.com",
+            "www.restaurants.com",
             "Restaurant",
             4.5f,
             3,

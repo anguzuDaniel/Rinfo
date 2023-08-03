@@ -1,5 +1,7 @@
 package com.danotech.rinfo.ui.screens.review
 
+import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,12 +12,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,16 +32,56 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
+import com.danotech.rinfo.data.LocalReviewProvider
+import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.components.RatingStars
+import com.danotech.rinfo.ui.components.Review
+import com.danotech.rinfo.ui.screens.RInfoScreen
+import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.example.compose.AppTheme
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReviewScreen() {
+fun ReviewScreen(
+    rinfoAppUiState: RinfoAppUiState,
+    onBackPressed: () -> Unit = {},
+) {
+    BackHandler {
+        onBackPressed()
+    }
+
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize(),
+        topBar = {
+            RinfoTopAppBar(
+                isShowingHomePage = false,
+                showBackgroundColor = false,
+                onBackButtonClicked = onBackPressed,
+            )
+        },
+    ) { innerPadding ->
+        LazyColumn() {
+            item {
+                ReviewContent(
+                    review = rinfoAppUiState.currentReview
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ReviewContent(
+    modifier: Modifier = Modifier,
+    review: Review = LocalReviewProvider.defaultReview
+) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.cafe_javas),
+            painter = painterResource(id = review.imageUrl),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
@@ -183,7 +228,11 @@ fun ReviewCard(
 @Composable
 fun ReviewScreenPreview() {
     AppTheme {
-        ReviewScreen()
+        ReviewScreen(
+            rinfoAppUiState = RinfoAppUiState(
+                currentReview = LocalReviewProvider.defaultReview
+            ),
+        )
     }
 }
 
@@ -193,7 +242,11 @@ fun ReviewScreenPreviewDark() {
     AppTheme(
         darkTheme = true
     ) {
-        ReviewScreen()
+        ReviewScreen(
+            rinfoAppUiState = RinfoAppUiState(
+                currentReview = LocalReviewProvider.defaultReview
+            ),
+        )
     }
 }
 

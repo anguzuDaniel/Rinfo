@@ -35,4 +35,6 @@
     <string name="logout">Logout</string>
     <string name="account">Account</string>
     <string name="review">review</string>
+    <string name="categories">categories</string>
+    <string name="about">About</string>
 </resources>
