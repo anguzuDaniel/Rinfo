@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "246402478244",
+    "project_id": "rinfo-5ee97",
+    "storage_bucket": "rinfo-5ee97.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:246402478244:android:c8c526bb8fce4d31533631",
+        "android_client_info": {
+          "package_name": "com.danotech.rinfo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "246402478244-f6cdhai0qrvvk1digmfnr2shi4qfm88f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.danotech.rinfo",
+            "certificate_hash": "87a2970ff4fafad1f3fcb893b285384639d8d8fe"
+          }
+        },
+        {
+          "client_id": "246402478244-22anr6j8hhef9lqo45mh31cbd5sq1n70.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPIlOVHDfgRTQURlGryRN4ezt9G3qEa9U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "246402478244-22anr6j8hhef9lqo45mh31cbd5sq1n70.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

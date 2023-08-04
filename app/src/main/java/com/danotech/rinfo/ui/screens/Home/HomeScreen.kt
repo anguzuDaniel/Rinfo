@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -80,9 +81,12 @@ fun HomeScreen(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
                         placeholder = R.string.search_by_location_or_business_name,
+                        onSearchInputClicked = onSearchInputClicked,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(10.dp),
+                            .padding(10.dp)
+                            .clip(MaterialTheme.shapes.large)
+                        ,
                     )
                 }
             )
@@ -99,9 +103,7 @@ fun HomeScreen(
                 },
                 fab = {
                     FloatingActionButton(
-                        onClick = {
-                            onFabClicked
-                        },
+                        onClick = onFabClicked,
                         modifier = Modifier.padding(bottom = 10.dp),
                         contentColor = MaterialTheme.colorScheme.onPrimary,
                         containerColor = MaterialTheme.colorScheme.primary
@@ -120,8 +122,7 @@ fun HomeScreen(
             rinfoAppUiState = rinfoAppUiState,
             innerPadding = innerPadding,
             onReviewCardClicked = onReviewCardClicked,
-            onCategoryClicked = onCategoryClicked,
-            onSearchInputClicked = onSearchInputClicked,
+            onCategoryClicked = { onCategoryClicked() },
         )
     }
 }
@@ -148,7 +149,6 @@ fun HomePageContent(
     onReviewCardClicked: (Review) -> Unit = {},
     onBackPressed: () -> Unit = {},
     onCategoryClicked: () -> Unit = {},
-    onSearchInputClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val reviews = LocalReviewProvider.reviews
@@ -161,7 +161,7 @@ fun HomePageContent(
     ) {
         item {
             CategoryOptionRow(
-                onCategoryClicked = onCategoryClicked
+                onCategoryClicked = { onCategoryClicked() }
             )
         }
 
@@ -227,7 +227,7 @@ fun CategoryOptionRow(
             icon = R.drawable.baseline_view_module_24,
             name = R.string.all,
             modifier = Modifier.weight(1f),
-            onCategoryClick = onCategoryClicked
+            onCategoryClicked = { onCategoryClicked() }
         )
 
         CategoryIconButton(
@@ -235,7 +235,7 @@ fun CategoryOptionRow(
             icon = R.drawable.baseline_dining_24,
             name = R.string.restaurants,
             modifier = Modifier.weight(1f),
-            onCategoryClick = onCategoryClicked
+            onCategoryClicked = { onCategoryClicked() }
         )
 
         CategoryIconButton(
@@ -243,7 +243,7 @@ fun CategoryOptionRow(
             icon = R.drawable.baseline_sports_bar_24,
             name = R.string.bars,
             modifier = Modifier.weight(1f),
-            onCategoryClick = onCategoryClicked
+            onCategoryClicked = { onCategoryClicked() }
         )
 
         CategoryIconButton(
@@ -251,7 +251,7 @@ fun CategoryOptionRow(
             icon = R.drawable.baseline_local_hotel_24,
             name = R.string.hotels,
             modifier = Modifier.weight(1f),
-            onCategoryClick = onCategoryClicked
+            onCategoryClicked = { onCategoryClicked() }
         )
 
         CategoryIconButton(
@@ -259,7 +259,7 @@ fun CategoryOptionRow(
             icon = R.drawable.baseline_more_horiz_24,
             name = R.string.others,
             modifier = Modifier.weight(1f),
-            onCategoryClick = onCategoryClicked
+            onCategoryClicked = { onCategoryClicked() }
         )
     }
 }

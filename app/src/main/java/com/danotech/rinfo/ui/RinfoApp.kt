@@ -83,7 +83,11 @@ fun RinfoApp(
         }
 
         RInfoScreen.Search.name -> {
-            SearchPage()
+            SearchPage(
+                onBackPressed = {
+                    viewModel.popBackStack()
+                },
+            )
         }
 
         RInfoScreen.Favourites.name -> {

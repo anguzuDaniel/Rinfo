@@ -85,7 +85,6 @@ fun ReviewCard(
     }
 }
 
-
 data class Review(
     val id: Int = 0,
     // to be changed to receive url links
@@ -95,6 +94,8 @@ data class Review(
     val rating: Int = 0,
     val comment: String
 )
+
+
 
 @Preview(showBackground = true)
 @Composable

@@ -77,6 +77,7 @@ fun TextInput(
 fun SearchTextField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
+    onSearchInputClicked: () -> Unit = {},
     @StringRes placeholder: Int,
     modifier: Modifier = Modifier
 ) {
@@ -107,7 +108,7 @@ fun SearchTextField(
             },
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
-            modifier = modifier
+            modifier = modifier.clickable(onClick = onSearchInputClicked)
         )
     }
 }

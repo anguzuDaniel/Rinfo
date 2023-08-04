@@ -2,7 +2,6 @@ package com.danotech.rinfo.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -81,7 +80,7 @@ fun CategoryIconButton(
     description: String,
     @DrawableRes icon: Int,
     @StringRes name: Int,
-    onCategoryClick: () -> Unit = {},
+    onCategoryClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -94,7 +93,7 @@ fun CategoryIconButton(
                 .clip(shape = MaterialTheme.shapes.medium)
         ) {
             IconButton(
-                onClick = { onCategoryClick() },
+                onClick = onCategoryClicked,
                 modifier = modifier
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 colors = IconButtonDefaults.iconButtonColors(

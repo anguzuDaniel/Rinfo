@@ -9,18 +9,19 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 
@@ -35,13 +36,15 @@ fun RinfoTopAppBar(
     actions: @Composable () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = if (!isShowingHomePage && !isSearchPage) {
             {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                    modifier = modifier
                 )
             }
         } else {
@@ -50,6 +53,10 @@ fun RinfoTopAppBar(
         navigationIcon = if (!isShowingHomePage) {
             {
                 IconButton(onClick = onBackButtonClicked) {
+                    /**
+                     * if background color is true or shown
+                     * show rounded back arrow
+                     */
                     /**
                      * if background color is true or shown
                      * show rounded back arrow
@@ -79,9 +86,6 @@ fun RinfoTopAppBar(
         } else {
             { Box() {} }
         },
-        /**
-         * s
-         */
         colors = if (showBackgroundColor) {
             TopAppBarDefaults.smallTopAppBarColors(
                 containerColor = MaterialTheme.colorScheme.background,

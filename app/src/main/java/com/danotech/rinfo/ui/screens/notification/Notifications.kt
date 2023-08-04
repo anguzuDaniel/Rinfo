@@ -71,9 +71,7 @@ fun NotificationPage(
                 )
             }, fab = {
                 FloatingActionButton(
-                    onClick = {
-                        onFabClicked
-                    },
+                    onClick = onFabClicked,
                     modifier = Modifier.padding(bottom = 10.dp),
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     containerColor = MaterialTheme.colorScheme.primary

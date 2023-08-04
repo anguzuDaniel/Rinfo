@@ -1,6 +1,7 @@
 package com.danotech.rinfo.ui.screens.search
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
@@ -19,8 +20,12 @@ import com.example.compose.AppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchPage(
-
+    onBackPressed: () -> Unit = {}
 ) {
+    BackHandler {
+        onBackPressed()
+    }
+
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
     var searchResults by remember { mutableStateOf(emptyList<String>()) }
 
@@ -32,9 +37,8 @@ fun SearchPage(
                 title = "search",
                 isShowingHomePage = false,
                 isSearchPage = true,
-                onBackButtonClicked = {
-                    // Back button clicked
-                }, actions = {
+                onBackButtonClicked = onBackPressed,
+                actions = {
                     SearchTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
@@ -64,7 +68,6 @@ fun SearchPage(
         }
     }
 }
-
 
 
 @Composable
