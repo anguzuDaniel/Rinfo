@@ -156,6 +156,21 @@ fun ShowOptionButton(
     }
 }
 
+@Composable
+fun BasicButton(@StringRes text: Int, modifier: Modifier, action: () -> Unit) {
+    Button(
+        onClick = action,
+        modifier = modifier,
+        colors =
+        buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        )
+    ) {
+        Text(text = stringResource(text), fontSize = 16.sp)
+    }
+}
+
 @Preview
 @Composable
 fun CategoryIconButtonPreview() {
