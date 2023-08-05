@@ -36,15 +36,19 @@ object LocalReviewProvider {
     )
 
     val categories = listOf(
-        Category("Hotels", Icons.Default.Home),
-        Category("Restaurants", Icons.Default.Home),
-        Category("Cafes", Icons.Default.Home),
-        Category("Spas", Icons.Default.Home),
-        Category("Parks", Icons.Default.Home),
-        Category("Museums", Icons.Default.Home),
-        Category("Fitness Centers", Icons.Default.Home),
-        Category("Bookstores", Icons.Default.Home),
-        Category("Beaches", Icons.Default.Home),
-        Category("Movie Theaters", Icons.Default.Home),
+        Category("Hotels", Icons.Default.Home, R.drawable.baseline_local_hotel_24),
+        Category("Restaurants", Icons.Default.Home, R.drawable.baseline_restaurant_24),
+        Category("Cafes", Icons.Default.Home, R.drawable.baseline_coffee_24),
+        Category("Spas", Icons.Default.Home, R.drawable.baseline_spa_24),
+        Category(
+            "Parks",
+            Icons.Default.Home,
+            R.drawable.baseline_spa_24
+        ),
+        Category("Museums", Icons.Default.Home, R.drawable.baseline_museum_24),
+        Category("Fitness Centers", Icons.Default.Home, R.drawable.baseline_fitness_center_24),
+        Category("Bookstores", Icons.Default.Home, R.drawable.baseline_library_books_24),
+        Category("Beaches", Icons.Default.Home, R.drawable.baseline_beach_access_24),
+        Category("Movie Theaters", Icons.Default.Home, R.drawable.baseline_theaters_24),
     )
 }

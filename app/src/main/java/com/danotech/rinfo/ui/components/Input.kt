@@ -31,7 +31,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
-import com.example.compose.AppTheme
+import com.danotech.rinfo.ui.theme.AppTheme
 
 // reusable text input
 @OptIn(ExperimentalMaterial3Api::class)

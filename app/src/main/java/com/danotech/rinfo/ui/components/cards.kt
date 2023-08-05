@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.data.LocalReviewProvider
-import com.example.compose.AppTheme
+import com.danotech.rinfo.ui.theme.AppTheme
 
 /**
  * Review card

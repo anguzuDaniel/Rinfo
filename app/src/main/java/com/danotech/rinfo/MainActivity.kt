@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.danotech.rinfo.ui.RinfoApp
-import com.danotech.rinfo.ui.screens.Home.HomeScreen
-import com.example.compose.AppTheme
+import com.danotech.rinfo.ui.theme.AppTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

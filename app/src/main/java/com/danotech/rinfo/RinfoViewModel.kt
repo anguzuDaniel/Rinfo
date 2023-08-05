@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -21,6 +23,37 @@ class RinfoViewModel : ViewModel() {
     }
 
     fun onScreenSelected(screen: RInfoScreen) {
+        if (Firebase.auth.currentUser == null) {
+            when (screen) {
+                RInfoScreen.Account -> {
+                    _uiState.update {
+                        it.copy(
+                            currentScreen = RInfoScreen.Account
+                        )
+                    }
+                }
+
+                RInfoScreen.Home -> {
+                    _uiState.update {
+                        it.copy(
+                            currentScreen = RInfoScreen.Home
+                        )
+                    }
+                }
+
+                else -> {
+                    _uiState.update {
+                        it.copy(
+                            currentScreen = RInfoScreen.Login
+                        )
+                    }
+                }
+            }
+
+
+            return
+        }
+
         when (screen) {
             RInfoScreen.Home -> {
                 _uiState.update {
@@ -114,6 +147,14 @@ class RinfoViewModel : ViewModel() {
     }
 
     fun showBusinessDetails(review: Review) {
+        if (Firebase.auth.currentUser == null) {
+            _uiState.update {
+                it.copy(
+                    currentScreen = RInfoScreen.Login
+                )
+            }
+            return
+        }
         _uiState.update {
             it.copy(
                 currentReview = review,

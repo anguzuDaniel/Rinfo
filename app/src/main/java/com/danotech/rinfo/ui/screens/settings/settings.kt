@@ -46,7 +46,7 @@ import com.danotech.rinfo.ui.components.SubHeadingText
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.example.compose.AppTheme
+import com.danotech.rinfo.ui.theme.AppTheme
 
 enum class SettingType {
     switch,

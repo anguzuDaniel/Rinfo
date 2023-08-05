@@ -5,8 +5,8 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -28,7 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.danotech.rinfo.R
-import com.example.compose.AppTheme
+import com.danotech.rinfo.ui.theme.AppTheme
+
 
 /**
  * reusable button
@@ -42,12 +43,15 @@ fun RinfoButton(
     modifier: Modifier = Modifier,
 ) {
     Button(
-        onClick = { onClicked },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp)
+        onClick = onClicked,
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        shape = MaterialTheme.shapes.medium,
     ) {
-        Text(text = stringResource(id = name))
+        Text(
+            text = stringResource(id = name),
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 
@@ -171,20 +175,49 @@ fun BasicButton(@StringRes text: Int, modifier: Modifier, action: () -> Unit) {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun CategoryIconButtonPreview() {
-    CategoryIconButton(
-        description = "test",
-        icon = R.drawable.baseline_dining_24,
-        name = R.string.all
-    )
+    AppTheme() {
+        CategoryIconButton(
+            description = "test",
+            icon = R.drawable.baseline_dining_24,
+            name = R.string.all
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CategoryIconButtonDarkPreview() {
+    AppTheme() {
+        CategoryIconButton(
+            description = "test",
+            icon = R.drawable.baseline_dining_24,
+            name = R.string.all
+        )
+    }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ShowOptionButtonPreview() {
     AppTheme {
+        ShowOptionButton(
+            name = R.string.all,
+            active = false,
+            onClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ShowOptionButtonDarkPreview() {
+    AppTheme(
+        darkTheme = true
+    ) {
         ShowOptionButton(
             name = R.string.all,
             active = false,

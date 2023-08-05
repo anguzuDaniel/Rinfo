@@ -38,7 +38,7 @@ import com.danotech.rinfo.ui.components.RatingStars
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.example.compose.AppTheme
+import com.danotech.rinfo.ui.theme.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)

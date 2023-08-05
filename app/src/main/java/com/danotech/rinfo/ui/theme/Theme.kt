@@ -1,4 +1,4 @@
-package com.example.compose
+package com.danotech.rinfo.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -14,8 +14,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.danotech.rinfo.ui.theme.Shapes
-import com.danotech.rinfo.ui.theme.Typography
 
 private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,

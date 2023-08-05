@@ -1,6 +1,7 @@
 package com.danotech.rinfo.ui.screens.search
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,12 +44,18 @@ import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.RatingStars
 import com.danotech.rinfo.ui.components.SearchTextField
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.example.compose.AppTheme
+import com.danotech.rinfo.ui.theme.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchCategory() {
+fun SearchCategory(
+    onBackPressed: () -> Unit = {}
+) {
+    BackHandler() {
+        onBackPressed()
+    }
+
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
     var searchResults by remember { mutableStateOf(emptyList<String>()) }
 
@@ -61,7 +68,7 @@ fun SearchCategory() {
                 isShowingHomePage = false,
                 isSearchPage = true,
                 onBackButtonClicked = {
-                    // Back button clicked
+                    onBackPressed()
                 },
                 actions = {
                     SearchTextField(

@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.SearchTextField
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.example.compose.AppTheme
+import com.danotech.rinfo.ui.theme.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)

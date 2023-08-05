@@ -1,4 +1,5 @@
-package com.example.compose
+package com.danotech.rinfo.ui.theme
+
 import androidx.compose.ui.graphics.Color
 
 val md_theme_light_primary = Color(0xFFB42625)

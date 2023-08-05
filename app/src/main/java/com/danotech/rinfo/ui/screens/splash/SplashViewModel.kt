@@ -21,8 +21,8 @@ import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.ConfigurationService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
-import com.danotech.rinfo.SPLASH_SCREEN
-import com.danotech.rinfo.TASKS_SCREEN
+import com.danotech.rinfo.ui.SPLASH_SCREEN
+import com.danotech.rinfo.ui.TASKS_SCREEN
 import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

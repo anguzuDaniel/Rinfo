@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Rinfo</string>
-    <string name="create_account">Create Account</string>
-    <string name="login">Login</string>
+    <string name="create_account">Sign up</string>
+    <string name="login">Sign in</string>
     <string name="register_here">Already have an account register here</string>
     <string name="sign_in">Sign in to continue</string>
-    <string name="have_an_account">Already have an account register here</string>
+    <string name="have_an_account">Already have an account?</string>
     <string name="search">search</string>
     <string name="all">All</string>
     <string name="bars">Bars</string>
@@ -50,4 +50,8 @@
     <string name="review">review</string>
     <string name="categories">categories</string>
     <string name="about">About</string>
+    <string name="dont_have_an_account">Don\'t have an account</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="more_categories">more categories</string>
+    <string name="category">category</string>
 </resources>

@@ -2,6 +2,7 @@ package com.danotech.rinfo.ui.screens.notification
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,7 +37,7 @@ import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.example.compose.AppTheme
+import com.danotech.rinfo.ui.theme.AppTheme
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -116,7 +117,7 @@ fun NotificationList(
 fun NotificationItem(index: Int) {
     ListItem(modifier = Modifier
         .fillMaxWidth()
-        .padding(16.dp),
+        .clickable(onClick = { }),
         headlineText = { Text("Notification $index") },
         supportingText = { Text("This is a sample notification message.") },
         trailingContent = {

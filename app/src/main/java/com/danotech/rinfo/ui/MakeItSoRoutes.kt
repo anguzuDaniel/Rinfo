@@ -1,5 +1,5 @@
 
-package com.danotech.rinfo
+package com.danotech.rinfo.ui
 
 const val SPLASH_SCREEN = "SplashScreen"
 const val SETTINGS_SCREEN = "SettingsScreen"

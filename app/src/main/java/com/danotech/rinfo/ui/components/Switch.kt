@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.compose.AppTheme
+import com.danotech.rinfo.ui.theme.AppTheme
 
 @Composable
 fun SettingSwitch(
