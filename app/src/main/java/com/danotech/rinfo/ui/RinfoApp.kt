@@ -1,19 +1,32 @@
 package com.danotech.rinfo.ui
 
-import android.app.Activity
+import android.Manifest
+import android.content.res.Resources
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.Surface
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.danotech.rinfo.RinfoViewModel
+import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.ui.components.Review
-import com.danotech.rinfo.ui.screens.Home.HomeScreen
+import com.danotech.rinfo.ui.screens.home.HomeScreen
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
 import com.danotech.rinfo.ui.screens.account.CreateAccountUiState
@@ -25,178 +38,234 @@ import com.danotech.rinfo.ui.screens.review.ReviewScreen
 import com.danotech.rinfo.ui.screens.search.SearchCategory
 import com.danotech.rinfo.ui.screens.search.SearchPage
 import com.danotech.rinfo.ui.screens.settings.SettingPage
+import com.danotech.rinfo.ui.theme.AppTheme
+import com.danotech.rinfo.common.composable.PermissionDialog
+import com.danotech.rinfo.common.composable.RationaleDialog
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun RinfoApp() {
+    AppTheme() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            RequestNotificationPermissionDialog()
+        }
+
+        Surface(color = MaterialTheme.colors.background) {
+            val appState = rememberAppState()
+
+            Scaffold(
+                snackbarHost = {
+                    SnackbarHost(
+                        hostState = it,
+                        modifier = Modifier.padding(8.dp),
+                        snackbar = { snackbarData ->
+                            Snackbar(snackbarData, contentColor = MaterialTheme.colors.onPrimary)
+                        }
+                    )
+                },
+                scaffoldState = appState.scaffoldState
+            ) { innerPaddingModifier ->
+                NavHost(
+                    navController = appState.navController,
+                    startDestination = RInfoScreen.Home.name,
+                    modifier = Modifier.padding(innerPaddingModifier)
+                ) {
+                    makeItSoGraph(appState)
+                }
+            }
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun RequestNotificationPermissionDialog() {
+    val permissionState =
+        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+
+    if (!permissionState.status.isGranted) {
+        if (permissionState.status.shouldShowRationale) RationaleDialog()
+        else PermissionDialog { permissionState.launchPermissionRequest() }
+    }
+}
 
 @Composable
-fun RinfoApp(
-    navController: NavHostController = rememberNavController()
-) {
-    val activity = LocalContext.current as Activity
+fun rememberAppState(
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    navController: NavHostController = rememberNavController(),
+    snackbarManager: SnackbarManager = SnackbarManager,
+    resources: Resources = resources(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
+) =
+    remember(scaffoldState, navController, snackbarManager, resources, coroutineScope) {
+        RinfoAppUiState(
+            scaffoldState = scaffoldState,
+            navController = navController,
+            snackbarManager = snackbarManager,
+            resources = resources,
+            coroutineScope = coroutineScope
+        )
+    }
 
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry?.destination?.route
+@Composable
+@ReadOnlyComposable
+fun resources(): Resources {
+    LocalConfiguration.current
+    return LocalContext.current.resources
+}
 
-    val viewModel: RinfoViewModel = viewModel()
-    val rinfoAppUiState = viewModel.uiState.collectAsState().value
-
-    NavHost(
-        navController = navController,
-        startDestination = RInfoScreen.Home.name
-    ) {
-        composable(route = RInfoScreen.Home.name) {
-            HomeScreen(
-                rinfoAppUiState = rinfoAppUiState,
-                currentPage = rinfoAppUiState.currentScreen,
-                onTabSelected = { screen ->
-                    if (Firebase.auth.currentUser == null) {
-                        navController.navigate(RInfoScreen.Login.name)
-                        return@HomeScreen
-                    }
-
-                    navController.navigate(screen.name)
-                },
-                onBackPressed = {
-                    activity.finish()
-                },
-                onReviewCardClicked = { review: Review ->
-                    if (Firebase.auth.currentUser == null) {
-                        navController.navigate(RInfoScreen.Login.name)
-                        return@HomeScreen
-                    }
-
-                    viewModel.showBusinessDetails(
-                        review = review,
-                    )
-                    navController.navigate(RInfoScreen.Review.name)
-                },
-                onFabClicked = {
-                    if (Firebase.auth.currentUser == null) {
-                        navController.navigate(RInfoScreen.Login.name)
-                        return@HomeScreen
-                    }
-
-                    navController.navigate(RInfoScreen.Search.name)
-                },
-                onCategoryClicked = {
-                    if (Firebase.auth.currentUser == null) {
-                        navController.navigate(RInfoScreen.Login.name)
-                        return@HomeScreen
-                    }
-
-                    navController.navigate(RInfoScreen.MoreCategories.name)
-                },
-                onSearchInputClicked = {
-                    if (Firebase.auth.currentUser == null) {
-                        navController.navigate(RInfoScreen.Login.name)
-                        return@HomeScreen
-                    }
-
-                    navController.navigate(RInfoScreen.Search.name)
-                },
-            )
-        }
-        composable(route = RInfoScreen.Login.name) {
-            Login(
-                onSignUpTextClicked = {
-                    navController.navigate(RInfoScreen.Account.name)
-                },
-                onBackHandler = {
-                    navController.popBackStack()
+@ExperimentalMaterialApi
+fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
+    composable(route = RInfoScreen.Home.name) {
+        HomeScreen(
+            onTabSelected = { screen ->
+                if (Firebase.auth.currentUser == null) {
+                    appState.navigate(RInfoScreen.Login.name)
+                    return@HomeScreen
                 }
-            )
-        }
-        composable(route = RInfoScreen.Account.name) {
-            CreateAccount(
-                onSignInTextClicked = {
-                    navController.navigate(RInfoScreen.Login.name)
-                },
-                createAccountUiState = CreateAccountUiState(),
-                onBackHandler = {
-                    navController.popBackStack()
+
+                appState.navigate(screen.name)
+            },
+            onBackPressed = {
+                appState.popUp()
+            },
+            onReviewCardClicked = { review: Review ->
+                if (Firebase.auth.currentUser == null) {
+                    appState.navigate(RInfoScreen.Login.name)
+                    return@HomeScreen
                 }
-            )
-        }
-        composable(route = RInfoScreen.Favourites.name) {
-            FavoriteScreen(
-                rinfoAppUiState = rinfoAppUiState,
-                onBackPressed = {
-                    navController.popBackStack()
-                },
-                onFabClicked = {
-                    navController.navigate(RInfoScreen.Search.name)
-                },
-                onTabSelected = { screen ->
-                    navController.navigate(screen.name)
-                },
-                onReviewCardClicked = { review: Review ->
-                    viewModel.showBusinessDetails(
-                        review = review,
-                    )
-                    navController.navigate(RInfoScreen.Review.name)
+
+                appState.navigate(RInfoScreen.Review.name)
+            },
+            onFabClicked = {
+                if (Firebase.auth.currentUser == null) {
+                    appState.navigate(RInfoScreen.Login.name)
+                    return@HomeScreen
                 }
-            )
-        }
-        composable(route = RInfoScreen.Notification.name) {
-            NotificationPage(
-                rinfoAppUiState = rinfoAppUiState,
-                onBackPressed = {
-                    navController.popBackStack()
-                },
-                onFabClicked = {
-                    viewModel.onScreenSelected(RInfoScreen.Search)
-                },
-                onTabSelected = { screen ->
-                    navController.navigate(screen.name)
-                },
-            )
-        }
-        composable(route = RInfoScreen.Settings.name) {
-            SettingPage(
-                rinfoAppUiState = rinfoAppUiState,
-                onBackPressed = {
-                    navController.popBackStack()
-                },
-                onFabClicked = {
-                    viewModel.onScreenSelected(RInfoScreen.Search)
-                },
-                onTabSelected = { screen ->
-                    navController.navigate(screen.name)
-                },
-            )
-        }
-        composable(route = RInfoScreen.Search.name) {
-            SearchPage(
-                onBackPressed = {
-                    navController.popBackStack()
-                },
-            )
-        }
-        composable(route = RInfoScreen.MoreCategories.name) {
-            MoreCategoriesPage(
-                onBackPressed = {
-                    navController.popBackStack()
-                },
-                onCategoryItemClicked = {
-//                    viewModel.onCategorySelected(it)
-                    navController.navigate(RInfoScreen.Category.name)
+
+                appState.navigate(RInfoScreen.Search.name)
+            },
+            onCategoryClicked = {
+                if (Firebase.auth.currentUser == null) {
+                    appState.navigate(RInfoScreen.Login.name)
+                    return@HomeScreen
                 }
-            )
-        }
-        composable(route = RInfoScreen.Category.name) {
-            SearchCategory(
-                onBackPressed = {
-                    navController.popBackStack()
+
+                appState.navigate(RInfoScreen.MoreCategories.name)
+            },
+            onSearchInputClicked = {
+                if (Firebase.auth.currentUser == null) {
+                    appState.navigate(RInfoScreen.Login.name)
+                    return@HomeScreen
                 }
-            )
-        }
-        composable(route = RInfoScreen.Review.name) {
-            ReviewScreen(
-                rinfoAppUiState = rinfoAppUiState,
-                onBackPressed = {
-                    navController.popBackStack()
-                },
-            )
-        }
+
+                appState.navigate(RInfoScreen.Search.name)
+            },
+        )
+    }
+    composable(route = RInfoScreen.Login.name) {
+        Login(
+            onSignUpTextClicked = {
+                appState.navigate(RInfoScreen.Account.name)
+            },
+            onBackHandler = {
+                appState.popUp()
+            }
+        )
+    }
+    composable(route = RInfoScreen.Account.name) {
+        CreateAccount(
+            onSignInTextClicked = {
+                appState.navigate(RInfoScreen.Login.name)
+            },
+            createAccountUiState = CreateAccountUiState(),
+            onBackHandler = {
+                appState.popUp()
+            }
+        )
+    }
+    composable(route = RInfoScreen.Favourites.name) {
+        FavoriteScreen(
+            onBackPressed = {
+                appState.popUp()
+            },
+            onFabClicked = {
+                appState.navigate(RInfoScreen.Search.name)
+            },
+            onTabSelected = { screen ->
+                appState.navigate(screen.name)
+            },
+            onReviewCardClicked = { review: Review ->
+
+                appState.navigate(RInfoScreen.Review.name)
+            }
+        )
+    }
+    composable(route = RInfoScreen.Notification.name) {
+        NotificationPage(
+            onBackPressed = {
+                appState.popUp()
+            },
+            onFabClicked = {
+                appState.navigate(RInfoScreen.Search.name)
+            },
+            onTabSelected = { screen ->
+                appState.navigate(screen.name)
+            },
+        )
+    }
+    composable(route = RInfoScreen.Settings.name) {
+        SettingPage(
+            onBackPressed = {
+                appState.popUp()
+            },
+            onFabClicked = {
+                appState.navigate(RInfoScreen.Search.name)
+            },
+            onTabSelected = { screen ->
+                appState.navigate(screen.name)
+            },
+        )
+    }
+    composable(route = RInfoScreen.Search.name) {
+        SearchPage(
+            onBackPressed = {
+                appState.popUp()
+            },
+        )
+    }
+    composable(route = RInfoScreen.MoreCategories.name) {
+        MoreCategoriesPage(
+            onBackPressed = {
+                appState.popUp()
+            },
+            onCategoryItemClicked = {
+                appState.navigate(RInfoScreen.Category.name)
+            }
+        )
+    }
+    composable(route = RInfoScreen.Category.name) {
+        SearchCategory(
+            onBackPressed = {
+                appState.popUp()
+            }
+        )
+    }
+    composable(route = RInfoScreen.Review.name) {
+        ReviewScreen(
+            onBackPressed = {
+                appState.popUp()
+            },
+        )
     }
 }

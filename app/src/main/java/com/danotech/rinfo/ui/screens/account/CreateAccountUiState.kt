@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 
 /**
  * A data class representing the state of the create account screen.
- * @param firstName The first name of the user.
+ * @param name The first name of the user.
  * @param lastName The last name of the user.
  * @param email The email of the user.
  * @param password The password of the user.
@@ -20,8 +20,7 @@ import androidx.annotation.StringRes
  * @see CreateAccountViewModelFactory
  */
 data class CreateAccountUiState(
-    val firstName: String = "",
-    val lastName: String = "",
+    val name: String = "",
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",

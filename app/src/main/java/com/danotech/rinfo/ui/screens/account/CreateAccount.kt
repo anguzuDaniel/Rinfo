@@ -39,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.data.LocalReviewProvider
 import com.danotech.rinfo.ui.components.ClickableTextRow
@@ -52,6 +53,7 @@ import com.danotech.rinfo.ui.theme.AppTheme
 fun CreateAccount(
     createAccountUiState: CreateAccountUiState,
     modifier: Modifier = Modifier,
+    viewModel: CreateAccountViewModel = hiltViewModel(),
     onSignInTextClicked: () -> Unit = { },
     onBackHandler: () -> Unit = {}
 ) {
@@ -91,7 +93,10 @@ fun CreateAccount(
                  * First name text input
                  */
                 TextInput(
-                    value = TextFieldValue(createAccountUiState.firstName),
+                    value = TextFieldValue(createAccountUiState.name),
+                    onValueChanged = {
+                        viewModel.onFirstNameChanged(createAccountUiState.name)
+                    },
                     labelText = stringResource(R.string.name),
                     leadingIcon = Icons.Default.Person,
                 )
@@ -100,7 +105,9 @@ fun CreateAccount(
             item {
                 TextInput(
                     value = TextFieldValue(createAccountUiState.email),
-                    onValueChanged = {},
+                    onValueChanged = {
+                        viewModel.onEmailChanged(createAccountUiState.email)
+                    },
                     labelText = stringResource(R.string.email),
                     leadingIcon = Icons.Default.Email,
                 )
@@ -109,6 +116,9 @@ fun CreateAccount(
             item {
                 TextInput(
                     value = TextFieldValue(createAccountUiState.password),
+                    onValueChanged = {
+                        viewModel.onPasswordChanged(createAccountUiState.password)
+                    },
                     labelText = stringResource(R.string.password),
                     leadingIcon = Icons.Filled.Lock,
                 )
@@ -117,6 +127,9 @@ fun CreateAccount(
             item {
                 TextInput(
                     value = TextFieldValue(createAccountUiState.confirmPassword),
+                    onValueChanged = {
+                        viewModel.onConfirmPasswordChanged(createAccountUiState.confirmPassword)
+                    },
                     labelText = stringResource(R.string.confirm_password),
                     leadingIcon = Icons.Default.Lock,
                 )

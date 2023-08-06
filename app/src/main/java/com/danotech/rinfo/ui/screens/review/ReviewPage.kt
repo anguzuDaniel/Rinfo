@@ -31,12 +31,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.data.LocalReviewProvider
-import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.components.RatingStars
 import com.danotech.rinfo.ui.components.Review
-import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.danotech.rinfo.ui.theme.AppTheme
 
@@ -44,7 +43,7 @@ import com.danotech.rinfo.ui.theme.AppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewScreen(
-    rinfoAppUiState: RinfoAppUiState,
+    viewModel: ReviewPageViewModel = hiltViewModel(),
     onBackPressed: () -> Unit = {},
 ) {
     BackHandler {
@@ -65,7 +64,7 @@ fun ReviewScreen(
         LazyColumn() {
             item {
                 ReviewContent(
-                    review = rinfoAppUiState.currentReview
+                    review = viewModel.uiState.value.currentReview
                 )
             }
         }
@@ -78,7 +77,7 @@ fun ReviewContent(
     review: Review = LocalReviewProvider.defaultReview
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         Image(
             painter = painterResource(id = review.imageUrl),
@@ -228,11 +227,7 @@ fun ReviewCard(
 @Composable
 fun ReviewScreenPreview() {
     AppTheme {
-        ReviewScreen(
-            rinfoAppUiState = RinfoAppUiState(
-                currentReview = LocalReviewProvider.defaultReview
-            ),
-        )
+        ReviewScreen()
     }
 }
 
@@ -242,11 +237,7 @@ fun ReviewScreenPreviewDark() {
     AppTheme(
         darkTheme = true
     ) {
-        ReviewScreen(
-            rinfoAppUiState = RinfoAppUiState(
-                currentReview = LocalReviewProvider.defaultReview
-            ),
-        )
+        ReviewScreen()
     }
 }
 

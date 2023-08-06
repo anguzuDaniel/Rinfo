@@ -5,6 +5,7 @@
     <string name="register_here">Already have an account register here</string>
     <string name="sign_in">Sign in to continue</string>
     <string name="have_an_account">Already have an account?</string>
+    <string name="email_error">Please insert a valid email.</string>
     <string name="search">search</string>
     <string name="all">All</string>
     <string name="bars">Bars</string>
@@ -15,6 +16,10 @@
     <string name="generic_error">Something wrong happened. Please try again.</string>
     <string name="try_again">Try again</string>
 
+    <string name="repeat_password">Repeat password</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+
     <!-- LoginScreen -->
     <string name="login_details">Enter your login details</string>
     <string name="forgot_password">Forgot password? Click to get recovery email</string>
@@ -24,7 +29,6 @@
     <!-- SignUpScreen -->
     <string name="password_error">Your password should have at least six digits and include one digit, one lower case letter and one upper case letter.</string>
     <string name="password_match_error">Passwords do not match.</string>
-
 
 
     <string name="restaurants">Restaurants</string>
@@ -62,4 +66,11 @@
     <string name="business">Business</string>
     <string name="personal">Personal</string>
     <string name="account_type_icon">Account type icon</string>
+
+    <!-- FCM -->
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="request_notification_permission">Request permission</string>
+    <string name="notification_permission_title">Notification permission</string>
+    <string name="notification_permission_description">The notification permission is important for this app. Please grant the permission.</string>
+    <string name="notification_permission_settings">The notification permission is important for this app. Please navigate to your device settings and enable notifications for Make it So.</string>
 </resources>

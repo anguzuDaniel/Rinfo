@@ -1,19 +1,39 @@
 package com.danotech.rinfo.ui.screens.account
 
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
+import androidx.compose.runtime.mutableStateOf
+import com.danotech.rinfo.RinfoViewModel
+import com.danotech.rinfo.common.SnackbarManager
+import com.danotech.rinfo.common.ext.isValidEmail
+import com.danotech.rinfo.common.ext.isValidPassword
+import com.danotech.rinfo.common.ext.passwordMatches
+import com.danotech.rinfo.model.service.AccountService
+import com.danotech.rinfo.model.service.LogService
+import com.danotech.rinfo.ui.SETTINGS_SCREEN
+import com.danotech.rinfo.ui.SIGN_UP_SCREEN
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import com.danotech.rinfo.R.string as AppText
 
-class CreateAccountViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(CreateAccountUiState())
-    val uiState: MutableStateFlow<CreateAccountUiState> = _uiState
+@HiltViewModel
+class CreateAccountViewModel @Inject constructor(
+    private val accountService: AccountService,
+    logService: LogService
+) : RinfoViewModel(logService) {
+    var uiState = mutableStateOf(CreateAccountUiState())
+        private set
+
+    private val email: String
+        get() = uiState.value.email
+
+    private val password: String
+        get() = uiState.value.password
 
     init {
         initializeUIState()
     }
 
     private fun initializeUIState() {
-        _uiState.value = CreateAccountUiState()
+        uiState.value = CreateAccountUiState()
     }
 
     /**
@@ -22,9 +42,7 @@ class CreateAccountViewModel : ViewModel() {
      * @see CreateAccountUiState
      */
     fun onEmailChanged(email: String) {
-        _uiState.update {
-            it.copy(email = email)
-        }
+        uiState.value = uiState.value.copy(email = email)
     }
 
     /**
@@ -33,9 +51,7 @@ class CreateAccountViewModel : ViewModel() {
      * @see CreateAccountUiState
      */
     fun onPasswordChanged(password: String) {
-        _uiState.update {
-            it.copy(password = password)
-        }
+        uiState.value = uiState.value.copy(password = password)
     }
 
     /**
@@ -44,74 +60,50 @@ class CreateAccountViewModel : ViewModel() {
      * @see CreateAccount
      */
     fun onConfirmPasswordChanged(confirmPassword: String) {
-        _uiState.update {
-            it.copy(confirmPassword = confirmPassword)
-        }
+        uiState.value = uiState.value.copy(confirmPassword = confirmPassword)
     }
 
     /**
      * This function is called when the user inputs in the first name
-     * @param firstName
+     * @param name
      */
-    fun onFirstNameChanged(firstName: String) {
-        _uiState.update {
-            it.copy(firstName = firstName)
-        }
-    }
-
-    /**
-     * This function is called when the user inputs the last name
-     * @param lastName
-     */
-    fun onLastNameChanged(lastName: String) {
-        _uiState.update {
-            it.copy(lastName = lastName)
-        }
+    fun onFirstNameChanged(name: String) {
+        uiState.value = uiState.value.copy(name = name)
     }
 
     /**
      * This function is create account button is clicked
      */
     fun onCreateAccountClicked() {
-        _uiState.update {
-            it.copy(isCreateAccountInProgress = true)
-        }
+        uiState.value = uiState.value.copy(isCreateAccountInProgress = true)
     }
 
     /**
      * when account is created successfully
      */
     fun onAccountCreated() {
-        _uiState.update {
-            it.copy(isCreateAccountInProgress = false, isCreateAccountSuccess = true)
-        }
+        uiState.value = uiState.value.copy(isCreateAccountInProgress = false, isCreateAccountSuccess = true)
     }
 
     /**
      * when account creation fails
      */
     fun onAccountCreationFailed() {
-        _uiState.update {
-            it.copy(isCreateAccountInProgress = false, isCreateAccountError = true)
-        }
+        uiState.value = uiState.value.copy(isCreateAccountInProgress = false, isCreateAccountError = true)
     }
 
     /**
      * show when there is an error
      */
     fun onAccountCreationErrorShown() {
-        _uiState.update {
-            it.copy(isCreateAccountError = false)
-        }
+        uiState.value = uiState.value.copy(isCreateAccountError = false)
     }
 
     /**
      * show when account creation is successful
      */
     fun onAccountCreationSuccessShown() {
-        _uiState.update {
-            it.copy(isCreateAccountSuccess = false)
-        }
+        uiState.value = uiState.value.copy(isCreateAccountSuccess = false)
     }
 
     /**
@@ -119,8 +111,28 @@ class CreateAccountViewModel : ViewModel() {
      * @param accountType
      */
     fun onAccountTypeSelected(accountType: AccountType) {
-        _uiState.update {
-            it.copy(accountType = accountType)
+        uiState.value = uiState.value.copy(accountType = accountType)
+    }
+
+    fun onSignUpClick(openAndPopUp: (String, String) -> Unit) {
+        if (!email.isValidEmail()) {
+            SnackbarManager.showMessage(AppText.email_error)
+            return
+        }
+
+        if (!password.isValidPassword()) {
+            SnackbarManager.showMessage(AppText.password_error)
+            return
+        }
+
+        if (!password.passwordMatches(uiState.value.confirmPassword)) {
+            SnackbarManager.showMessage(AppText.password_match_error)
+            return
+        }
+
+        launchCatching {
+            accountService.linkAccount(email, password)
+            openAndPopUp(SETTINGS_SCREEN, SIGN_UP_SCREEN)
         }
     }
 }

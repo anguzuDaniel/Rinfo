@@ -6,16 +6,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.Surface
 import com.danotech.rinfo.ui.RinfoApp
 import com.danotech.rinfo.ui.theme.AppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                Surface() {
-                    RinfoApp()
-                }
+                RinfoApp()
             }
         }
     }

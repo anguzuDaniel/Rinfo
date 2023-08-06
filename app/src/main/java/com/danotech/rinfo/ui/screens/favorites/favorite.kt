@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.components.ReviewCard
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
@@ -34,7 +33,6 @@ import com.danotech.rinfo.ui.theme.AppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteScreen(
-    rinfoAppUiState: RinfoAppUiState,
     onBackPressed: () -> Unit = {},
     onFabClicked: () -> Unit = {},
     onReviewCardClicked: (Review) -> Unit = {},
@@ -75,7 +73,6 @@ fun FavoriteScreen(
         bottomBar = {
             CenteredBottomBarLayout(bottomBar = {
                 RinfoBottomNavigation(
-                    rinfoAppUiState = rinfoAppUiState,
                     currentScreen = RInfoScreen.Favourites,
                     onTabSelected = onTabSelected,
                     modifier = Modifier.fillMaxWidth()
@@ -116,11 +113,7 @@ fun FavoriteScreen(
 @Composable
 fun FavoriteScreenPreview() {
     AppTheme {
-        FavoriteScreen(
-            rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Favourites
-            ),
-        )
+        FavoriteScreen()
     }
 }
 
@@ -130,10 +123,6 @@ fun FavoriteScreenDarkPreview() {
     AppTheme(
         darkTheme = true
     ) {
-        FavoriteScreen(
-            rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Favourites
-            ),
-        )
+        FavoriteScreen()
     }
 }

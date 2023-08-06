@@ -53,7 +53,6 @@ import com.danotech.rinfo.ui.screens.RInfoScreen
  */
 @Composable
 fun RinfoBottomNavigation(
-    rinfoAppUiState: RinfoAppUiState,
     currentScreen: RInfoScreen,
     onTabSelected: ((RInfoScreen) -> Unit) = {},
     modifier: Modifier = Modifier,

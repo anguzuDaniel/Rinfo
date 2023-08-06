@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.components.ProfileImage
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.components.SettingSwitch
@@ -58,7 +57,6 @@ enum class SettingType {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingPage(
-    rinfoAppUiState: RinfoAppUiState,
     onBackPressed: () -> Unit = {},
     onFabClicked: () -> Unit = {},
     onTabSelected: (RInfoScreen) -> Unit = {},
@@ -79,7 +77,6 @@ fun SettingPage(
         bottomBar = {
             CenteredBottomBarLayout(bottomBar = {
                 RinfoBottomNavigation(
-                    rinfoAppUiState = rinfoAppUiState,
                     currentScreen = RInfoScreen.Settings,
                     onTabSelected = onTabSelected,
                     modifier = Modifier.fillMaxWidth()
@@ -255,11 +252,7 @@ fun SettingsClickableComp(
 @Composable
 fun EditAccountPreview() {
     AppTheme {
-        SettingPage(
-            rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Settings,
-            ),
-        )
+        SettingPage()
     }
 }
 
@@ -269,10 +262,6 @@ fun EditAccountDarkPreview() {
     AppTheme(
         darkTheme = true
     ) {
-        SettingPage(
-            rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Settings,
-            ),
-        )
+        SettingPage()
     }
 }

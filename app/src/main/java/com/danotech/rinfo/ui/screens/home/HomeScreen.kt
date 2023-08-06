@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.Home
+package com.danotech.rinfo.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
@@ -34,9 +34,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
-import com.danotech.rinfo.data.LocalReviewProvider
-import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.components.CategoryIconButton
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.components.ReviewCard
@@ -52,8 +51,7 @@ import com.danotech.rinfo.ui.theme.AppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    rinfoAppUiState: RinfoAppUiState,
-    currentPage: RInfoScreen,
+    viewModel: HomesScreenViewModel = hiltViewModel(),
     onTabSelected: (RInfoScreen) -> Unit = {},
     onBackPressed: () -> Unit = {},
     onFabClicked: () -> Unit = {},
@@ -85,8 +83,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(10.dp)
-                            .clip(MaterialTheme.shapes.large)
-                        ,
+                            .clip(MaterialTheme.shapes.large),
                     )
                 }
             )
@@ -95,7 +92,6 @@ fun HomeScreen(
             CenteredBottomBarLayout(
                 bottomBar = {
                     RinfoBottomNavigation(
-                        rinfoAppUiState = rinfoAppUiState,
                         currentScreen = RInfoScreen.Home,
                         onTabSelected = onTabSelected,
                         modifier = Modifier.fillMaxWidth()
@@ -119,7 +115,7 @@ fun HomeScreen(
         floatingActionButtonPosition = FabPosition.Center,
     ) { innerPadding ->
         HomePageContent(
-            rinfoAppUiState = rinfoAppUiState,
+            viewModel = viewModel,
             innerPadding = innerPadding,
             onReviewCardClicked = onReviewCardClicked,
             onCategoryClicked = { onCategoryClicked() },
@@ -144,14 +140,14 @@ fun HomeScreen(
  */
 @Composable
 fun HomePageContent(
-    rinfoAppUiState: RinfoAppUiState,
+    viewModel: HomesScreenViewModel,
     innerPadding: PaddingValues,
     onReviewCardClicked: (Review) -> Unit = {},
     onBackPressed: () -> Unit = {},
     onCategoryClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val reviews = LocalReviewProvider.reviews
+    val reviews = viewModel.showReviews()
 
     LazyColumn(
         modifier = modifier.padding(dimensionResource(id = R.dimen.body_padding)),
@@ -314,12 +310,7 @@ fun ShowOptionRow() {
 @Composable
 fun HomeScreenPreview() {
     AppTheme {
-        HomeScreen(
-            rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Home
-            ),
-            currentPage = RInfoScreen.Home
-        )
+        HomeScreen()
     }
 }
 
@@ -329,11 +320,6 @@ fun HomeScreenDarkPreview() {
     AppTheme(
         darkTheme = true,
     ) {
-        HomeScreen(
-            rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Home
-            ),
-            currentPage = RInfoScreen.Home
-        )
+        HomeScreen()
     }
 }

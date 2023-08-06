@@ -44,7 +44,6 @@ import com.danotech.rinfo.ui.theme.AppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationPage(
-    rinfoAppUiState: RinfoAppUiState,
     onBackPressed: () -> Unit = {},
     onFabClicked: () -> Unit = {},
     onTabSelected: (RInfoScreen) -> Unit = {},
@@ -65,7 +64,6 @@ fun NotificationPage(
         bottomBar = {
             CenteredBottomBarLayout(bottomBar = {
                 RinfoBottomNavigation(
-                    rinfoAppUiState = rinfoAppUiState,
                     currentScreen = RInfoScreen.Notification,
                     onTabSelected = onTabSelected,
                     modifier = Modifier.fillMaxWidth()
@@ -157,11 +155,7 @@ fun NotificationCardPreview() {
     AppTheme(
         darkTheme = false
     ) {
-        NotificationPage(
-            rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Home
-            ),
-        )
+        NotificationPage()
     }
 }
 
@@ -171,10 +165,6 @@ fun NotificationCardDarkPreview() {
     AppTheme(
         darkTheme = true
     ) {
-        NotificationPage(
-            rinfoAppUiState = RinfoAppUiState(
-                currentScreen = RInfoScreen.Home
-            ),
-        )
+        NotificationPage()
     }
 }
