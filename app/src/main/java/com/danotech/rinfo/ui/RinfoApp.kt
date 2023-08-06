@@ -16,6 +16,7 @@ import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.Home.HomeScreen
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
+import com.danotech.rinfo.ui.screens.account.CreateAccountUiState
 import com.danotech.rinfo.ui.screens.account.Login
 import com.danotech.rinfo.ui.screens.category.MoreCategoriesPage
 import com.danotech.rinfo.ui.screens.favorites.FavoriteScreen
@@ -110,6 +111,7 @@ fun RinfoApp(
                 onSignInTextClicked = {
                     navController.navigate(RInfoScreen.Login.name)
                 },
+                createAccountUiState = CreateAccountUiState(),
                 onBackHandler = {
                     navController.popBackStack()
                 }

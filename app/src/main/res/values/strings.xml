@@ -54,4 +54,12 @@
     <string name="sign_up">Sign Up</string>
     <string name="more_categories">more categories</string>
     <string name="category">category</string>
+    <string name="account_type">Account type</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="password">Password</string>
+    <string name="business">Business</string>
+    <string name="personal">Personal</string>
+    <string name="account_type_icon">Account type icon</string>
 </resources>

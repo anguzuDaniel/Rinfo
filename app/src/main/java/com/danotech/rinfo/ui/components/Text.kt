@@ -64,7 +64,8 @@ fun ClickableTextRow(
 
         ClickableText(
             text = AnnotatedString(text = stringResource(id = clickableText)),
-            onClick = { onSignUpTextClicked() }
+            onClick = { onSignUpTextClicked() },
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }

@@ -39,6 +39,7 @@ import com.danotech.rinfo.ui.theme.AppTheme
 fun TextInput(
     leadingIcon: ImageVector? = null,
     labelText: String,
+    value: TextFieldValue = TextFieldValue(""),
     modifier: Modifier = Modifier,
     onValueChanged: () -> Unit = {},
     onSearchInputClicked: () -> Unit = {},
