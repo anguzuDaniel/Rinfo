@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,16 +38,16 @@ import com.danotech.rinfo.ui.theme.AppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextInput(
-    leadingIcon: ImageVector? = null,
     labelText: String,
-    value: TextFieldValue = TextFieldValue(""),
+    value: String,
     modifier: Modifier = Modifier,
-    onValueChanged: () -> Unit = {},
+    leadingIcon: ImageVector? = null,
+    onValueChanged: (String) -> Unit = {},
     onSearchInputClicked: () -> Unit = {},
 ) {
     OutlinedTextField(
-        value = "",
-        onValueChange = { onValueChanged() },
+        value = value,
+        onValueChange = { onValueChanged(it) },
         leadingIcon = {
             Icon(
                 imageVector = leadingIcon!!,
@@ -54,10 +55,10 @@ fun TextInput(
                 contentDescription = null
             )
         },
-        label = {
+        placeholder = {
             Text(
                 text = labelText,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelSmall,
             )
         },
         keyboardOptions = KeyboardOptions(
@@ -72,46 +73,69 @@ fun TextInput(
     Spacer(modifier = modifier.height(5.dp))
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EmailField(
+    value: String,
+    onValueChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedTextField(
+        singleLine = true,
+        modifier = modifier.fillMaxWidth(),
+        value = value,
+        onValueChange = { onValueChanged(it) },
+        placeholder = {
+            Text(
+                text = stringResource(R.string.email),
+                style = MaterialTheme.typography.labelSmall
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Email,
+                contentDescription = "Email",
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    )
+    Spacer(modifier = modifier.height(5.dp))
+}
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTextField(
     value: TextFieldValue,
+    @StringRes placeholder: Int,
+    modifier: Modifier = Modifier,
     onValueChange: (TextFieldValue) -> Unit,
     onSearchInputClicked: () -> Unit = {},
-    @StringRes placeholder: Int,
-    modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val searchIcon = Icons.Default.Search
 
-    Column(
-        modifier = modifier
-    ) {
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            textStyle = MaterialTheme.typography.labelSmall,
-            singleLine = true,
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = stringResource(R.string.search),
-                    modifier = Modifier.size(24.dp)
-                )
-            },
-            placeholder = {
-                Text(
-                    text = stringResource(placeholder),
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
-            modifier = modifier.clickable(onClick = onSearchInputClicked)
-        )
-    }
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        textStyle = MaterialTheme.typography.labelSmall,
+        singleLine = true,
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = stringResource(R.string.search),
+                modifier = Modifier.size(24.dp)
+            )
+        },
+        placeholder = {
+            Text(
+                text = stringResource(placeholder),
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
+        modifier = modifier.clickable(onClick = onSearchInputClicked)
+    )
 }
 
 @Preview(showBackground = true)
@@ -122,6 +146,7 @@ fun TextInputPreview() {
     ) {
         TextInput(
             labelText = "Name",
+            value = "",
             leadingIcon = Icons.Filled.Person
         )
     }

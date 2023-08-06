@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
@@ -36,27 +34,30 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.data.LocalReviewProvider
 import com.danotech.rinfo.ui.components.ClickableTextRow
+import com.danotech.rinfo.ui.components.EmailField
 import com.danotech.rinfo.ui.components.GoogleButton
 import com.danotech.rinfo.ui.components.HeadingText
+import com.danotech.rinfo.ui.components.PasswordField
+import com.danotech.rinfo.ui.components.RepeatPasswordField
 import com.danotech.rinfo.ui.components.RinfoButton
 import com.danotech.rinfo.ui.components.TextInput
 import com.danotech.rinfo.ui.theme.AppTheme
 
 @Composable
 fun CreateAccount(
-    createAccountUiState: CreateAccountUiState,
     modifier: Modifier = Modifier,
     viewModel: CreateAccountViewModel = hiltViewModel(),
     onSignInTextClicked: () -> Unit = { },
     onBackHandler: () -> Unit = {}
 ) {
+    val createAccountUiState by viewModel.uiState
+
     BackHandler {
         onBackHandler()
     }
@@ -72,8 +73,7 @@ fun CreateAccount(
             item {
                 // page title
                 HeadingText(
-                    text = R.string.create_account,
-                    modifier = Modifier.padding(5.dp)
+                    text = R.string.create_account, modifier = Modifier.padding(5.dp)
                 )
             }
 
@@ -93,51 +93,38 @@ fun CreateAccount(
                  * First name text input
                  */
                 TextInput(
-                    value = TextFieldValue(createAccountUiState.name),
-                    onValueChanged = {
-                        viewModel.onFirstNameChanged(createAccountUiState.name)
-                    },
+                    value = createAccountUiState.name,
+                    onValueChanged = viewModel::onFirstNameChanged,
                     labelText = stringResource(R.string.name),
                     leadingIcon = Icons.Default.Person,
                 )
             }
 
             item {
-                TextInput(
-                    value = TextFieldValue(createAccountUiState.email),
-                    onValueChanged = {
-                        viewModel.onEmailChanged(createAccountUiState.email)
-                    },
-                    labelText = stringResource(R.string.email),
-                    leadingIcon = Icons.Default.Email,
+                EmailField(
+                    value = createAccountUiState.email,
+                    onValueChanged = viewModel::onEmailChanged,
                 )
             }
 
             item {
-                TextInput(
-                    value = TextFieldValue(createAccountUiState.password),
-                    onValueChanged = {
-                        viewModel.onPasswordChanged(createAccountUiState.password)
-                    },
-                    labelText = stringResource(R.string.password),
-                    leadingIcon = Icons.Filled.Lock,
+                PasswordField(
+                    value = createAccountUiState.password,
+                    onValueChanged = viewModel::onPasswordChanged,
                 )
             }
 
             item {
-                TextInput(
-                    value = TextFieldValue(createAccountUiState.confirmPassword),
-                    onValueChanged = {
-                        viewModel.onConfirmPasswordChanged(createAccountUiState.confirmPassword)
-                    },
-                    labelText = stringResource(R.string.confirm_password),
-                    leadingIcon = Icons.Default.Lock,
+                RepeatPasswordField(
+                    value = createAccountUiState.confirmPassword,
+                    onValueChanged = viewModel::onConfirmPasswordChanged,
                 )
             }
 
             item {
                 SelectAccountType(
-                    modifier = Modifier
+                    modifier = Modifier,
+                    onAccountTypeSelected = viewModel::onAccountTypeSelected
                 )
             }
 
@@ -145,8 +132,7 @@ fun CreateAccount(
                 Spacer(modifier = Modifier.height(10.dp))
                 RinfoButton(
                     name = R.string.create_account,
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
@@ -164,8 +150,7 @@ fun CreateAccount(
                             .padding(vertical = 10.dp)
                     )
                     Text(
-                        text = "OR", modifier = Modifier
-                            .padding(10.dp)
+                        text = "OR", modifier = Modifier.padding(10.dp)
                     )
                     Divider(
                         modifier = Modifier
@@ -177,8 +162,7 @@ fun CreateAccount(
 
             item {
                 GoogleButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
@@ -189,6 +173,7 @@ fun CreateAccount(
 @Composable
 fun SelectAccountType(
     modifier: Modifier = Modifier,
+    onAccountTypeSelected: (AccountType) -> Unit = {}
 ) {
     val listItems = LocalReviewProvider.accountOptions
 
@@ -221,7 +206,7 @@ fun SelectAccountType(
 
             TextField(
                 value = stringResource(id = selectedItem.name),
-                onValueChange = {},
+                onValueChange = { onAccountTypeSelected(selectedItem) },
                 readOnly = true,
                 label = { Text(text = stringResource(id = R.string.account_type)) },
                 trailingIcon = {
@@ -265,8 +250,7 @@ fun SelectAccountType(
                                 contentDescription = stringResource(id = selectedOption.name)
                             )
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
@@ -278,9 +262,7 @@ fun SelectAccountType(
 @Composable
 fun CreateAccountPreview() {
     AppTheme {
-        CreateAccount(
-            createAccountUiState = CreateAccountUiState()
-        )
+        CreateAccount()
     }
 }
 
@@ -290,8 +272,6 @@ fun CreateAccountDarkPreview() {
     AppTheme(
         darkTheme = true,
     ) {
-        CreateAccount(
-            createAccountUiState = CreateAccountUiState()
-        )
+        CreateAccount()
     }
 }

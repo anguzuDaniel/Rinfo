@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.BottomMenuItem
-import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.screens.RInfoScreen
 
 /**

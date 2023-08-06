@@ -23,8 +23,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.ClickableTextRow
+import com.danotech.rinfo.ui.components.EmailField
 import com.danotech.rinfo.ui.components.GoogleButton
 import com.danotech.rinfo.ui.components.HeadingText
+import com.danotech.rinfo.ui.components.PasswordField
 import com.danotech.rinfo.ui.components.RinfoButton
 import com.danotech.rinfo.ui.components.SubHeadingText
 import com.danotech.rinfo.ui.components.TextInput
@@ -52,14 +54,14 @@ fun Login(
             // page sub title
             SubHeadingText(text = R.string.sign_in)
 
-            TextInput(
-                labelText = "Email",
-                leadingIcon = Icons.Default.Person
+            EmailField(
+                value = "",
+                onValueChanged = { /*TODO*/ },
             )
 
-            TextInput(
-                labelText = "Password",
-                leadingIcon = Icons.Default.Lock
+            PasswordField(
+                value = "",
+                onValueChanged = { /*TODO*/ },
             )
 
             RinfoButton(

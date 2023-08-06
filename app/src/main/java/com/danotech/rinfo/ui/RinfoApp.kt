@@ -17,30 +17,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.danotech.rinfo.common.SnackbarManager
+import com.danotech.rinfo.common.composable.PermissionDialog
+import com.danotech.rinfo.common.composable.RationaleDialog
 import com.danotech.rinfo.ui.components.Review
-import com.danotech.rinfo.ui.screens.home.HomeScreen
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
-import com.danotech.rinfo.ui.screens.account.CreateAccountUiState
 import com.danotech.rinfo.ui.screens.account.Login
 import com.danotech.rinfo.ui.screens.category.MoreCategoriesPage
 import com.danotech.rinfo.ui.screens.favorites.FavoriteScreen
+import com.danotech.rinfo.ui.screens.home.HomeScreen
 import com.danotech.rinfo.ui.screens.notification.NotificationPage
 import com.danotech.rinfo.ui.screens.review.ReviewScreen
 import com.danotech.rinfo.ui.screens.search.SearchCategory
 import com.danotech.rinfo.ui.screens.search.SearchPage
 import com.danotech.rinfo.ui.screens.settings.SettingPage
 import com.danotech.rinfo.ui.theme.AppTheme
-import com.danotech.rinfo.common.composable.PermissionDialog
-import com.danotech.rinfo.common.composable.RationaleDialog
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -48,8 +49,6 @@ import com.google.accompanist.permissions.shouldShowRationale
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -188,7 +187,6 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             onSignInTextClicked = {
                 appState.navigate(RInfoScreen.Login.name)
             },
-            createAccountUiState = CreateAccountUiState(),
             onBackHandler = {
                 appState.popUp()
             }

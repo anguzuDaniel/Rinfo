@@ -70,6 +70,7 @@ fun EditAccountContent(
         item {
             TextInput(
                 leadingIcon = Icons.Filled.AccountBox,
+                value = "",
                 labelText = "Account Name"
             )
         }
@@ -77,6 +78,7 @@ fun EditAccountContent(
         item {
             TextInput(
                 leadingIcon = Icons.Filled.AccountBox,
+                value = "",
                 labelText = "First Name"
             )
         }
@@ -84,6 +86,7 @@ fun EditAccountContent(
         item {
             TextInput(
                 leadingIcon = Icons.Filled.AccountBox,
+                value = "",
                 labelText = "Last Name"
             )
         }
