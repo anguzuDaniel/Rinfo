@@ -15,8 +15,6 @@ import kotlinx.coroutines.launch
 
 @Stable
 class RinfoAppUiState(
-    var currentScreen: RInfoScreen = RInfoScreen.Home,
-    val isShowingBottomBar: Boolean = true,
     var currentReview: Review = LocalReviewProvider.defaultReview,
     val scaffoldState: ScaffoldState,
     val navController: NavHostController,

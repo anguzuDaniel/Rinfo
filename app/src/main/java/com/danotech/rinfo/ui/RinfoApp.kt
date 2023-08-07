@@ -32,7 +32,7 @@ import com.danotech.rinfo.common.composable.RationaleDialog
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
-import com.danotech.rinfo.ui.screens.account.Login
+import com.danotech.rinfo.ui.screens.login.LoginScreen
 import com.danotech.rinfo.ui.screens.category.MoreCategoriesPage
 import com.danotech.rinfo.ui.screens.favorites.FavoriteScreen
 import com.danotech.rinfo.ui.screens.home.HomeScreen
@@ -173,12 +173,15 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         )
     }
     composable(route = RInfoScreen.Login.name) {
-        Login(
+        LoginScreen(
             onSignUpTextClicked = {
                 appState.navigate(RInfoScreen.Account.name)
             },
             onBackHandler = {
                 appState.popUp()
+            },
+            onSignInClick = {
+                appState.navigate(RInfoScreen.Home.name)
             }
         )
     }

@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.danotech.rinfo.ui.screens.account
+package com.danotech.rinfo.ui.screens.login
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
@@ -9,31 +9,34 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.ClickableTextRow
 import com.danotech.rinfo.ui.components.EmailField
 import com.danotech.rinfo.ui.components.GoogleButton
 import com.danotech.rinfo.ui.components.HeadingText
+import com.danotech.rinfo.ui.components.OrFormDiver
 import com.danotech.rinfo.ui.components.PasswordField
-import com.danotech.rinfo.ui.components.RinfoButton
+import com.danotech.rinfo.ui.components.SignInButton
 import com.danotech.rinfo.ui.components.SubHeadingText
-import com.danotech.rinfo.ui.theme.AppTheme
 
 @Composable
-fun Login(
+fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onSignUpTextClicked: () -> Unit = { },
+    onSignInClick: () -> Unit = { },
     onBackHandler: () -> Unit = { }
 ) {
+    val loginUiState = viewModel.uiState.value
+
     BackHandler() {
         onBackHandler()
     }
@@ -51,25 +54,29 @@ fun Login(
             SubHeadingText(text = R.string.sign_in)
 
             EmailField(
-                value = "",
-                onValueChanged = { /*TODO*/ },
+                value = loginUiState.email,
+                onValueChanged = viewModel::onEmailChange,
             )
 
             PasswordField(
-                value = "",
-                onValueChanged = { /*TODO*/ },
+                value = loginUiState.password,
+                onValueChanged = viewModel::onPasswordChange,
             )
 
-            RinfoButton(
-                name = R.string.login,
-                onClicked = { /*TODO*/ },
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+            SignInButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    viewModel.signInClick()
+
+                    /**
+                     * if sign in success then navigate to home screen
+                     */
+                    if (loginUiState.isSignInSuccess) onSignInClick()
+                })
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Divider()
+            OrFormDiver()
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -88,23 +95,5 @@ fun Login(
                 onSignUpTextClicked = onSignUpTextClicked
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginPreview() {
-    AppTheme {
-        Login()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginDarkPreview() {
-    AppTheme(
-        darkTheme = true
-    ) {
-        Login()
     }
 }

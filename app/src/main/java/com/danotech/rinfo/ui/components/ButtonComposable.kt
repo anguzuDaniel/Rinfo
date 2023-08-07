@@ -39,6 +39,14 @@ fun SignUpButton(
     RinfoButton(name = R.string.sign_up, onClicked = onClick, modifier = modifier)
 }
 
+@Composable
+fun SignInButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    RinfoButton(name = R.string.sign_in, onClicked = onClick, modifier = modifier)
+}
+
 /**
  * reusable button
  * provide a string resource for the button name

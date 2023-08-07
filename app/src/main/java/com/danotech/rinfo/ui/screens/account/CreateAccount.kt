@@ -40,6 +40,7 @@ import com.danotech.rinfo.ui.components.ClickableTextRow
 import com.danotech.rinfo.ui.components.EmailField
 import com.danotech.rinfo.ui.components.GoogleButton
 import com.danotech.rinfo.ui.components.HeadingText
+import com.danotech.rinfo.ui.components.OrFormDiver
 import com.danotech.rinfo.ui.components.PasswordField
 import com.danotech.rinfo.ui.components.RepeatPasswordField
 import com.danotech.rinfo.ui.components.SignUpButton
@@ -132,27 +133,7 @@ fun CreateAccount(
             }
 
             item {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                ) {
-                    Divider(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(vertical = 10.dp)
-                    )
-                    Text(
-                        text = "OR", modifier = Modifier.padding(10.dp)
-                    )
-                    Divider(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(vertical = 10.dp)
-                    )
-                }
+                OrFormDiver()
             }
 
             item {
