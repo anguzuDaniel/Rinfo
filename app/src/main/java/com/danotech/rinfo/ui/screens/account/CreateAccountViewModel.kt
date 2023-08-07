@@ -8,8 +8,6 @@ import com.danotech.rinfo.common.ext.isValidPassword
 import com.danotech.rinfo.common.ext.passwordMatches
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
-import com.danotech.rinfo.ui.SETTINGS_SCREEN
-import com.danotech.rinfo.ui.SIGN_UP_SCREEN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import com.danotech.rinfo.R.string as AppText
@@ -67,7 +65,7 @@ class CreateAccountViewModel @Inject constructor(
      * This function is called when the user inputs in the first name
      * @param name
      */
-    fun onFirstNameChanged(name: String) {
+    fun onNameChanged(name: String) {
         uiState.value = uiState.value.copy(name = name)
     }
 
@@ -82,14 +80,16 @@ class CreateAccountViewModel @Inject constructor(
      * when account is created successfully
      */
     fun onAccountCreated() {
-        uiState.value = uiState.value.copy(isCreateAccountInProgress = false, isCreateAccountSuccess = true)
+        uiState.value =
+            uiState.value.copy(isCreateAccountInProgress = false, isCreateAccountSuccess = true)
     }
 
     /**
      * when account creation fails
      */
     fun onAccountCreationFailed() {
-        uiState.value = uiState.value.copy(isCreateAccountInProgress = false, isCreateAccountError = true)
+        uiState.value =
+            uiState.value.copy(isCreateAccountInProgress = false, isCreateAccountError = true)
     }
 
     /**
@@ -114,7 +114,7 @@ class CreateAccountViewModel @Inject constructor(
         uiState.value = uiState.value.copy(accountType = accountType)
     }
 
-    fun onSignUpClick(openAndPopUp: (String, String) -> Unit) {
+    fun onSignUpClick() {
         if (!email.isValidEmail()) {
             SnackbarManager.showMessage(AppText.email_error)
             return
@@ -131,8 +131,7 @@ class CreateAccountViewModel @Inject constructor(
         }
 
         launchCatching {
-            accountService.linkAccount(email, password)
-            openAndPopUp(SETTINGS_SCREEN, SIGN_UP_SCREEN)
+            accountService.createAccountWithEmailAndPassword(email, password)
         }
     }
 }

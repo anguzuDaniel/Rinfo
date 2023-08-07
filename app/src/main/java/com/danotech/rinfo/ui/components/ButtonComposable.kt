@@ -31,6 +31,14 @@ import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.theme.AppTheme
 
 
+@Composable
+fun SignUpButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    RinfoButton(name = R.string.sign_up, onClicked = onClick, modifier = modifier)
+}
+
 /**
  * reusable button
  * provide a string resource for the button name

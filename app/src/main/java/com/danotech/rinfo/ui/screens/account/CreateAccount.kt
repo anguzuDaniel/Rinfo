@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,7 +32,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
@@ -45,10 +42,11 @@ import com.danotech.rinfo.ui.components.GoogleButton
 import com.danotech.rinfo.ui.components.HeadingText
 import com.danotech.rinfo.ui.components.PasswordField
 import com.danotech.rinfo.ui.components.RepeatPasswordField
-import com.danotech.rinfo.ui.components.RinfoButton
-import com.danotech.rinfo.ui.components.TextInput
-import com.danotech.rinfo.ui.theme.AppTheme
+import com.danotech.rinfo.ui.components.SignUpButton
 
+/**
+ * Create Account page
+ */
 @Composable
 fun CreateAccount(
     modifier: Modifier = Modifier,
@@ -88,17 +86,17 @@ fun CreateAccount(
                 )
             }
 
-            item {
-                /**
-                 * First name text input
-                 */
-                TextInput(
-                    value = createAccountUiState.name,
-                    onValueChanged = viewModel::onFirstNameChanged,
-                    labelText = stringResource(R.string.name),
-                    leadingIcon = Icons.Default.Person,
-                )
-            }
+//            item {
+//                /**
+//                 * First name text input
+//                 */
+//                TextInput(
+//                    value = createAccountUiState.name,
+//                    onValueChanged = viewModel::onNameChanged,
+//                    labelText = stringResource(R.string.name),
+//                    leadingIcon = Icons.Default.Person,
+//                )
+//            }
 
             item {
                 EmailField(
@@ -121,19 +119,16 @@ fun CreateAccount(
                 )
             }
 
-            item {
-                SelectAccountType(
-                    modifier = Modifier,
-                    onAccountTypeSelected = viewModel::onAccountTypeSelected
-                )
-            }
+//            item {
+//                SelectAccountType(
+//                    modifier = Modifier,
+//                    onAccountTypeSelected = viewModel::onAccountTypeSelected
+//                )
+//            }
 
             item {
                 Spacer(modifier = Modifier.height(10.dp))
-                RinfoButton(
-                    name = R.string.create_account,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                SignUpButton(modifier = Modifier.fillMaxWidth(), onClick = viewModel::onSignUpClick)
             }
 
             item {
@@ -255,23 +250,5 @@ fun SelectAccountType(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CreateAccountPreview() {
-    AppTheme {
-        CreateAccount()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CreateAccountDarkPreview() {
-    AppTheme(
-        darkTheme = true,
-    ) {
-        CreateAccount()
     }
 }
