@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.dataObjects
 import com.google.firebase.firestore.ktx.toObject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.tasks.await
@@ -20,6 +21,7 @@ constructor(
     private val fireStore: FirebaseFirestore,
     private val auth: AccountService
 ) : ProfileService {
+    @OptIn(ExperimentalCoroutinesApi::class)
     override val profiles: Flow<List<Profile>>
         get() =
             auth.currentUser.flatMapLatest { user ->
@@ -32,17 +34,20 @@ constructor(
 
     override suspend fun create(profile: Profile): String =
         trace(SAVE_PROFILE_TRACE) {
-            val profileWithUserId = profile.copy(id = FirebaseAuth.getInstance().currentUser!!.email.toString())
-            fireStore.collection(PROFILE_COLLECTION).add(profileWithUserId).await().id
+            val profileWithUserId =
+                profile.copy(id = FirebaseAuth.getInstance().currentUser!!.email.toString())
+            fireStore.collection(PROFILE_COLLECTION).document(profileWithUserId.userId)
+                .set(profileWithUserId).await().toString()
         }
 
     override suspend fun update(profile: Profile): Unit =
         trace(UPDATE_PROFILE_TRACE) {
-            fireStore.collection(PROFILE_COLLECTION).document(profile.id).set(profile).await()
+            val profileId = profile.userId
+            fireStore.collection(PROFILE_COLLECTION).document(profileId).set(profile).await()
         }
 
-    override suspend fun delete(profileId: String) {
-        fireStore.collection(PROFILE_COLLECTION).document(profileId).delete().await()
+    override suspend fun delete(profile: String) {
+        fireStore.collection(PROFILE_COLLECTION).document(profile).delete().await()
     }
 
     companion object {

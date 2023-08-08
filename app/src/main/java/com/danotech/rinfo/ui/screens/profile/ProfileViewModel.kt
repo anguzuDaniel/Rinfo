@@ -6,8 +6,8 @@ import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.model.service.ProfileService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,13 +49,12 @@ class ProfileViewModel @Inject constructor(
     fun saveProfile() {
         launchCatching {
             val profile = Profile(
-                id = accountService.currentUserId,
                 profileName = uiState.value.profileName,
                 firstName = uiState.value.profileFirstName,
                 lastName = uiState.value.profileLastName,
                 profileImageUrl = uiState.value.profileImage
             )
-            if (profileService.getProfile(accountService.currentUserId) == null) {
+            if (profileService.getProfile(FirebaseAuth.getInstance().currentUser!!.email.toString()) == null) {
                 profileService.create(profile)
             } else {
                 profileService.update(profile)
