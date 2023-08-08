@@ -37,6 +37,14 @@ class RinfoAppUiState(
         navController.popBackStack()
     }
 
+    fun logIn() {
+        isLoggedIn = true
+    }
+
+    fun logOut() {
+        isLoggedIn = false
+    }
+
     fun navigate(route: String) {
         navController.navigate(route) { launchSingleTop = true }
     }

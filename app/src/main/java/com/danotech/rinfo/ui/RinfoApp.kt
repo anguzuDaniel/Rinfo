@@ -61,15 +61,12 @@ fun RinfoApp() {
 
             Scaffold(
                 snackbarHost = {
-                    SnackbarHost(
-                        hostState = it,
+                    SnackbarHost(hostState = it,
                         modifier = Modifier.padding(8.dp),
                         snackbar = { snackbarData ->
                             Snackbar(snackbarData, contentColor = MaterialTheme.colors.onPrimary)
-                        }
-                    )
-                },
-                scaffoldState = appState.scaffoldState
+                        })
+                }, scaffoldState = appState.scaffoldState
             ) { innerPaddingModifier ->
                 NavHost(
                     navController = appState.navController,
@@ -103,16 +100,15 @@ fun rememberAppState(
     snackbarManager: SnackbarManager = SnackbarManager,
     resources: Resources = resources(),
     coroutineScope: CoroutineScope = rememberCoroutineScope()
-) =
-    remember(scaffoldState, navController, snackbarManager, resources, coroutineScope) {
-        RinfoAppUiState(
-            scaffoldState = scaffoldState,
-            navController = navController,
-            snackbarManager = snackbarManager,
-            resources = resources,
-            coroutineScope = coroutineScope
-        )
-    }
+) = remember(scaffoldState, navController, snackbarManager, resources, coroutineScope) {
+    RinfoAppUiState(
+        scaffoldState = scaffoldState,
+        navController = navController,
+        snackbarManager = snackbarManager,
+        resources = resources,
+        coroutineScope = coroutineScope
+    )
+}
 
 @Composable
 @ReadOnlyComposable
@@ -172,44 +168,32 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         )
     }
     composable(route = RInfoScreen.Login.name) {
-        LoginScreen(
-            onSignUpTextClicked = {
-                appState.navigate(RInfoScreen.Account.name)
-            },
-            onBackHandler = {
-                appState.popUp()
-            },
-            openAndPopUp = { route, popUp ->
-                appState.navigateAndPopUp(route, popUp)
-                appState.isLoggedIn = true
-            }
-        )
+        LoginScreen(onSignUpTextClicked = {
+            appState.navigate(RInfoScreen.Account.name)
+        }, onBackHandler = {
+            appState.popUp()
+        }, openAndPopUp = { route, popUp ->
+            appState.navigateAndPopUp(route, popUp)
+            appState.logIn()
+        })
     }
     composable(route = RInfoScreen.Account.name) {
-        CreateAccount(
-            onSignInTextClicked = {
-                appState.navigate(RInfoScreen.Login.name)
-            },
-            onBackHandler = {
-                appState.popUp()
-            }
-        )
+        CreateAccount(onSignInTextClicked = {
+            appState.navigate(RInfoScreen.Login.name)
+        }, onBackHandler = {
+            appState.popUp()
+        })
     }
     composable(route = RInfoScreen.Favourites.name) {
-        FavoriteScreen(
-            onBackPressed = {
-                appState.popUp()
-            },
-            onFabClicked = {
-                appState.navigate(RInfoScreen.Search.name)
-            },
-            onTabSelected = { screen ->
-                appState.navigate(screen.name)
-            },
-            onReviewCardClicked = { review: Review ->
-                appState.navigate(RInfoScreen.Review.name)
-            }
-        )
+        FavoriteScreen(onBackPressed = {
+            appState.popUp()
+        }, onFabClicked = {
+            appState.navigate(RInfoScreen.Search.name)
+        }, onTabSelected = { screen ->
+            appState.navigate(screen.name)
+        }, onReviewCardClicked = { review: Review ->
+            appState.navigate(RInfoScreen.Review.name)
+        })
     }
     composable(route = RInfoScreen.Notification.name) {
         NotificationPage(
@@ -235,8 +219,10 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             onTabSelected = { screen ->
                 appState.navigate(screen.name)
             },
-            onLogoutClicked = {
-            },
+            openAndPopUp = { route, popUp ->
+                appState.navigateAndPopUp(route, popUp)
+                appState.logOut()
+            }
         )
     }
     composable(route = RInfoScreen.Search.name) {
@@ -247,21 +233,16 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         )
     }
     composable(route = RInfoScreen.MoreCategories.name) {
-        MoreCategoriesPage(
-            onBackPressed = {
-                appState.popUp()
-            },
-            onCategoryItemClicked = {
-                appState.navigate(RInfoScreen.Category.name)
-            }
-        )
+        MoreCategoriesPage(onBackPressed = {
+            appState.popUp()
+        }, onCategoryItemClicked = {
+            appState.navigate(RInfoScreen.Category.name)
+        })
     }
     composable(route = RInfoScreen.Category.name) {
-        SearchCategory(
-            onBackPressed = {
-                appState.popUp()
-            }
-        )
+        SearchCategory(onBackPressed = {
+            appState.popUp()
+        })
     }
     composable(route = RInfoScreen.Review.name) {
         ReviewScreen(

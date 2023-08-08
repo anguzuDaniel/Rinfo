@@ -56,10 +56,10 @@ enum class SettingType {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    openAndPopUp: (String, String) -> Unit,
     onBackPressed: () -> Unit = {},
     onFabClicked: () -> Unit = {},
     onTabSelected: (RInfoScreen) -> Unit = {},
-    onLogoutClicked: () -> Unit,
 ) {
     BackHandler {
         onBackPressed()
@@ -97,20 +97,20 @@ fun SettingsScreen(
         },
     ) { innerPadding ->
         EditAccountContent(
+            openAndPopUp = openAndPopUp,
             innerPadding = innerPadding,
             settingType = SettingType.text,
-            onLogoutClicked = onLogoutClicked
         )
     }
 }
 
 @Composable
 fun EditAccountContent(
+    openAndPopUp: (String, String) -> Unit,
     settingsViewModel: SettingsViewModel = hiltViewModel(),
     innerPadding: PaddingValues,
     settingType: SettingType,
     modifier: Modifier = Modifier,
-    onLogoutClicked: () -> Unit,
 ) {
     LazyColumn(
         modifier = modifier
@@ -184,8 +184,7 @@ fun EditAccountContent(
                     iconDesc = R.string.logout,
                     settingType = SettingType.button,
                     onClick = {
-                        settingsViewModel.onLogoutClick()
-                        onLogoutClicked()
+                        settingsViewModel.onLogoutClick(openAndPopUp)
                     }
                 )
             }
