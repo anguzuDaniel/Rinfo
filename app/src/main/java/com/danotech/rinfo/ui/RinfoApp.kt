@@ -32,6 +32,8 @@ import com.danotech.rinfo.common.composable.RationaleDialog
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
+import com.danotech.rinfo.ui.screens.account.EditAccount
+import com.danotech.rinfo.ui.screens.business_account.BusinessAccount
 import com.danotech.rinfo.ui.screens.category.MoreCategoriesPage
 import com.danotech.rinfo.ui.screens.favorites.FavoriteScreen
 import com.danotech.rinfo.ui.screens.home.HomeScreen
@@ -184,6 +186,12 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             appState.popUp()
         })
     }
+    composable(route = RInfoScreen.BusinessAccount.name) {
+        BusinessAccount()
+    }
+    composable(route = RInfoScreen.EditAccount.name) {
+        EditAccount()
+    }
     composable(route = RInfoScreen.Favourites.name) {
         FavoriteScreen(onBackPressed = {
             appState.popUp()
@@ -221,7 +229,12 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             },
             openAndPopUp = { route, popUp ->
                 appState.navigateAndPopUp(route, popUp)
+            },
+            onLogoutClicked = {
                 appState.logOut()
+            },
+            onNavClicked = { screen ->
+                appState.navigate(screen)
             }
         )
     }

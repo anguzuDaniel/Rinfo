@@ -30,4 +30,8 @@ class SettingsViewModel @Inject constructor(
             openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Settings.name)
         }
     }
+
+    fun onAccountClick(openAndPopUp: (String, String) -> Unit) {
+        openAndPopUp(RInfoScreen.Account.name, RInfoScreen.Settings.name)
+    }
 }

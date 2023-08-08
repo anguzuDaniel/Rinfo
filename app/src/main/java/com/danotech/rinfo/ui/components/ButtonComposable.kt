@@ -47,6 +47,14 @@ fun SignInButton(
     RinfoButton(name = R.string.sign_in, onClicked = action, modifier = modifier)
 }
 
+@Composable
+fun BusinessAccountButton(
+    modifier: Modifier = Modifier,
+    action: () -> Unit,
+) {
+    RinfoButton(name = R.string.add_account, onClicked = action, modifier = modifier)
+}
+
 /**
  * reusable button
  * provide a string resource for the button name
@@ -62,7 +70,6 @@ fun RinfoButton(
         onClick = onClicked,
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-        shape = MaterialTheme.shapes.medium,
     ) {
         Text(
             text = stringResource(id = name),

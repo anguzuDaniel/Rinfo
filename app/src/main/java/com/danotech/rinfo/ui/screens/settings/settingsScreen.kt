@@ -60,6 +60,8 @@ fun SettingsScreen(
     onBackPressed: () -> Unit = {},
     onFabClicked: () -> Unit = {},
     onTabSelected: (RInfoScreen) -> Unit = {},
+    onLogoutClicked: () -> Unit = {},
+    onNavClicked: (String) -> Unit = {},
 ) {
     BackHandler {
         onBackPressed()
@@ -100,17 +102,21 @@ fun SettingsScreen(
             openAndPopUp = openAndPopUp,
             innerPadding = innerPadding,
             settingType = SettingType.text,
+            onLogoutClicked = onLogoutClicked,
+            onNavClicked = onNavClicked
         )
     }
 }
 
 @Composable
 fun EditAccountContent(
+    modifier: Modifier = Modifier,
     openAndPopUp: (String, String) -> Unit,
     settingsViewModel: SettingsViewModel = hiltViewModel(),
     innerPadding: PaddingValues,
     settingType: SettingType,
-    modifier: Modifier = Modifier,
+    onLogoutClicked: () -> Unit,
+    onNavClicked: (String) -> Unit = {},
 ) {
     LazyColumn(
         modifier = modifier
@@ -142,9 +148,10 @@ fun EditAccountContent(
                     name = R.string.dark_mode,
                     icon = Icons.Rounded.FavoriteBorder,
                     iconDesc = R.string.dark_mode,
-                ) {
-                    // here you can do anything - navigate - open other settings, ...
-                }
+                    onClick = {
+
+                    }
+                )
 
                 SettingsClickableComp(
                     name = R.string.notifications,
@@ -152,6 +159,7 @@ fun EditAccountContent(
                     iconDesc = R.string.notifications,
                 ) {
                     // here you can do anything - navigate - open other settings, ...
+
                 }
 
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.body_padding)))
@@ -165,9 +173,20 @@ fun EditAccountContent(
                     icon = Icons.Rounded.FavoriteBorder,
                     iconDesc = R.string.account,
                     settingType = settingType,
-                ) {
-                    // here you can do anything - navigate - open other settings, ...
-                }
+                    onClick = {
+                        onNavClicked(RInfoScreen.BusinessAccount.name)
+                    }
+                )
+
+                SettingsClickableComp(
+                    name = R.string.account,
+                    icon = Icons.Rounded.FavoriteBorder,
+                    iconDesc = R.string.account,
+                    settingType = settingType,
+                    onClick = {
+                        onNavClicked(RInfoScreen.EditAccount.name)
+                    }
+                )
 
                 SettingsClickableComp(
                     name = R.string.about,
@@ -185,6 +204,7 @@ fun EditAccountContent(
                     settingType = SettingType.button,
                     onClick = {
                         settingsViewModel.onLogoutClick(openAndPopUp)
+                        onLogoutClicked()
                     }
                 )
             }

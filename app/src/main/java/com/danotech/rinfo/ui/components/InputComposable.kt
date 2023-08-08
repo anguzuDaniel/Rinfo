@@ -74,6 +74,35 @@ fun TextInput(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun TextInputWithLabel(
+    labelText: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    onValueChanged: (String) -> Unit = {},
+    onSearchInputClicked: () -> Unit = {},
+) {
+    Text(
+        text = labelText,
+        style = MaterialTheme.typography.labelSmall,
+    )
+    Spacer(modifier = modifier.height(5.dp))
+    OutlinedTextField(
+        value = value,
+        onValueChange = { onValueChanged(it) },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            autoCorrect = false,
+            imeAction = ImeAction.Next,
+        ),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = { onSearchInputClicked() }),
+    )
+    Spacer(modifier = modifier.height(5.dp))
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun EmailField(
     value: String,
     onValueChanged: (String) -> Unit,

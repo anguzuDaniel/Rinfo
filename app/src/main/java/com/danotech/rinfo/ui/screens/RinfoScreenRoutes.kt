@@ -18,6 +18,8 @@ enum class RInfoScreen(@StringRes val title: Int) {
     Notification(title = R.string.notifications),
     Settings(title = R.string.settings),
     Account(title = R.string.account),
+    BusinessAccount(title = R.string.business),
+    EditAccount(title = R.string.edit_account),
     Review(title = R.string.review),
     Search(title = R.string.search),
     Login(title = R.string.login),
