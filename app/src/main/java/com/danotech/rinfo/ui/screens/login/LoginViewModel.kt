@@ -7,9 +7,12 @@ import com.danotech.rinfo.common.ext.isValidEmail
 import com.danotech.rinfo.common.ext.isValidPassword
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
+import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.RinfoViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+@HiltViewModel
 class LoginViewModel @Inject constructor(
     private val accountService: AccountService,
     logService: LogService
@@ -39,7 +42,7 @@ class LoginViewModel @Inject constructor(
         uiState.value = uiState.value.copy(password = newValue)
     }
 
-    fun signInClick() {
+    fun signInClick(openAndPopUp: (String, String) -> Unit) {
         if (!email.isValidEmail()) {
             SnackbarManager.showMessage(R.string.email_error)
             return
@@ -53,6 +56,7 @@ class LoginViewModel @Inject constructor(
         launchCatching {
             accountService.authenticate(email, password)
             uiState.value = uiState.value.copy(isSignInSuccess = true)
+            openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Login.name)
         }
     }
 }

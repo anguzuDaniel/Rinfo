@@ -32,22 +32,20 @@ import com.danotech.rinfo.common.composable.RationaleDialog
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
-import com.danotech.rinfo.ui.screens.login.LoginScreen
 import com.danotech.rinfo.ui.screens.category.MoreCategoriesPage
 import com.danotech.rinfo.ui.screens.favorites.FavoriteScreen
 import com.danotech.rinfo.ui.screens.home.HomeScreen
+import com.danotech.rinfo.ui.screens.login.LoginScreen
 import com.danotech.rinfo.ui.screens.notification.NotificationPage
 import com.danotech.rinfo.ui.screens.review.ReviewScreen
 import com.danotech.rinfo.ui.screens.search.SearchCategory
 import com.danotech.rinfo.ui.screens.search.SearchPage
-import com.danotech.rinfo.ui.screens.settings.SettingPage
+import com.danotech.rinfo.ui.screens.settings.SettingsScreen
 import com.danotech.rinfo.ui.theme.AppTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -125,10 +123,11 @@ fun resources(): Resources {
 
 @ExperimentalMaterialApi
 fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
+
     composable(route = RInfoScreen.Home.name) {
         HomeScreen(
             onTabSelected = { screen ->
-                if (Firebase.auth.currentUser == null) {
+                if (!appState.isLoggedIn) {
                     appState.navigate(RInfoScreen.Login.name)
                     return@HomeScreen
                 }
@@ -139,7 +138,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 appState.popUp()
             },
             onReviewCardClicked = { review: Review ->
-                if (Firebase.auth.currentUser == null) {
+                if (!appState.isLoggedIn) {
                     appState.navigate(RInfoScreen.Login.name)
                     return@HomeScreen
                 }
@@ -147,7 +146,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 appState.navigate(RInfoScreen.Review.name)
             },
             onFabClicked = {
-                if (Firebase.auth.currentUser == null) {
+                if (!appState.isLoggedIn) {
                     appState.navigate(RInfoScreen.Login.name)
                     return@HomeScreen
                 }
@@ -155,7 +154,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 appState.navigate(RInfoScreen.Search.name)
             },
             onCategoryClicked = {
-                if (Firebase.auth.currentUser == null) {
+                if (!appState.isLoggedIn) {
                     appState.navigate(RInfoScreen.Login.name)
                     return@HomeScreen
                 }
@@ -163,7 +162,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 appState.navigate(RInfoScreen.MoreCategories.name)
             },
             onSearchInputClicked = {
-                if (Firebase.auth.currentUser == null) {
+                if (!appState.isLoggedIn) {
                     appState.navigate(RInfoScreen.Login.name)
                     return@HomeScreen
                 }
@@ -180,8 +179,9 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             onBackHandler = {
                 appState.popUp()
             },
-            onSignInClick = {
-                appState.navigate(RInfoScreen.Home.name)
+            openAndPopUp = { route, popUp ->
+                appState.navigateAndPopUp(route, popUp)
+                appState.isLoggedIn = true
             }
         )
     }
@@ -207,7 +207,6 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 appState.navigate(screen.name)
             },
             onReviewCardClicked = { review: Review ->
-
                 appState.navigate(RInfoScreen.Review.name)
             }
         )
@@ -226,7 +225,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         )
     }
     composable(route = RInfoScreen.Settings.name) {
-        SettingPage(
+        SettingsScreen(
             onBackPressed = {
                 appState.popUp()
             },
@@ -235,6 +234,8 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             },
             onTabSelected = { screen ->
                 appState.navigate(screen.name)
+            },
+            onLogoutClicked = {
             },
         )
     }

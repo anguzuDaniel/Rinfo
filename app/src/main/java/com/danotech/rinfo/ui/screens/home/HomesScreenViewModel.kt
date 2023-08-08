@@ -1,8 +1,10 @@
 package com.danotech.rinfo.ui.screens.home
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.RinfoViewModel
 import com.danotech.rinfo.data.LocalReviewProvider
+import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.components.Review
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +16,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomesScreenViewModel @Inject constructor(
+    private val accountService: AccountService,
     logService: LogService,
 ) : RinfoViewModel(logService) {
     val uiState = mutableStateOf(HomeScreenUiState())
@@ -31,5 +34,9 @@ class HomesScreenViewModel @Inject constructor(
             reviews = LocalReviewProvider.reviews
         )
         return uiState.value.reviews
+    }
+
+    fun isLoggedIn(): Boolean {
+        return true
     }
 }

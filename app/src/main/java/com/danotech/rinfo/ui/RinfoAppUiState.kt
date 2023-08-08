@@ -15,13 +15,15 @@ import kotlinx.coroutines.launch
 
 @Stable
 class RinfoAppUiState(
+    val isShowingBottomBar: Boolean = true,
+    var isLoggedIn: Boolean = false,
     var currentReview: Review = LocalReviewProvider.defaultReview,
     val scaffoldState: ScaffoldState,
     val navController: NavHostController,
     private val snackbarManager: SnackbarManager,
     private val resources: Resources,
     coroutineScope: CoroutineScope
-)  {
+) {
     init {
         coroutineScope.launch {
             snackbarManager.snackbarMessages.filterNotNull().collect { snackbarMessage ->

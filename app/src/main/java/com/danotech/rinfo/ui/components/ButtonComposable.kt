@@ -42,9 +42,9 @@ fun SignUpButton(
 @Composable
 fun SignInButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    action: () -> Unit,
 ) {
-    RinfoButton(name = R.string.sign_in, onClicked = onClick, modifier = modifier)
+    RinfoButton(name = R.string.sign_in, onClicked = action, modifier = modifier)
 }
 
 /**

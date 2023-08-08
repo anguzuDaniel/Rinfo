@@ -35,8 +35,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.ProfileImage
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
@@ -45,7 +45,6 @@ import com.danotech.rinfo.ui.components.SubHeadingText
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.danotech.rinfo.ui.theme.AppTheme
 
 enum class SettingType {
     switch,
@@ -56,10 +55,11 @@ enum class SettingType {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingPage(
+fun SettingsScreen(
     onBackPressed: () -> Unit = {},
     onFabClicked: () -> Unit = {},
     onTabSelected: (RInfoScreen) -> Unit = {},
+    onLogoutClicked: () -> Unit,
 ) {
     BackHandler {
         onBackPressed()
@@ -99,17 +99,19 @@ fun SettingPage(
         EditAccountContent(
             innerPadding = innerPadding,
             settingType = SettingType.text,
+            onLogoutClicked = onLogoutClicked
         )
     }
 }
 
 @Composable
 fun EditAccountContent(
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
     innerPadding: PaddingValues,
     settingType: SettingType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onLogoutClicked: () -> Unit,
 ) {
-
     LazyColumn(
         modifier = modifier
             .padding(dimensionResource(id = R.dimen.body_padding)),
@@ -180,10 +182,12 @@ fun EditAccountContent(
                     name = R.string.logout,
                     icon = Icons.Rounded.FavoriteBorder,
                     iconDesc = R.string.logout,
-                    settingType = settingType,
-                ) {
-                    // here you can do anything - navigate - open other settings, ...
-                }
+                    settingType = SettingType.button,
+                    onClick = {
+                        settingsViewModel.onLogoutClick()
+                        onLogoutClicked()
+                    }
+                )
             }
         }
     }
@@ -244,24 +248,5 @@ fun SettingsClickableComp(
                 }
             }
         }
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun EditAccountPreview() {
-    AppTheme {
-        SettingPage()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun EditAccountDarkPreview() {
-    AppTheme(
-        darkTheme = true
-    ) {
-        SettingPage()
     }
 }

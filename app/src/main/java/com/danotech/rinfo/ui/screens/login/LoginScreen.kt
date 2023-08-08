@@ -18,6 +18,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
+import com.danotech.rinfo.common.ext.basicButton
 import com.danotech.rinfo.ui.components.ClickableTextRow
 import com.danotech.rinfo.ui.components.EmailField
 import com.danotech.rinfo.ui.components.GoogleButton
@@ -29,10 +30,10 @@ import com.danotech.rinfo.ui.components.SubHeadingText
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
+    openAndPopUp: (String, String) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: LoginViewModel = hiltViewModel(),
     onSignUpTextClicked: () -> Unit = { },
-    onSignInClick: () -> Unit = { },
     onBackHandler: () -> Unit = { }
 ) {
     val loginUiState = viewModel.uiState.value
@@ -40,6 +41,7 @@ fun LoginScreen(
     BackHandler() {
         onBackHandler()
     }
+
     Surface() {
         Column(
             modifier = modifier
@@ -64,15 +66,12 @@ fun LoginScreen(
             )
 
             SignInButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    viewModel.signInClick()
-
-                    /**
-                     * if sign in success then navigate to home screen
-                     */
-                    if (loginUiState.isSignInSuccess) onSignInClick()
-                })
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .basicButton()
+            ) {
+                viewModel.signInClick(openAndPopUp)
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
