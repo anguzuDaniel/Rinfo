@@ -55,6 +55,14 @@ fun BusinessAccountButton(
     RinfoButton(name = R.string.add_account, onClicked = action, modifier = modifier)
 }
 
+@Composable
+fun SaveProfileButton(
+    modifier: Modifier = Modifier,
+    action: () -> Unit,
+) {
+    RinfoButton(name = R.string.save, onClicked = action, modifier = modifier)
+}
+
 /**
  * reusable button
  * provide a string resource for the button name

@@ -32,7 +32,7 @@ import com.danotech.rinfo.common.composable.RationaleDialog
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
-import com.danotech.rinfo.ui.screens.account.EditAccount
+import com.danotech.rinfo.ui.screens.profile.ProfileScreen
 import com.danotech.rinfo.ui.screens.business_account.BusinessAccount
 import com.danotech.rinfo.ui.screens.category.MoreCategoriesPage
 import com.danotech.rinfo.ui.screens.favorites.FavoriteScreen
@@ -48,6 +48,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -190,7 +192,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         BusinessAccount()
     }
     composable(route = RInfoScreen.EditAccount.name) {
-        EditAccount()
+        ProfileScreen()
     }
     composable(route = RInfoScreen.Favourites.name) {
         FavoriteScreen(onBackPressed = {

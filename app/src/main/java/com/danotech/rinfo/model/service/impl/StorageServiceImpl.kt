@@ -23,30 +23,30 @@ constructor(private val firestore: FirebaseFirestore, private val auth: AccountS
   override val reviews: Flow<List<Review>>
     get() =
       auth.currentUser.flatMapLatest { user ->
-        firestore.collection(TASK_COLLECTION).whereEqualTo(USER_ID_FIELD, user.id).dataObjects()
+        firestore.collection(REVIEW_COLLECTION).whereEqualTo(USER_ID_FIELD, user.id).dataObjects()
       }
 
   override suspend fun getReview(reviewId: String): Review? =
-    firestore.collection(TASK_COLLECTION).document(reviewId).get().await().toObject()
+    firestore.collection(REVIEW_COLLECTION).document(reviewId).get().await().toObject()
 
   override suspend fun save(review: Review): String =
     trace(SAVE_TASK_TRACE) {
-      val taskWithUserId = review.copy(id = auth.currentUserId)
-      firestore.collection(TASK_COLLECTION).add(taskWithUserId).await().id
+      val reviewWithUserId = review.copy(id = auth.currentUserId)
+      firestore.collection(REVIEW_COLLECTION).add(reviewWithUserId).await().id
     }
 
   override suspend fun update(review: Review): Unit =
     trace(UPDATE_TASK_TRACE) {
-      firestore.collection(TASK_COLLECTION).document(review.id).set(review).await()
+      firestore.collection(REVIEW_COLLECTION).document(review.id).set(review).await()
     }
 
   override suspend fun delete(reviewId: String) {
-    firestore.collection(TASK_COLLECTION).document(reviewId).delete().await()
+    firestore.collection(REVIEW_COLLECTION).document(reviewId).delete().await()
   }
 
   companion object {
     private const val USER_ID_FIELD = "userId"
-    private const val TASK_COLLECTION = "reviews"
+    private const val REVIEW_COLLECTION = "reviews"
     private const val SAVE_TASK_TRACE = "saveReview"
     private const val UPDATE_TASK_TRACE = "updateReview"
   }
