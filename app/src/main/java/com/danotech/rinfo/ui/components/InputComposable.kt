@@ -75,6 +75,7 @@ fun TextInput(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextInputWithLabel(
+    @StringRes placeholder: Int = R.string.empty,
     labelText: String,
     value: String,
     modifier: Modifier = Modifier,
@@ -94,6 +95,12 @@ fun TextInputWithLabel(
             autoCorrect = false,
             imeAction = ImeAction.Next,
         ),
+        placeholder = {
+            Text(
+                text = stringResource(placeholder),
+                style = MaterialTheme.typography.labelSmall,
+            )
+        },
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = { onSearchInputClicked() }),

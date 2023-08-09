@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,7 +19,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -30,9 +30,9 @@ import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.danotech.rinfo.ui.theme.AppTheme
 
 data class Category(
-    val name: String,
-    val icon: ImageVector,
-    val iconDrawable: Int
+    val name: String = "",
+    val icon: ImageVector = Icons.Filled.Business,
+    val iconDrawable: Int = 0
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -156,7 +156,7 @@ fun CategoriesListItem(
         )
         Spacer(modifier = Modifier.width(16.dp))
         Icon(
-            painter = painterResource(id = category.iconDrawable),
+            imageVector = category.icon,
             contentDescription = "Right Arrow",
             tint = MaterialTheme.colorScheme.onSurface
         )

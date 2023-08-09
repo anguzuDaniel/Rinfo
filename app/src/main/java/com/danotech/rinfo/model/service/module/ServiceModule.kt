@@ -1,11 +1,13 @@
 package com.danotech.rinfo.model.service.module
 
 import com.danotech.rinfo.model.service.AccountService
+import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.ConfigurationService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.model.service.ProfileService
 import com.danotech.rinfo.model.service.StorageService
 import com.danotech.rinfo.model.service.impl.AccountServiceImpl
+import com.danotech.rinfo.model.service.impl.BusinessAccountServiceImpl
 import com.danotech.rinfo.model.service.impl.ConfigurationServiceImpl
 import com.danotech.rinfo.model.service.impl.LogServiceImpl
 import com.danotech.rinfo.model.service.impl.ProfileServiceImpl
@@ -32,4 +34,7 @@ abstract class ServiceModule {
 
     @Binds
     abstract fun provideProfileService(impl: ProfileServiceImpl): ProfileService
+
+    @Binds
+    abstract fun provideBusinessAccountService(impl: BusinessAccountServiceImpl): BusinessAccountService
 }

@@ -2,21 +2,33 @@ package com.danotech.rinfo.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,12 +59,61 @@ fun SignInButton(
     RinfoButton(name = R.string.sign_in, onClicked = action, modifier = modifier)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BusinessAccountButton(
+    isLoading: Boolean = false,
     modifier: Modifier = Modifier,
     action: () -> Unit,
 ) {
-    RinfoButton(name = R.string.add_account, onClicked = action, modifier = modifier)
+    Button(
+        onClick = action,
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = modifier
+                .animateContentSize(
+                    animationSpec = (tween(
+                        durationMillis = 300,
+                        easing = LinearOutSlowInEasing
+                    ))
+                )
+                .background(MaterialTheme.colorScheme.primary),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = if (isLoading) "Saving" else "Save",
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+            if (isLoading) {
+                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun AddImageButton(
+    modifier: Modifier = Modifier,
+    action: () -> Unit,
+) {
+    RinfoButton(
+        name = R.string.add_account,
+        onClicked = action,
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .border(1.dp, MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.small)
+            .clip(MaterialTheme.shapes.small)
+            .padding(8.dp)
+    )
 }
 
 @Composable
@@ -254,5 +315,18 @@ fun ShowOptionButtonDarkPreview() {
             active = false,
             onClick = {},
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BusinessButtonPreview() {
+    AppTheme {
+        BusinessAccountButton(
+            isLoading = false,
+            modifier = Modifier.padding(16.dp),
+        ) {
+
+        }
     }
 }

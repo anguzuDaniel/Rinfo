@@ -179,7 +179,7 @@ fun EditAccountContent(
                 )
 
                 SettingsClickableComp(
-                    name = R.string.account,
+                    name = R.string.profile,
                     icon = Icons.Rounded.FavoriteBorder,
                     iconDesc = R.string.account,
                     settingType = settingType,

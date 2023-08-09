@@ -1,107 +1,156 @@
 package com.danotech.rinfo.ui.screens.business_account
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.components.ProfileImage
-import com.danotech.rinfo.ui.components.RinfoButton
+import com.danotech.rinfo.common.ext.basicButton
+import com.danotech.rinfo.ui.components.BasicButton
+import com.danotech.rinfo.ui.components.BusinessAccountButton
 import com.danotech.rinfo.ui.components.TextInputWithLabel
+import com.danotech.rinfo.ui.screens.account.SelectBusinessCategory
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.danotech.rinfo.ui.theme.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BusinessAccount() {
+fun BusinessAccount(
+    viewModel: BusinessAccountViewModel = hiltViewModel(),
+    onBackClicked: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    BackHandler() {
+        onBackClicked()
+    }
+
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         topBar = {
             RinfoTopAppBar(
                 title = "Business Account",
                 isShowingHomePage = false,
-                onBackButtonClicked = {
-                    // Back button clicked
-                },
+                onBackButtonClicked = onBackClicked,
             )
         },
-    ) {
-        BusinessAccountContent()
+    ) { innerPadding ->
+        BusinessAccountContent(
+            innerPadding = innerPadding,
+            viewModel = viewModel
+        )
     }
 }
 
 @Composable
 fun BusinessAccountContent(
-    modifier: Modifier = Modifier
+    viewModel: BusinessAccountViewModel,
+    modifier: Modifier = Modifier,
+    innerPadding: PaddingValues = PaddingValues(0.dp),
 ) {
-    Column {
-        Spacer(modifier = Modifier.height(20.dp))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ProfileImage(
-                size = 200.dp,
-                imageUrI = R.drawable.cafe_javas
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "Business Logo")
-        }
-        Spacer(modifier = Modifier.height(20.dp))
+    val uiState = viewModel.uiState.value
 
-        TextInputWithLabel(
-            labelText = "Business Name",
-            value = "",
-            onValueChanged = {})
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        TextInputWithLabel(
-            labelText = "Description",
-            value = "",
-            onValueChanged = {})
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        RinfoButton(
-            name = R.string.add_account,
-            onClicked = { /*TODO*/ },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        BusinessAccount()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun EditAccountPreview() {
-    AppTheme {
-        BusinessAccount()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun EditAccountDarkPreview() {
-    AppTheme(
-        darkTheme = true
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(dimensionResource(id = R.dimen.body_padding)),
+        contentPadding = innerPadding
     ) {
-        BusinessAccount()
+
+        item {
+
+            TextInputWithLabel(
+                labelText = "Business Name",
+                placeholder = R.string.cake_business,
+                value = uiState.name,
+                onValueChanged = viewModel::onNameChange
+            )
+        }
+
+        item {
+            TextInputWithLabel(
+                labelText = "Description",
+                placeholder = R.string.placeholder_business_description,
+                value = uiState.description,
+                onValueChanged = viewModel::onDescriptionChange
+            )
+        }
+
+
+        item {
+            TextInputWithLabel(
+                labelText = "Address",
+                value = uiState.address,
+                placeholder = R.string.placeholder_business_address,
+                onValueChanged = viewModel::onAddressChange
+            )
+        }
+
+
+
+        item {
+            TextInputWithLabel(
+                labelText = "phone",
+                value = uiState.phone,
+                placeholder = R.string.placeholder_business_phone,
+                onValueChanged = viewModel::onPhoneChange
+            )
+        }
+
+
+        item {
+            TextInputWithLabel(
+                labelText = "email",
+                value = uiState.email,
+                placeholder = R.string.placeholder_business_email,
+                onValueChanged = viewModel::onEmailChange
+            )
+        }
+
+        item {
+            SelectBusinessCategory(
+                modifier = Modifier,
+                onAccountTypeSelected = {
+                    viewModel.onCategoryChange(it)
+                },
+            )
+        }
+
+        item {
+            BasicButton(
+                text = R.string.add_logo,
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surface)
+                    .basicButton()
+            ) {
+
+            }
+        }
+
+        item {
+
+            BusinessAccountButton(
+                isLoading = uiState.isLoading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .basicButton()
+            ) {
+                viewModel.onBusinessAccountCreated()
+            }
+        }
     }
 }

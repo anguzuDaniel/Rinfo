@@ -75,4 +75,20 @@
     <string name="notification_permission_settings">The notification permission is important for this app. Please navigate to your device settings and enable notifications for Make it So.</string>
     <string name="add_account">add account</string>
     <string name="edit_account">edit_account</string>
+    <string name="profile">Profile</string>
+    <string name="business_type">Business type</string>
+    <string name="empty" />
+    <string name="cake_business">placeholder_business_name</string>
+    <string name="placeholder_business_description">We sale the best cakes in kampala city!</string>
+    <string name="placeholder_business_address">Kampala/Uganda</string>
+    <string name="placeholder_business_phone">000-000-000-000</string>
+    <string name="placeholder_business_email">cakebusiness@gmail.com</string>
+    <string name="add_logo">Add logo</string>
+    <string name="name_is_required">Name is required</string>
+    <string name="description_is_required">Business Description is required</string>
+    <string name="address_is_required">Business Address is required</string>
+    <string name="phone_is_required">Phone number is required</string>
+    <string name="email_is_required">Business email is required</string>
+    <string name="business_account_created">Account created</string>
+    <string name="business_account_updated">Account updated</string>
 </resources>

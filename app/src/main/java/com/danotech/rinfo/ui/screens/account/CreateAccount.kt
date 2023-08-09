@@ -1,16 +1,13 @@
 package com.danotech.rinfo.ui.screens.account
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -30,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,6 +40,7 @@ import com.danotech.rinfo.ui.components.OrFormDiver
 import com.danotech.rinfo.ui.components.PasswordField
 import com.danotech.rinfo.ui.components.RepeatPasswordField
 import com.danotech.rinfo.ui.components.SignUpButton
+import com.danotech.rinfo.ui.screens.category.Category
 
 /**
  * Create Account page
@@ -147,11 +144,11 @@ fun CreateAccount(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectAccountType(
+fun SelectBusinessCategory(
     modifier: Modifier = Modifier,
-    onAccountTypeSelected: (AccountType) -> Unit = {}
+    onAccountTypeSelected: (Category) -> Unit = {}
 ) {
-    val listItems = LocalReviewProvider.accountOptions
+    val listItems = LocalReviewProvider.categories
 
     var expanded by remember {
         mutableStateOf(false)
@@ -181,10 +178,10 @@ fun SelectAccountType(
         ) {
 
             TextField(
-                value = stringResource(id = selectedItem.name),
+                value = selectedItem.name,
                 onValueChange = { onAccountTypeSelected(selectedItem) },
                 readOnly = true,
-                label = { Text(text = stringResource(id = R.string.account_type)) },
+                label = { Text(text = stringResource(id = R.string.business_type)) },
                 trailingIcon = {
                     TrailingIcon(
                         expanded = expanded,
@@ -192,7 +189,7 @@ fun SelectAccountType(
                 },
                 leadingIcon = {
                     Icon(
-                        painter = painterResource(id = selectedItem.icon),
+                        imageVector = selectedItem.icon,
                         contentDescription = stringResource(R.string.account_type_icon)
                     )
                 },
@@ -215,15 +212,16 @@ fun SelectAccountType(
                 listItems.forEach { selectedOption ->
                     // menu item
                     DropdownMenuItem(
-                        text = { Text(text = stringResource(id = selectedOption.name)) },
+                        text = { Text(text = selectedOption.name) },
                         onClick = {
                             selectedItem = selectedOption
+                            onAccountTypeSelected(selectedOption)
                             expanded = false
                         },
                         leadingIcon = {
                             Icon(
-                                painter = painterResource(id = selectedOption.icon),
-                                contentDescription = stringResource(id = selectedOption.name)
+                                imageVector = selectedOption.icon,
+                                contentDescription = selectedOption.name
                             )
                         },
                         modifier = Modifier.fillMaxWidth()
