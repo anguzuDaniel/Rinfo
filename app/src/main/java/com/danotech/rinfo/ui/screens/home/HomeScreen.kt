@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
+import com.danotech.rinfo.model.BusinessDocument
 import com.danotech.rinfo.ui.components.CategoryIconButton
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.components.ReviewCard
@@ -55,7 +57,7 @@ fun HomeScreen(
     onTabSelected: (RInfoScreen) -> Unit = {},
     onBackPressed: () -> Unit = {},
     onFabClicked: () -> Unit = {},
-    onReviewCardClicked: (Review) -> Unit = {},
+    onReviewCardClicked: (BusinessDocument) -> Unit = {},
     onCategoryClicked: () -> Unit = {},
     onSearchInputClicked: () -> Unit = {},
 ) {
@@ -65,6 +67,7 @@ fun HomeScreen(
 
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
     var searchResults by remember { mutableStateOf(emptyList<String>()) }
+
 
     Scaffold(
         modifier = Modifier
@@ -142,12 +145,14 @@ fun HomeScreen(
 fun HomePageContent(
     viewModel: HomesScreenViewModel,
     innerPadding: PaddingValues,
-    onReviewCardClicked: (Review) -> Unit = {},
+    onReviewCardClicked: (BusinessDocument) -> Unit = {},
     onBackPressed: () -> Unit = {},
     onCategoryClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val reviews = viewModel.showReviews()
+    val businessState by viewModel.businessFlow.collectAsState(initial = emptyList())
+
 
     LazyColumn(
         modifier = modifier.padding(dimensionResource(id = R.dimen.body_padding)),
@@ -169,9 +174,9 @@ fun HomePageContent(
             FilterRow()
         }
 
-        items(reviews, key = { review -> review.id }) { review ->
+        items(businessState) { business ->
             ReviewCard(
-                review = review,
+                business = business,
                 onReviewCardClicked = onReviewCardClicked
             )
         }

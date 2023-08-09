@@ -1,13 +1,17 @@
 package com.danotech.rinfo.ui.screens.home
 
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.RinfoViewModel
 import com.danotech.rinfo.data.LocalReviewProvider
+import com.danotech.rinfo.model.BusinessDocument
 import com.danotech.rinfo.model.service.AccountService
+import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.components.Review
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 /***
@@ -16,10 +20,16 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomesScreenViewModel @Inject constructor(
+    private val businessAccountService: BusinessAccountService,
     private val accountService: AccountService,
     logService: LogService,
 ) : RinfoViewModel(logService) {
     val uiState = mutableStateOf(HomeScreenUiState())
+
+    val businessFlow: Flow<List<BusinessDocument>> = flow {
+        val businesses = businessAccountService.getAllBusiness(5).first()
+        emit(businesses)
+    }
 
     init {
         initializeUIState()
@@ -38,5 +48,19 @@ class HomesScreenViewModel @Inject constructor(
 
     fun isLoggedIn(): Boolean {
         return true
+    }
+
+    fun getBusinesses() {
+        uiState.value = uiState.value.copy(isLoading = true)
+
+        launchCatching {
+            val businesses = businessAccountService.getAllBusiness(5).first()
+
+//            uiState.value = uiState.value.copy(
+//                businesses = businesses
+//            )
+        }.invokeOnCompletion {
+            uiState.value = uiState.value.copy(isLoading = false)
+        }
     }
 }

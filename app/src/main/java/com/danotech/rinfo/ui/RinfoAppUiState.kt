@@ -49,6 +49,10 @@ class RinfoAppUiState(
         navController.navigate(route) { launchSingleTop = true }
     }
 
+    fun navigateAndDisplayBusiness(route: String, review: Review) {
+        navController.navigate(route) { launchSingleTop = true }
+    }
+
     fun navigateAndPopUp(route: String, popUp: String) {
         navController.navigate(route) {
             launchSingleTop = true

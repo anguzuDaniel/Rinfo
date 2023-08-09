@@ -32,7 +32,7 @@ class BusinessAccountViewModel @Inject constructor(
 
     private fun initializeUIState() {
         launchCatching {
-            val business = businessAccountService.businessAccount
+            val business = businessAccountService.currentUserBusinessAccount
 
             business.map { accounts ->
                 if (accounts.isNotEmpty()) {
@@ -121,7 +121,7 @@ class BusinessAccountViewModel @Inject constructor(
                 businessCategory = updateUiState.businessCategory.name,
                 reviews = 0
             )
-            if (businessAccountService.getBusiness(accountService.currentUserId) == null) {
+            if (businessAccountService.getBusinessById(accountService.currentUserId) == null) {
                 businessAccountService.create(business)
                 SnackbarManager.showMessage(R.string.business_account_created)
             } else {

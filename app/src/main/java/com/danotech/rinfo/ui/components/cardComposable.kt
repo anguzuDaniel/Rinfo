@@ -18,40 +18,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
-import com.danotech.rinfo.data.LocalReviewProvider
-import com.danotech.rinfo.ui.theme.AppTheme
+import com.danotech.rinfo.model.BusinessDocument
 
 /**
  * Review card
  * when clicked it redirects you to the review page
- * @param review
+ * @param business
  * @param onReviewCardClicked takes an int which is the currents review's id
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewCard(
-    review: Review,
+    business: BusinessDocument,
     modifier: Modifier = Modifier,
-    onReviewCardClicked: (Review) -> Unit = {}
+    onReviewCardClicked: (BusinessDocument) -> Unit = {}
 ) {
     Card(
         shape = MaterialTheme.shapes.small,
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp,
         ),
-        onClick = { onReviewCardClicked(review) },
+        onClick = { onReviewCardClicked(business) },
         modifier = modifier.fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier.padding(10.dp)
         ) {
             Image(
-                painter = painterResource(id = review.imageUrl),
+                painter = painterResource(id = R.drawable.cafe_javas),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(end = 16.dp)
@@ -62,7 +59,7 @@ fun ReviewCard(
 
             Column() {
                 Text(
-                    text = review.businessName,
+                    text = business.name,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -70,7 +67,7 @@ fun ReviewCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = review.comment,
+                    text = business.description,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -78,7 +75,7 @@ fun ReviewCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 RatingStars(
-                    rating = review.rating,
+                    rating = business.reviews,
                 )
             }
         }
@@ -95,15 +92,3 @@ data class Review(
     val comment: String
 )
 
-
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewReviewCard() {
-    AppTheme {
-        ReviewCard(
-            review = LocalReviewProvider.defaultReview,
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.body_padding))
-        )
-    }
-}

@@ -1,13 +1,10 @@
 package com.danotech.rinfo.ui.screens.favorites
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,19 +14,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.Review
-import com.danotech.rinfo.ui.components.ReviewCard
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.danotech.rinfo.ui.theme.AppTheme
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteScreen(
@@ -92,20 +88,20 @@ fun FavoriteScreen(
             })
         },
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.body_padding))
-                .fillMaxSize(),
-            contentPadding = innerPadding
-        ) {
-            items(reviews, key = { review -> review.id }) { review ->
-                ReviewCard(
-                    review = review,
-                    onReviewCardClicked = onReviewCardClicked
-                )
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.body_padding)))
-            }
-        }
+//        LazyColumn(
+//            modifier = Modifier
+//                .padding(dimensionResource(id = R.dimen.body_padding))
+//                .fillMaxSize(),
+//            contentPadding = innerPadding
+//        ) {
+//            items(reviews, key = { review -> review.id }) { review ->
+//                ReviewCard(
+//                    business = review,
+//                    onReviewCardClicked = onReviewCardClicked
+//                )
+//                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.body_padding)))
+//            }
+//        }
     }
 }
 

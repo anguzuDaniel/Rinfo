@@ -1,6 +1,7 @@
 package com.danotech.rinfo.ui.screens.review
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -23,32 +24,41 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
-import com.danotech.rinfo.data.LocalReviewProvider
+import com.danotech.rinfo.model.BusinessDocument
 import com.danotech.rinfo.ui.components.RatingStars
-import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.danotech.rinfo.ui.theme.AppTheme
+import kotlinx.coroutines.flow.Flow
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewScreen(
+    businessId: String = "",
     viewModel: ReviewPageViewModel = hiltViewModel(),
     onBackPressed: () -> Unit = {},
 ) {
     BackHandler {
         onBackPressed()
     }
+
+    val businessState: State<BusinessDocument?> =
+        viewModel.getBusinessById(businessId = businessId).collectAsState(
+            initial = null
+        )
+
+    Log.d("ReviewScreen", "businessState: $businessState")
+    Log.d("ReviewScreen", "businessId: $businessId")
 
     Scaffold(
         modifier = Modifier
@@ -64,7 +74,7 @@ fun ReviewScreen(
         LazyColumn() {
             item {
                 ReviewContent(
-                    review = viewModel.uiState.value.currentReview
+                    business = businessState.value ?: BusinessDocument(),
                 )
             }
         }
@@ -72,15 +82,21 @@ fun ReviewScreen(
 }
 
 @Composable
+fun CollectBusinessState(businessFlow: Flow<BusinessDocument?>): State<BusinessDocument?> {
+    // Collect the flow and convert it into a Compose State
+    return businessFlow.collectAsState(initial = null)
+}
+
+@Composable
 fun ReviewContent(
     modifier: Modifier = Modifier,
-    review: Review = LocalReviewProvider.defaultReview
+    business: BusinessDocument = BusinessDocument()
 ) {
     Column(
         modifier = modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = review.imageUrl),
+            painter = painterResource(id = R.drawable.cafe_javas),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
@@ -93,7 +109,7 @@ fun ReviewContent(
         Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.body_padding))) {
 
             Text(
-                text = "Cafe Javas",
+                text = business.name,
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -107,12 +123,12 @@ fun ReviewContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row {
-                    RatingStars(rating = 3)
+                    RatingStars(rating = business.reviews)
 
                     Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacer_medium)))
 
                     Text(
-                        text = "4.9",
+                        text = business.reviews.toString(),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -128,8 +144,7 @@ fun ReviewContent(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "We're committed to great food, great coffee, great service, an experience that will make your time with us fabulous. All visuals are serving suggestions only.\n" +
-                        "Prices are quoted in Uganda Shillings and inclusive of VAT.",
+                text = business.description,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -221,24 +236,6 @@ fun ReviewCard(
     }
 
     Spacer(modifier = Modifier.height(10.dp))
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ReviewScreenPreview() {
-    AppTheme {
-        ReviewScreen()
-    }
-}
-
-@Preview
-@Composable
-fun ReviewScreenPreviewDark() {
-    AppTheme(
-        darkTheme = true
-    ) {
-        ReviewScreen()
-    }
 }
 
 data class CustomerReview(

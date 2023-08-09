@@ -23,12 +23,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.common.composable.PermissionDialog
 import com.danotech.rinfo.common.composable.RationaleDialog
+import com.danotech.rinfo.model.BusinessDocument
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
@@ -53,7 +56,7 @@ import kotlinx.coroutines.CoroutineScope
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RinfoApp() {
-    AppTheme() {
+    AppTheme {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             RequestNotificationPermissionDialog()
         }
@@ -135,13 +138,13 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             onBackPressed = {
                 appState.popUp()
             },
-            onReviewCardClicked = { review: Review ->
+            onReviewCardClicked = { business: BusinessDocument ->
                 if (!appState.isLoggedIn) {
                     appState.navigate(RInfoScreen.Login.name)
                     return@HomeScreen
                 }
 
-                appState.navigate(RInfoScreen.Review.name)
+                appState.navigate("${RInfoScreen.Review.name}/${business.id}")
             },
             onFabClicked = {
                 if (!appState.isLoggedIn) {
@@ -265,11 +268,22 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             appState.popUp()
         })
     }
-    composable(route = RInfoScreen.Review.name) {
-        ReviewScreen(
-            onBackPressed = {
-                appState.popUp()
-            },
-        )
+    composable(
+        route = "${RInfoScreen.Review.name}/{businessId}",
+        arguments = listOf(navArgument("businessId") { type = NavType.StringType })
+    ) { backStackEntry ->
+        val businessId = backStackEntry.arguments?.getString("businessId")
+
+        if (businessId != null) {
+            // Use the businessId to fetch data or perform other operations
+            ReviewScreen(
+                businessId = businessId,
+                onBackPressed = {
+                    appState.popUp()
+                }
+            )
+        } else {
+            // Handle the case where businessId is null
+        }
     }
 }

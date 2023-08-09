@@ -7,7 +7,6 @@ import com.danotech.rinfo.model.service.trace
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.dataObjects
-import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -21,38 +20,50 @@ constructor(
     private val auth: AccountService
 ) : BusinessAccountService {
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val businessAccount: Flow<List<BusinessDocument>>
+    override val currentUserBusinessAccount: Flow<List<BusinessDocument>>
         get() =
             auth.currentUser.flatMapLatest { user ->
-                fireStore.collection(PROFILE_COLLECTION).whereEqualTo(USER_ID_FIELD, user.id)
+                fireStore.collection(BUSINESS_COLLECTION).whereEqualTo(USER_ID_FIELD, user.id)
                     .dataObjects()
             }
 
-    override suspend fun getBusiness(businessId: String): BusinessDocument? =
-        fireStore.collection(PROFILE_COLLECTION).document(businessId).get().await().toObject()
+    override suspend fun getAllBusiness(number: Int): Flow<List<BusinessDocument>> {
+        return fireStore.collection(BUSINESS_COLLECTION).limit(number.toLong()).dataObjects()
+    }
+
+    override suspend fun getBusinessById(businessId: String): BusinessDocument? {
+        val documentSnapshot =
+            fireStore.collection(BUSINESS_COLLECTION).document(businessId).get().await()
+        return if (documentSnapshot.exists()) {
+            documentSnapshot.toObject(BusinessDocument::class.java)
+        } else {
+            null
+        }
+    }
 
     override suspend fun create(businessDocument: BusinessDocument): String =
-        trace(SAVE_PROFILE_TRACE) {
+        trace(SAVE_BUSINESS_TRACE) {
             val businessWithUserId =
                 businessDocument.copy(id = FirebaseAuth.getInstance().currentUser!!.email.toString())
-            fireStore.collection(PROFILE_COLLECTION).document(businessWithUserId.id)
+            fireStore.collection(BUSINESS_COLLECTION).document(businessWithUserId.id)
                 .set(businessWithUserId).await().toString()
         }
 
     override suspend fun update(businessDocument: BusinessDocument): Unit =
-        trace(UPDATE_PROFILE_TRACE) {
+        trace(UPDATE_BUSINESS_TRACE) {
             val businessId = businessDocument.id
-            fireStore.collection(PROFILE_COLLECTION).document(businessId).set(businessDocument).await()
+            fireStore.collection(BUSINESS_COLLECTION).document(businessId).set(businessDocument)
+                .await()
         }
 
     override suspend fun delete(business: String) {
-        fireStore.collection(PROFILE_COLLECTION).document(business).delete().await()
+        fireStore.collection(BUSINESS_COLLECTION).document(business).delete().await()
     }
 
     companion object {
         private const val USER_ID_FIELD = "userId"
-        private const val PROFILE_COLLECTION = "businessAccount"
-        private const val SAVE_PROFILE_TRACE = "saveBusinessAccount"
-        private const val UPDATE_PROFILE_TRACE = "updateBusinessAccount"
+        private const val BUSINESS_COLLECTION = "businessAccount"
+        private const val SAVE_BUSINESS_TRACE = "saveBusinessAccount"
+        private const val UPDATE_BUSINESS_TRACE = "updateBusinessAccount"
     }
 }
