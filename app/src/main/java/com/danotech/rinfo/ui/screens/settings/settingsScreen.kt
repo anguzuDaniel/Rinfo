@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -41,7 +42,6 @@ import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.ProfileImage
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.components.SettingSwitch
-import com.danotech.rinfo.ui.components.SubHeadingText
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
@@ -119,98 +119,119 @@ fun EditAccountContent(
     onNavClicked: (String) -> Unit = {},
 ) {
     LazyColumn(
-        modifier = modifier
+        modifier = Modifier
+            .fillMaxSize()
             .padding(dimensionResource(id = R.dimen.body_padding)),
         contentPadding = innerPadding,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ProfileImage(
+                    size = 100.dp,
+                    imageUrI = R.drawable.cafe_javas
+                )
+                Spacer(modifier = Modifier.width(40.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    androidx.compose.material.Text(
+                        text = "Cafe Javas",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    androidx.compose.material.Text(
+                        text = "Kampala, Uganda",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(40.dp))
+            Divider()
             Spacer(modifier = Modifier.height(20.dp))
-            ProfileImage(
-                size = 150.dp,
-                imageUrI = R.drawable.cafe_javas
+        }
+
+        item {
+            SettingsClickableComp(
+                name = R.string.dark_mode,
+                icon = Icons.Rounded.FavoriteBorder,
+                iconDesc = R.string.dark_mode,
+                onClick = {
+
+                }
             )
         }
 
         item {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            SettingsClickableComp(
+                name = R.string.notifications,
+                icon = Icons.Rounded.FavoriteBorder,
+                iconDesc = R.string.notifications,
             ) {
-                SubHeadingText(
-                    text = R.string.personal_account,
-                    modifier = Modifier.padding(dimensionResource(id = R.dimen.body_padding))
-                )
+                // here you can do anything - navigate - open other settings, ...
 
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.body_padding)))
-
-                SettingsClickableComp(
-                    name = R.string.dark_mode,
-                    icon = Icons.Rounded.FavoriteBorder,
-                    iconDesc = R.string.dark_mode,
-                    onClick = {
-
-                    }
-                )
-
-                SettingsClickableComp(
-                    name = R.string.notifications,
-                    icon = Icons.Rounded.FavoriteBorder,
-                    iconDesc = R.string.notifications,
-                ) {
-                    // here you can do anything - navigate - open other settings, ...
-
-                }
-
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.body_padding)))
-
-                Divider()
-
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.body_padding)))
-
-                SettingsClickableComp(
-                    name = R.string.account,
-                    icon = Icons.Rounded.FavoriteBorder,
-                    iconDesc = R.string.account,
-                    settingType = settingType,
-                    onClick = {
-                        onNavClicked(RInfoScreen.BusinessAccount.name)
-                    }
-                )
-
-                SettingsClickableComp(
-                    name = R.string.profile,
-                    icon = Icons.Rounded.FavoriteBorder,
-                    iconDesc = R.string.account,
-                    settingType = settingType,
-                    onClick = {
-                        onNavClicked(RInfoScreen.EditAccount.name)
-                    }
-                )
-
-                SettingsClickableComp(
-                    name = R.string.about,
-                    icon = Icons.Rounded.FavoriteBorder,
-                    iconDesc = R.string.about,
-                    settingType = settingType,
-                ) {
-                    // here you can do anything - navigate - open other settings, ...
-                }
-
-                SettingsClickableComp(
-                    name = R.string.logout,
-                    icon = Icons.Rounded.FavoriteBorder,
-                    iconDesc = R.string.logout,
-                    settingType = SettingType.button,
-                    onClick = {
-                        settingsViewModel.onLogoutClick(openAndPopUp)
-                        onLogoutClicked()
-                    }
-                )
             }
         }
+
+        item {
+            SettingsClickableComp(
+                name = R.string.account,
+                icon = Icons.Rounded.FavoriteBorder,
+                iconDesc = R.string.account,
+                settingType = settingType,
+                onClick = {
+                    onNavClicked(RInfoScreen.BusinessAccount.name)
+                }
+            )
+        }
+
+        item {
+            SettingsClickableComp(
+                name = R.string.profile,
+                icon = Icons.Rounded.FavoriteBorder,
+                iconDesc = R.string.account,
+                settingType = settingType,
+                onClick = {
+                    onNavClicked(RInfoScreen.EditAccount.name)
+                }
+            )
+        }
+
+
+        item {
+            SettingsClickableComp(
+                name = R.string.about,
+                icon = Icons.Rounded.FavoriteBorder,
+                iconDesc = R.string.about,
+                settingType = settingType,
+            ) {
+                // here you can do anything - navigate - open other settings, ...
+            }
+        }
+
+
+        item {
+            SettingsClickableComp(
+                name = R.string.logout,
+                icon = Icons.Rounded.FavoriteBorder,
+                iconDesc = R.string.logout,
+                settingType = SettingType.button,
+                onClick = {
+                    settingsViewModel.onLogoutClick(openAndPopUp)
+                    onLogoutClicked()
+                }
+            )
+        }
+
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

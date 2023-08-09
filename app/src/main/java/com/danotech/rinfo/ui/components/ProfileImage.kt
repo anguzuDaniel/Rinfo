@@ -41,7 +41,7 @@ fun ProfileImage(
     onProfileImageClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val borderWidth = 4.dp
+    val borderWidth = 1.dp
     Image(
         painter = painterResource(id = imageUrI),
         contentDescription = null,

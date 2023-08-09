@@ -66,6 +66,24 @@ fun BusinessAccountButton(
     modifier: Modifier = Modifier,
     action: () -> Unit,
 ) {
+    ButtonWithLoader(isLoading = isLoading, modifier = modifier, action = action)
+}
+
+@Composable
+fun ProfileButton(
+    isLoading: Boolean = false,
+    modifier: Modifier = Modifier,
+    action: () -> Unit,
+) {
+    ButtonWithLoader(isLoading = isLoading, modifier = modifier, action = action)
+}
+
+@Composable
+private fun ButtonWithLoader(
+    isLoading: Boolean = false,
+    modifier: Modifier = Modifier,
+    action: () -> Unit,
+) {
     Button(
         onClick = action,
         modifier = modifier

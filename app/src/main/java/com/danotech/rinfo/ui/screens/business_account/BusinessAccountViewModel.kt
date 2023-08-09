@@ -131,10 +131,6 @@ class BusinessAccountViewModel @Inject constructor(
         }.invokeOnCompletion {
             // This block will be called when launchCatching completes
             uiState.value = uiState.value.copy(isLoading = false) // Set loading to false
-
-            BusinessAccountUiState(
-
-            )
         }
     }
 

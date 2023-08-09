@@ -1,40 +1,45 @@
 package com.danotech.rinfo.ui.screens.profile
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.Text
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.components.ProfileButton
 import com.danotech.rinfo.ui.components.ProfileImage
-import com.danotech.rinfo.ui.components.RinfoButton
-import com.danotech.rinfo.ui.components.SaveProfileButton
-import com.danotech.rinfo.ui.components.TextInput
+import com.danotech.rinfo.ui.components.TextInputWithLabel
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackClicked: () -> Unit,
 ) {
+    BackHandler {
+        onBackClicked()
+    }
+
     Scaffold(
         modifier = modifier
             .fillMaxSize(),
@@ -42,9 +47,7 @@ fun ProfileScreen(
             RinfoTopAppBar(
                 title = "Profile",
                 isShowingHomePage = false,
-                onBackButtonClicked = {
-                    // Back button clicked
-                },
+                onBackButtonClicked = onBackClicked,
             )
         },
     ) { innerPadding ->
@@ -65,51 +68,80 @@ fun ProfileContent(
 
     val profile = viewModel.getProfile()
 
-
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.body_padding))
-            .fillMaxHeight()
-            .verticalScroll(
-                rememberScrollState()
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(dimensionResource(id = R.dimen.body_padding)),
+        contentPadding = innerPadding,
     ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        ProfileImage(
-            size = 150.dp,
-            imageUrI = R.drawable.cafe_javas
-        )
-        Spacer(modifier = Modifier.height(20.dp))
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ProfileImage(
+                    size = 100.dp,
+                    imageUrI = R.drawable.cafe_javas
+                )
+                Spacer(modifier = Modifier.width(40.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Cafe Javas",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Kampala, Uganda",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(40.dp))
+            Divider()
+            Spacer(modifier = Modifier.height(40.dp))
+        }
 
-        TextInput(
-            leadingIcon = Icons.Filled.AccountBox,
-            value = uiState.profileName,
-            onValueChanged = viewModel::onProfileNameChanged,
-            labelText = "Account Name"
-        )
+        item {
+            TextInputWithLabel(
+                value = uiState.profileName,
+                onValueChanged = viewModel::onProfileNameChanged,
+                labelText = stringResource(R.string.profile_name)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
 
-        TextInput(
-            leadingIcon = Icons.Filled.AccountBox,
-            value = uiState.profileFirstName,
-            onValueChanged = viewModel::onProfileFirstNameChanged,
-            labelText = "First Name"
-        )
+        item {
+            TextInputWithLabel(
+                value = uiState.profileFirstName,
+                onValueChanged = viewModel::onProfileFirstNameChanged,
+                labelText = stringResource(R.string.first_name)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
 
-        TextInput(
-            leadingIcon = Icons.Filled.AccountBox,
-            value = uiState.profileLastName,
-            onValueChanged = viewModel::profileLastNameChanged,
-            labelText = "Last Name"
-        )
+        item {
+            TextInputWithLabel(
+                value = uiState.profileLastName,
+                onValueChanged = viewModel::profileLastNameChanged,
+                labelText = stringResource(R.string.last_name)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
 
-        SaveProfileButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-        ) {
-            viewModel.saveProfile()
+        item {
+            ProfileButton(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                isLoading = uiState.isLoading,
+            ) {
+                viewModel.saveProfile()
+            }
         }
     }
 }

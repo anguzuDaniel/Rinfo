@@ -194,7 +194,11 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         )
     }
     composable(route = RInfoScreen.EditAccount.name) {
-        ProfileScreen()
+        ProfileScreen(
+            onBackClicked = {
+                appState.popUp()
+            }
+        )
     }
     composable(route = RInfoScreen.Favourites.name) {
         FavoriteScreen(onBackPressed = {

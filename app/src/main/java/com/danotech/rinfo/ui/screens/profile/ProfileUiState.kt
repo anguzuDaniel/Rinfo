@@ -7,5 +7,6 @@ data class ProfileUiState(
     val profileImage: String = "",
     val profileName: String = "",
     val profileFirstName: String = "",
-    val profileLastName: String = ""
+    val profileLastName: String = "",
+    val isLoading: Boolean = false,
 )

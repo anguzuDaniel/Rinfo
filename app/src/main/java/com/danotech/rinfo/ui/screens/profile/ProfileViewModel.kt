@@ -1,6 +1,8 @@
 package com.danotech.rinfo.ui.screens.profile
 
 import androidx.compose.runtime.mutableStateOf
+import com.danotech.rinfo.R
+import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.model.Profile
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
@@ -47,6 +49,8 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun saveProfile() {
+        uiState.value = uiState.value.copy(isLoading = true)
+
         launchCatching {
             val profile = Profile(
                 profileName = uiState.value.profileName,
@@ -56,9 +60,14 @@ class ProfileViewModel @Inject constructor(
             )
             if (profileService.getProfile(FirebaseAuth.getInstance().currentUser!!.email.toString()) == null) {
                 profileService.create(profile)
+                SnackbarManager.showMessage(R.string.profile_added)
             } else {
                 profileService.update(profile)
+                SnackbarManager.showMessage(R.string.profile_updated)
             }
+        }.invokeOnCompletion {
+            getProfile()
+            uiState.value = uiState.value.copy(isLoading = false)
         }
     }
 
