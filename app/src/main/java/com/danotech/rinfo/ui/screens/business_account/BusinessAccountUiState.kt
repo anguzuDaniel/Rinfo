@@ -1,9 +1,6 @@
 package com.danotech.rinfo.ui.screens.business_account
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Business
-import com.danotech.rinfo.ui.components.Review
-import com.danotech.rinfo.ui.screens.category.Category
+import com.danotech.rinfo.model.local.Category
 
 data class BusinessAccountUiState(
     val name: String = "",
@@ -11,7 +8,7 @@ data class BusinessAccountUiState(
     val address: String = "",
     val phone: String = "",
     val email: String = "",
-    val businessCategory: Category = Category("", Icons.Default.Business, 0),
+    val businessCategory: Category = Category(name = ""),
     val reviews: Int = 0,
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,

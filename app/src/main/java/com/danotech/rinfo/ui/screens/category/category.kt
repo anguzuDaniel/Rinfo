@@ -10,38 +10,36 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.data.LocalReviewProvider
+import com.danotech.rinfo.model.local.Category
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.danotech.rinfo.ui.theme.AppTheme
 
-data class Category(
-    val name: String = "",
-    val icon: ImageVector = Icons.Filled.Business,
-    val iconDrawable: Int = 0
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoreCategoriesPage(
+    viewModel: CategoryViewModel = hiltViewModel(),
+    addCategoriesToDatabase: () -> Unit = {},
     onCategoryItemClicked: () -> Unit = {},
     onBackPressed: () -> Unit = {}
 ) {
-    BackHandler() {
+    BackHandler {
         onBackPressed()
     }
 
@@ -61,7 +59,8 @@ fun MoreCategoriesPage(
         CategoriesList(
             innerPadding = innerPadding,
             categories = LocalReviewProvider.categories,
-            onCategoryItemClicked = onCategoryItemClicked
+            onCategoryItemClicked = onCategoryItemClicked,
+            onAddCategoryClick = viewModel::onAddCategoryClick
         )
     }
 }
@@ -117,14 +116,23 @@ fun SearchTextField() {
 fun CategoriesList(
     innerPadding: PaddingValues,
     onCategoryItemClicked: () -> Unit = {},
-    categories: List<Category>
+    categories: List<Category>,
+    onAddCategoryClick: () -> Unit = {}
 ) {
     LazyColumn(
         contentPadding = innerPadding,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+
+
         item {
             SearchTextField()
+        }
+
+        item {
+            Button(onClick = onAddCategoryClick) {
+                Text(text = "Add categories to database")
+            }
         }
 
         items(categories) { category ->
@@ -156,7 +164,7 @@ fun CategoriesListItem(
         )
         Spacer(modifier = Modifier.width(16.dp))
         Icon(
-            imageVector = category.icon,
+            imageVector = Icons.Filled.ArrowRight,
             contentDescription = "Right Arrow",
             tint = MaterialTheme.colorScheme.onSurface
         )
@@ -166,7 +174,7 @@ fun CategoriesListItem(
 @Preview
 @Composable
 fun MoreCategoriesPagePreview() {
-    AppTheme() {
+    AppTheme {
         MoreCategoriesPage()
     }
 }

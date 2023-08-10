@@ -101,19 +101,7 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 },
-                fab = {
-//                    FloatingActionButton(
-//                        onClick = onFabClicked,
-//                        modifier = Modifier.padding(bottom = 10.dp),
-//                        contentColor = MaterialTheme.colorScheme.onPrimary,
-//                        containerColor = MaterialTheme.colorScheme.primary
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Default.Search,
-//                            contentDescription = stringResource(id = R.string.search)
-//                        )
-//                    }
-                }
+                fab = {}
             )
         },
         floatingActionButtonPosition = FabPosition.Center,

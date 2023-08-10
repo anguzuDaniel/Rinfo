@@ -91,7 +91,7 @@ fun SearchResults(
 @Preview
 @Composable
 fun SearchPagePreview() {
-    AppTheme() {
+    AppTheme {
         SearchPage()
     }
 }

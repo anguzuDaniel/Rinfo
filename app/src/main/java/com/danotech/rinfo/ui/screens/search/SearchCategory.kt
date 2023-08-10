@@ -52,7 +52,7 @@ import com.danotech.rinfo.ui.theme.AppTheme
 fun SearchCategory(
     onBackPressed: () -> Unit = {}
 ) {
-    BackHandler() {
+    BackHandler {
         onBackPressed()
     }
 
@@ -212,7 +212,7 @@ fun BusinessCard(business: Business, modifier: Modifier) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row() {
+                Row {
                     Icon(
                         imageVector = Icons.Filled.LocationOn,
                         contentDescription = "location"
@@ -303,7 +303,7 @@ fun BusinessInLocation(
 @Preview
 @Composable
 fun SearchCategoryPreview() {
-    AppTheme() {
+    AppTheme {
         val businessList = createBusinessList()
         BusinessInLocation(businessList = businessList)
     }

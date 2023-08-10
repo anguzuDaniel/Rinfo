@@ -2,6 +2,17 @@ package com.danotech.rinfo.model
 
 import com.google.firebase.firestore.DocumentId
 
+/**
+ *  Represents a review in the Firebase document
+ *  @param id: the id of the review
+ *  @param imageUrl: the url of the image
+ *  @param avatarResource: the resource of the avatar
+ *  @param businessName: the name of the business
+ *  @param rating: the rating of the business
+ *  @param comment: the comment of the business
+ *  @return a review
+ *  @see Review
+ */
 data class Review(
     @DocumentId val id: String = "",
     // to be changed to receive url links

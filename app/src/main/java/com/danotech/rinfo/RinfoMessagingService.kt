@@ -24,7 +24,6 @@ class RinfoMessagingService : FirebaseMessagingService() {
         }
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
     private fun sendNotification(message: RemoteMessage.Notification) {
         // If you want the notifications to appear when your app is in foreground
 

@@ -41,7 +41,7 @@ fun SettingSwitch(
 @Preview(showBackground = true)
 @Composable
 fun SettingSwitchPreview() {
-    AppTheme() {
+    AppTheme {
         SettingSwitch(
             switchOn = true,
             onSwitchChanged = {},

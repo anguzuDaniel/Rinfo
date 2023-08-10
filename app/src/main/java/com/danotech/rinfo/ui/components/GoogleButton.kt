@@ -81,7 +81,7 @@ fun GoogleButton(
 @Preview(showBackground = true)
 @Composable
 fun GoogleButtonPreview() {
-    AppTheme() {
+    AppTheme {
         GoogleButton()
     }
 }

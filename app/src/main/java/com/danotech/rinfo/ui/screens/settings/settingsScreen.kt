@@ -46,13 +46,6 @@ import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 
-enum class SettingType {
-    switch,
-    redirect,
-    text,
-    button,
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -101,7 +94,7 @@ fun SettingsScreen(
         EditAccountContent(
             openAndPopUp = openAndPopUp,
             innerPadding = innerPadding,
-            settingType = SettingType.text,
+            settingType = SettingType.TEXT,
             onLogoutClicked = onLogoutClicked,
             onNavClicked = onNavClicked
         )
@@ -221,7 +214,7 @@ fun EditAccountContent(
                 name = R.string.logout,
                 icon = Icons.Rounded.FavoriteBorder,
                 iconDesc = R.string.logout,
-                settingType = SettingType.button,
+                settingType = SettingType.BUTTON,
                 onClick = {
                     settingsViewModel.onLogoutClick(openAndPopUp)
                     onLogoutClicked()
@@ -239,7 +232,7 @@ fun SettingsClickableComp(
     icon: ImageVector,
     @StringRes iconDesc: Int,
     @StringRes name: Int,
-    settingType: SettingType = SettingType.switch,
+    settingType: SettingType = SettingType.SWITCH,
     onClick: () -> Unit
 ) {
     Surface(
@@ -273,7 +266,7 @@ fun SettingsClickableComp(
                         overflow = TextOverflow.Ellipsis,
                     )
                     Spacer(modifier = Modifier.weight(1.0f))
-                    if (settingType == SettingType.switch) {
+                    if (settingType == SettingType.SWITCH) {
                         SettingSwitch(
                             switchOn = false,
                             onSwitchChanged = {},

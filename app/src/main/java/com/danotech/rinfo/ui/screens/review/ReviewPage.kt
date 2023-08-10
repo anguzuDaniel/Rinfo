@@ -96,7 +96,7 @@ fun ReviewScreen(
         },
     ) { innerPadding ->
 
-        LazyColumn() {
+        LazyColumn {
             item {
                 if (viewModel.uiState.value.isLoading) {
                     Column(

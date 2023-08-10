@@ -19,12 +19,15 @@ package com.danotech.rinfo.model.service
 import com.danotech.rinfo.model.User
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Service for managing user accounts.
+ * this interface is used by the AccountServiceImpl class
+ * @see AccountServiceImpl for implementation details
+ */
 interface AccountService {
   val currentUserId: String
   val hasUser: Boolean
-
   val currentUser: Flow<User>
-
   suspend fun authenticate(email: String, password: String)
   suspend fun sendRecoveryEmail(email: String)
   suspend fun createAnonymousAccount()

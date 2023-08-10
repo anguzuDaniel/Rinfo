@@ -5,16 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.common.SnackbarMessage.Companion.toSnackbarMessage
 import com.danotech.rinfo.model.service.LogService
-import com.danotech.rinfo.ui.RinfoAppUiState
-import com.danotech.rinfo.ui.components.Review
-import com.danotech.rinfo.ui.screens.RInfoScreen
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 open class RinfoViewModel(

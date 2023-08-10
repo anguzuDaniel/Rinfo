@@ -96,4 +96,5 @@
     <string name="last_name">Last Name</string>
     <string name="profile_added">Profile created</string>
     <string name="profile_updated">Profile updated</string>
+    <string name="category_added_successfully">Category added successfully</string>
 </resources>

@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.data.LocalReviewProvider
+import com.danotech.rinfo.model.local.Category
 import com.danotech.rinfo.ui.components.ClickableTextRow
 import com.danotech.rinfo.ui.components.EmailField
 import com.danotech.rinfo.ui.components.GoogleButton
@@ -40,7 +43,6 @@ import com.danotech.rinfo.ui.components.OrFormDiver
 import com.danotech.rinfo.ui.components.PasswordField
 import com.danotech.rinfo.ui.components.RepeatPasswordField
 import com.danotech.rinfo.ui.components.SignUpButton
-import com.danotech.rinfo.ui.screens.category.Category
 
 /**
  * Create Account page
@@ -189,7 +191,7 @@ fun SelectBusinessCategory(
                 },
                 leadingIcon = {
                     Icon(
-                        imageVector = selectedItem.icon,
+                        imageVector = Icons.Filled.Category,
                         contentDescription = stringResource(R.string.account_type_icon)
                     )
                 },
@@ -220,7 +222,7 @@ fun SelectBusinessCategory(
                         },
                         leadingIcon = {
                             Icon(
-                                imageVector = selectedOption.icon,
+                                imageVector = Icons.Filled.Category,
                                 contentDescription = selectedOption.name
                             )
                         },

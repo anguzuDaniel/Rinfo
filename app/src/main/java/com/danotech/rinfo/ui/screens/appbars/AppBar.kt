@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,7 +49,7 @@ fun RinfoTopAppBar(
                 )
             }
         } else if (isSearchPage) {
-            { Box() {} }
+            { Box {} }
         } else {
             {
                 Text(
@@ -71,7 +71,7 @@ fun RinfoTopAppBar(
                      */
                     if (showBackgroundColor) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.Filled.ArrowBackIos,
                             contentDescription = stringResource(id = R.string.back_button)
                         )
                     } else {
@@ -90,9 +90,9 @@ fun RinfoTopAppBar(
                 }
             }
         } else if (isSearchPage) {
-            { Box() {} }
+            { Box {} }
         } else {
-            { Box() {} }
+            { Box {} }
         },
         colors = if (showBackgroundColor) {
             TopAppBarDefaults.smallTopAppBarColors(

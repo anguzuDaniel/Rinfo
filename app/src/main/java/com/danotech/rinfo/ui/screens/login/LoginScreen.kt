@@ -38,11 +38,11 @@ fun LoginScreen(
 ) {
     val loginUiState = viewModel.uiState.value
 
-    BackHandler() {
+    BackHandler {
         onBackHandler()
     }
 
-    Surface() {
+    Surface {
         Column(
             modifier = modifier
                 .fillMaxSize()

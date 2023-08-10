@@ -287,7 +287,7 @@ fun BasicButton(@StringRes text: Int, modifier: Modifier, action: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun CategoryIconButtonPreview() {
-    AppTheme() {
+    AppTheme {
         CategoryIconButton(
             description = "test",
             icon = R.drawable.baseline_dining_24,
@@ -299,7 +299,7 @@ fun CategoryIconButtonPreview() {
 @Preview(showBackground = true)
 @Composable
 fun CategoryIconButtonDarkPreview() {
-    AppTheme() {
+    AppTheme {
         CategoryIconButton(
             description = "test",
             icon = R.drawable.baseline_dining_24,

@@ -32,8 +32,8 @@ import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel = hiltViewModel(),
     onBackClicked: () -> Unit,
 ) {
     BackHandler {
@@ -66,7 +66,7 @@ fun ProfileContent(
 ) {
     val uiState = viewModel.uiState.value
 
-    val profile = viewModel.getProfile()
+//    val profile = viewModel.getProfile()
 
     LazyColumn(
         modifier = modifier

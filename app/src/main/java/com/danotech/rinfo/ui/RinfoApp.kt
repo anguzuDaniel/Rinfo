@@ -219,9 +219,6 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             onBackPressed = {
                 appState.popUp()
             },
-            onFabClicked = {
-                appState.navigate(RInfoScreen.Search.name)
-            },
             onTabSelected = { screen ->
                 appState.navigate(screen.name)
             },

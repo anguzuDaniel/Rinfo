@@ -1,16 +1,14 @@
 package com.danotech.rinfo.ui.screens.business_account
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Business
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.model.BusinessDocument
+import com.danotech.rinfo.model.local.Category
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
-import com.danotech.rinfo.ui.screens.category.Category
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.map
@@ -135,6 +133,6 @@ class BusinessAccountViewModel @Inject constructor(
     }
 
     private fun getCategory(name: String): Category {
-        return Category(name, Icons.Default.Business, 0)
+        return Category(name = name)
     }
 }

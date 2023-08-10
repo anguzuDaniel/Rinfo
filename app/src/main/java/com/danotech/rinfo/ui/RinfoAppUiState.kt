@@ -6,18 +6,13 @@ import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.common.SnackbarMessage.Companion.toMessage
-import com.danotech.rinfo.data.LocalReviewProvider
-import com.danotech.rinfo.ui.components.Review
-import com.danotech.rinfo.ui.screens.RInfoScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 @Stable
 class RinfoAppUiState(
-    val isShowingBottomBar: Boolean = true,
     var isLoggedIn: Boolean = false,
-    var currentReview: Review = LocalReviewProvider.defaultReview,
     val scaffoldState: ScaffoldState,
     val navController: NavHostController,
     private val snackbarManager: SnackbarManager,
@@ -46,10 +41,6 @@ class RinfoAppUiState(
     }
 
     fun navigate(route: String) {
-        navController.navigate(route) { launchSingleTop = true }
-    }
-
-    fun navigateAndDisplayBusiness(route: String, review: Review) {
         navController.navigate(route) { launchSingleTop = true }
     }
 

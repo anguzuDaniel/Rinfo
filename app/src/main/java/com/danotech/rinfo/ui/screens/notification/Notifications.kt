@@ -11,15 +11,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.RinfoAppUiState
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
@@ -46,7 +42,6 @@ import com.danotech.rinfo.ui.theme.AppTheme
 @Composable
 fun NotificationPage(
     onBackPressed: () -> Unit = {},
-    onFabClicked: () -> Unit = {},
     onTabSelected: (RInfoScreen) -> Unit = {},
 ) {
     BackHandler {
@@ -100,10 +95,12 @@ fun NotificationPage(
 
 @Composable
 fun NotificationList(
-    innerPadding: PaddingValues, modifier: Modifier = Modifier
+    innerPadding: PaddingValues,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        contentPadding = innerPadding
+        contentPadding = innerPadding,
+        modifier = modifier
     ) {
         items(10) { index ->
             NotificationItem(index)

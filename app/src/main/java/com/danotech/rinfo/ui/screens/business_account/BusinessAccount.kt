@@ -32,7 +32,7 @@ fun BusinessAccount(
     onBackClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    BackHandler() {
+    BackHandler {
         onBackClicked()
     }
 

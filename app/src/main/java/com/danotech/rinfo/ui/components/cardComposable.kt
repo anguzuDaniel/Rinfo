@@ -57,7 +57,7 @@ fun ReviewCard(
                 contentScale = ContentScale.Crop,
             )
 
-            Column() {
+            Column {
                 Text(
                     text = business.name,
                     style = MaterialTheme.typography.titleMedium,
