@@ -7,6 +7,7 @@ import java.util.concurrent.Flow
 data class HomeScreenUiState(
     val reviews: List<Review> = emptyList(),
     val businesses: List<Business> = emptyList(),
+    val currentFilter: Boolean = false,
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
 )

@@ -2,6 +2,7 @@ package com.danotech.rinfo.ui.screens.notification
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -59,6 +60,7 @@ fun NotificationPage(
                 title = stringResource(id = R.string.notifications),
                 isShowingHomePage = false,
                 onBackButtonClicked = onBackPressed,
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
             )
         },
         bottomBar = {
@@ -69,17 +71,17 @@ fun NotificationPage(
                     modifier = Modifier.fillMaxWidth()
                 )
             }, fab = {
-                FloatingActionButton(
-                    onClick = onFabClicked,
-                    modifier = Modifier.padding(bottom = 10.dp),
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = stringResource(id = R.string.search)
-                    )
-                }
+//                FloatingActionButton(
+//                    onClick = onFabClicked,
+//                    modifier = Modifier.padding(bottom = 10.dp),
+//                    contentColor = MaterialTheme.colorScheme.onPrimary,
+//                    containerColor = MaterialTheme.colorScheme.primary
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Default.Search,
+//                        contentDescription = stringResource(id = R.string.search)
+//                    )
+//                }
             })
         },
     ) { innerPadding ->

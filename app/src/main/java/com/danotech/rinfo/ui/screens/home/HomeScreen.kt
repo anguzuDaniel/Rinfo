@@ -2,22 +2,27 @@ package com.danotech.rinfo.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,25 +34,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.BusinessDocument
 import com.danotech.rinfo.ui.components.CategoryIconButton
-import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.components.ReviewCard
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
-import com.danotech.rinfo.ui.components.SearchTextField
 import com.danotech.rinfo.ui.components.ShowOptionButton
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.danotech.rinfo.ui.theme.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,8 +58,9 @@ fun HomeScreen(
     onBackPressed: () -> Unit = {},
     onFabClicked: () -> Unit = {},
     onReviewCardClicked: (BusinessDocument) -> Unit = {},
+    onFilterClicked: () -> Unit = {},
     onCategoryClicked: () -> Unit = {},
-    onSearchInputClicked: () -> Unit = {},
+    onSearchIconClicked: () -> Unit = {},
 ) {
     BackHandler {
         onBackPressed()
@@ -78,17 +79,17 @@ fun HomeScreen(
                 onBackButtonClicked = {},
                 isSearchPage = true,
                 actions = {
-                    SearchTextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        placeholder = R.string.search_by_location_or_business_name,
-                        onSearchInputClicked = onSearchInputClicked,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                            .clip(MaterialTheme.shapes.large),
-                    )
-                }
+                    IconButton(
+                        onClick = onSearchIconClicked,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "search",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                },
+                modifier = Modifier.background(MaterialTheme.colorScheme.primary)
             )
         },
         bottomBar = {
@@ -101,17 +102,17 @@ fun HomeScreen(
                     )
                 },
                 fab = {
-                    FloatingActionButton(
-                        onClick = onFabClicked,
-                        modifier = Modifier.padding(bottom = 10.dp),
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = stringResource(id = R.string.search)
-                        )
-                    }
+//                    FloatingActionButton(
+//                        onClick = onFabClicked,
+//                        modifier = Modifier.padding(bottom = 10.dp),
+//                        contentColor = MaterialTheme.colorScheme.onPrimary,
+//                        containerColor = MaterialTheme.colorScheme.primary
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Default.Search,
+//                            contentDescription = stringResource(id = R.string.search)
+//                        )
+//                    }
                 }
             )
         },
@@ -122,6 +123,7 @@ fun HomeScreen(
             innerPadding = innerPadding,
             onReviewCardClicked = onReviewCardClicked,
             onCategoryClicked = { onCategoryClicked() },
+            onFilterClicked = onFilterClicked,
         )
     }
 }
@@ -148,6 +150,7 @@ fun HomePageContent(
     onReviewCardClicked: (BusinessDocument) -> Unit = {},
     onBackPressed: () -> Unit = {},
     onCategoryClicked: () -> Unit = {},
+    onFilterClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val reviews = viewModel.showReviews()
@@ -155,7 +158,9 @@ fun HomePageContent(
 
 
     LazyColumn(
-        modifier = modifier.padding(dimensionResource(id = R.dimen.body_padding)),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(dimensionResource(id = R.dimen.body_padding)),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = innerPadding,
@@ -167,18 +172,45 @@ fun HomePageContent(
         }
 
         item {
-            ShowOptionRow()
+            ShowOptionRow(
+                onFilterClicked = onFilterClicked
+            )
         }
 
         item {
             FilterRow()
         }
 
-        items(businessState) { business ->
-            ReviewCard(
-                business = business,
-                onReviewCardClicked = onReviewCardClicked
-            )
+        if (viewModel.uiState.value.isLoading) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .animateContentSize(
+                            animationSpec = (tween(
+                                durationMillis = 300,
+                                easing = LinearOutSlowInEasing
+                            ))
+                        ),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "Loading reviews...")
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+        } else {
+            items(businessState) { business ->
+                ReviewCard(
+                    business = business,
+                    onReviewCardClicked = onReviewCardClicked,
+                )
+            }
         }
     }
 }
@@ -266,65 +298,59 @@ fun CategoryOptionRow(
 }
 
 @Composable
-fun ShowOptionRow() {
+fun ShowOptionRow(
+    onFilterClicked: () -> Unit = {}
+) {
+
+    var clicked by remember { mutableStateOf(false) }
+
+
     Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+        horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         ShowOptionButton(
             name = R.string.all,
-            active = true,
-            onClick = {},
+            active = clicked,
             modifier = Modifier
-                .weight(1f)
+                .weight(1f),
+            onFilterClicked = {
+                clicked = !clicked
+                onFilterClicked()
+            }
         )
-
-        Spacer(modifier = Modifier.width(5.dp))
 
         ShowOptionButton(
             name = R.string.popular,
-            active = false,
-            onClick = {},
+            active = clicked,
             modifier = Modifier
-                .weight(1f)
+                .weight(1f),
+            onFilterClicked = {
+                clicked = !clicked
+                onFilterClicked()
+            }
         )
-
-        Spacer(modifier = Modifier.width(5.dp))
 
         ShowOptionButton(
             name = R.string.newest,
-            active = false,
-            onClick = {},
+            active = clicked,
             modifier = Modifier
-                .weight(1f)
+                .weight(1f),
+            onFilterClicked = {
+                clicked = !clicked
+                onFilterClicked()
+            }
         )
-
-        Spacer(modifier = Modifier.width(5.dp))
 
         ShowOptionButton(
             name = R.string.trend,
-            active = false,
-            onClick = {},
+            active = clicked,
             modifier = Modifier
-                .weight(1f)
+                .weight(1f),
+            onFilterClicked = {
+                clicked = !clicked
+                onFilterClicked()
+            }
         )
-    }
-}
-
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    AppTheme {
-        HomeScreen()
-    }
-}
-
-@Preview
-@Composable
-fun HomeScreenDarkPreview() {
-    AppTheme(
-        darkTheme = true,
-    ) {
-        HomeScreen()
     }
 }

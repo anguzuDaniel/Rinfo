@@ -34,7 +34,6 @@ fun SearchPage(
             .fillMaxSize(),
         topBar = {
             RinfoTopAppBar(
-                title = "search",
                 isShowingHomePage = false,
                 isSearchPage = true,
                 onBackButtonClicked = onBackPressed,
@@ -49,14 +48,10 @@ fun SearchPage(
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            SearchResults(results = searchResults)
-        }
+        SearchResults(
+            results = searchResults,
+            innerPadding = innerPadding
+        )
     }
 
     // Simulate search functionality here
@@ -73,14 +68,20 @@ fun SearchPage(
 @Composable
 fun SearchResults(
     results: List<String>,
+    innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize(),
+        contentPadding = innerPadding
+    ) {
         items(results.size) { index ->
             Text(
                 text = results[index],
                 modifier = modifier
                     .fillMaxWidth()
+                    .padding(20.dp)
             )
             Divider()
         }

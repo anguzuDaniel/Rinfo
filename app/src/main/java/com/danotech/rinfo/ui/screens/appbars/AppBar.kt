@@ -1,6 +1,7 @@
 package com.danotech.rinfo.ui.screens.appbars
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,12 +10,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,7 +37,7 @@ fun RinfoTopAppBar(
     actions: @Composable () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    CenterAlignedTopAppBar(
+    TopAppBar(
         title = if (!isShowingHomePage && !isSearchPage) {
             {
                 Text(
@@ -47,8 +48,15 @@ fun RinfoTopAppBar(
                     modifier = modifier
                 )
             }
+        } else if (isSearchPage) {
+            { Box() {} }
         } else {
-            { }
+            {
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
         },
         navigationIcon = if (!isShowingHomePage) {
             {
@@ -104,7 +112,14 @@ fun RinfoTopAppBar(
         actions = {
             actions()
         },
-        modifier = modifier
+        modifier = if (showBackgroundColor) {
+            modifier.border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.surface,
+            )
+        } else {
+            modifier
+        }
     )
 }
 

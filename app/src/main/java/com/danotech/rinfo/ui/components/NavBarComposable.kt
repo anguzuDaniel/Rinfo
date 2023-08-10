@@ -72,15 +72,6 @@ fun RinfoBottomNavigation(
         ) {
 
             bottomMenuItemsList.forEachIndexed { index, navigationItemContent ->
-                if (index == 2) {
-                    // add an empty space for FAB
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = {},
-                        icon = {},
-                        enabled = false
-                    )
-                }
 
                 NavigationBarItem(
                     selected = currentScreen == navigationItemContent.rinfoScreen,

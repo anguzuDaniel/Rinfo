@@ -1,7 +1,5 @@
 package com.danotech.rinfo.ui.screens.review
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.data.LocalReviewProvider
 import com.danotech.rinfo.model.BusinessDocument
@@ -10,7 +8,6 @@ import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
@@ -47,6 +44,12 @@ class ReviewPageViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Gets a business by id
+     * @param businessId The id of the business to get
+     * @return A flow of the business
+     * @throws Exception If the business could not be found
+     */
     fun getBusinessById(businessId: String): Flow<BusinessDocument?> {
         return flow {
             // Set isLoading to true

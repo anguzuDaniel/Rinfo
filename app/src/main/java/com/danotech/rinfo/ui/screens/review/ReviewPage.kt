@@ -3,7 +3,11 @@ package com.danotech.rinfo.ui.screens.review
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,14 +16,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -47,6 +56,7 @@ fun ReviewScreen(
     businessId: String = "",
     viewModel: ReviewPageViewModel = hiltViewModel(),
     onBackPressed: () -> Unit = {},
+    onSearchIconClicked: () -> Unit = {},
 ) {
     BackHandler {
         onBackPressed()
@@ -68,14 +78,51 @@ fun ReviewScreen(
                 isShowingHomePage = false,
                 showBackgroundColor = false,
                 onBackButtonClicked = onBackPressed,
+                actions = {
+                    IconButton(
+                        onClick = onSearchIconClicked,
+                        modifier = Modifier
+                            .padding(1.dp)
+                            .background(MaterialTheme.colorScheme.surface, shape = CircleShape),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Bookmark,
+                            contentDescription = "BookMark Business",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
             )
         },
     ) { innerPadding ->
+
         LazyColumn() {
             item {
-                ReviewContent(
-                    business = businessState.value ?: BusinessDocument(),
-                )
+                if (viewModel.uiState.value.isLoading) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
+                            .animateContentSize(
+                                animationSpec = (tween(
+                                    durationMillis = 300,
+                                    easing = LinearOutSlowInEasing
+                                ))
+                            ),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                } else {
+                    ReviewContent(
+                        business = businessState.value ?: BusinessDocument(),
+                    )
+                }
             }
         }
     }

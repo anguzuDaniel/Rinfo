@@ -162,7 +162,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
 
                 appState.navigate(RInfoScreen.MoreCategories.name)
             },
-            onSearchInputClicked = {
+            onSearchIconClicked = {
                 if (!appState.isLoggedIn) {
                     appState.navigate(RInfoScreen.Login.name)
                     return@HomeScreen
