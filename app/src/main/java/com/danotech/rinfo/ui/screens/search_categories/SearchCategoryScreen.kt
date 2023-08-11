@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.search
+package com.danotech.rinfo.ui.screens.search_categories
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
@@ -27,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -37,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.RatingStars
-import com.danotech.rinfo.ui.components.RinfoSearchBar
+import com.danotech.rinfo.ui.components.CategorySearchBar
 import com.danotech.rinfo.ui.screens.category.CategoryViewModel
 import com.danotech.rinfo.ui.theme.AppTheme
 
@@ -53,7 +52,6 @@ fun SearchCategory(
 
     val uiState = viewModel.uiState.value
 
-    val categories = viewModel.getAllCategories().collectAsState(initial = emptyList()).value
 
     Scaffold(
         modifier = Modifier
@@ -65,22 +63,12 @@ fun SearchCategory(
                 .padding(paddingValues = it),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            RinfoSearchBar(
+            CategorySearchBar(
                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, start = 8.dp, end = 8.dp),
-                searchInput = uiState.searchedCategory,
-                onSearchInput = viewModel::onSearchInput,
-                onSearch = viewModel::onSearch,
                 onBack = onBackPressed,
                 onClose = viewModel::onClose,
                 viewModel = viewModel,
             )
-//
-//            SearchCategoryContent(
-//                viewModel = viewModel,
-//                searchQuery = uiState.searchedCategory,
-//                onMapClicked = {},
-//                onBackPressed = onBackPressed,
-//            )
         }
     }
 }

@@ -17,6 +17,6 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE id = :id")
     fun getCategoryById(id: Int): Flow<Category>
 
-    @Query("SELECT * FROM categories WHERE name LIKE :name || '%'")
+    @Query("SELECT * FROM categories WHERE name LIKE '%' || :name || '%' ORDER BY name ASC")
     fun getCategoryByName(name: String): Flow<List<Category>>
 }

@@ -1,21 +1,15 @@
 package com.danotech.rinfo.ui.components
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,9 +39,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.danotech.rinfo.model.local.Category
+import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.screens.category.CategoriesListItem
 import com.danotech.rinfo.ui.screens.category.CategoryViewModel
 
@@ -66,8 +60,7 @@ fun SearchTextField(
     Surface(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 5.dp),
     ) {
-        BasicTextField(
-            value = searchInput,
+        BasicTextField(value = searchInput,
             onValueChange = onSearchInput,
             textStyle = MaterialTheme.typography.labelSmall,
             singleLine = true,
@@ -97,21 +90,17 @@ fun SearchTextField(
                         Text(text = "Search", style = MaterialTheme.typography.labelSmall)
                     }
                 }
-            }
-        )
+            })
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RinfoSearchBar(
+fun CategorySearchBar(
     modifier: Modifier = Modifier,
-    searchInput: String = "",
-    onSearchInput: (String) -> Unit = {},
-    onSearch: (String) -> Unit = {},
     onBack: () -> Unit = {},
     onClose: () -> Unit = {},
-    onCategoryItemClicked: () -> Unit = {},
+    navigateToCategoryPage: () -> Unit = {},
     viewModel: CategoryViewModel,
     placeholder: String = "Search categories",
 ) {
@@ -119,52 +108,48 @@ fun RinfoSearchBar(
         onBack()
     }
 
+    val uiState = viewModel.uiState.value
+
     var active by remember {
         mutableStateOf(true)
     }
 
-    val categories = viewModel.getAllCategories().collectAsState(initial = emptyList()).value
-
-    val uiState = viewModel.uiState.value
+    val categorySearchResults by viewModel.getCategoryByName().collectAsState(initial = emptyList())
 
     Scaffold(
         modifier = if (active) Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
-        else
-            modifier
-                .background(MaterialTheme.colorScheme.background),
+        else modifier.background(MaterialTheme.colorScheme.background),
     ) { innerPadding ->
-        SearchBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues = innerPadding)
-                .background(MaterialTheme.colorScheme.background),
-            query = searchInput,
-            onQueryChange = onSearchInput,
-            onSearch = onSearch,
+        SearchBar(modifier = Modifier
+            .fillMaxWidth()
+            .padding(paddingValues = innerPadding)
+            .background(MaterialTheme.colorScheme.background),
+            query = uiState.searchedCategory,
+            onQueryChange = viewModel::onSearchInput,
+            onSearch = viewModel::onSearch,
             active = active,
             onActiveChange = { active = it },
             leadingIcon = {
                 Icon(
                     modifier = Modifier.clickable { onBack() },
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = ""
+                    contentDescription = stringResource(id = R.string.back_button)
                 )
             },
             trailingIcon = {
                 if (active) {
                     Icon(
-                        modifier = Modifier
-                            .clickable {
-                                if (searchInput.isNotEmpty()) {
-                                    onClose()
-                                } else {
-                                    active = false
-                                }
-                            },
+                        modifier = Modifier.clickable {
+                            if (uiState.searchInput.isNotEmpty()) {
+                                onClose()
+                            } else {
+                                active = false
+                            }
+                        },
                         imageVector = Icons.Filled.Close,
-                        contentDescription = ""
+                        contentDescription = stringResource(R.string.close)
                     )
                 }
             },
@@ -173,44 +158,17 @@ fun RinfoSearchBar(
             ),
             placeholder = {
                 Text(
-                    text = placeholder,
-                    style = MaterialTheme.typography.labelSmall
+                    text = placeholder, style = MaterialTheme.typography.labelSmall
                 )
-            }
-        ) {
+            }) {
             LazyColumn {
-                if (searchInput.isEmpty()) {
-                    items(categories) { category ->
-                        CategoriesListItem(
-                            category = category,
-                            onCategoryItemClicked = onCategoryItemClicked
-                        )
-                    }
-                } else {
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 16.dp, vertical = 12.dp)
-                                .animateContentSize(
-                                    animationSpec = (tween(
-                                        durationMillis = 300,
-                                        easing = LinearOutSlowInEasing
-                                    ))
-                                ),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                    }
+                items(categorySearchResults, key = { cat -> cat.id }) { category ->
+                    CategoriesListItem(
+                        category = category,
+                        onCategoryItemClicked = navigateToCategoryPage
+                    )
                 }
             }
-
         }
     }
 }

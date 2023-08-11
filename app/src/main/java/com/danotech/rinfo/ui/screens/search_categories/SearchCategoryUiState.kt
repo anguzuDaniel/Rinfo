@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.search
+package com.danotech.rinfo.ui.screens.search_categories
 
 import com.danotech.rinfo.model.local.Category
 

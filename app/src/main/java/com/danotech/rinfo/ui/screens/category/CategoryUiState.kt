@@ -7,6 +7,6 @@ data class CategoryUiState(
     val category: String = "",
     var searchInput: String = "",
     val isLoading: Boolean = false,
-    val searchedCategory: String = "",
+    var searchedCategory: String = "",
     val isLoggedIn: Boolean = false,
 )

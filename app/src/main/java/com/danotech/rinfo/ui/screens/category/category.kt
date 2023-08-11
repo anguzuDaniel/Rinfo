@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.model.local.Category
-import com.danotech.rinfo.ui.components.RinfoSearchBar
+import com.danotech.rinfo.ui.components.CategorySearchBar
 import com.danotech.rinfo.ui.theme.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -36,28 +36,16 @@ fun MoreCategoriesPage(
 
     val uiState = viewModel.uiState.value
 
-    val categories = viewModel.getAllCategories().collectAsState(initial = emptyList()).value
-
     Scaffold {
         Column(
             modifier = Modifier,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            RinfoSearchBar(
+            CategorySearchBar(
                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, start = 8.dp, end = 8.dp),
-                searchInput = uiState.searchedCategory,
-                onSearchInput = viewModel::onSearchInput,
-                onSearch = viewModel::onSearch,
                 onBack = onBackPressed,
                 onClose = viewModel::onClose,
                 viewModel = viewModel,
-            )
-
-            CategoriesList(
-                onCategoryItemClicked = onCategoryItemClicked,
-                onAddCategoryClick = viewModel::onAddCategoryClick,
-                viewModel = viewModel,
-                contentPadding = it,
             )
         }
     }
@@ -70,10 +58,9 @@ fun CategoriesList(
     onCategoryItemClicked: () -> Unit = {},
     onAddCategoryClick: () -> Unit = {},
     viewModel: CategoryViewModel,
-    onCategorySearch: (String) -> Unit = {}
+    onCategorySearch: (String) -> Unit = {},
+    categories: List<Category> = emptyList(),
 ) {
-    val categories = viewModel.getAllCategories().collectAsState(initial = emptyList()).value
-
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = contentPadding
@@ -119,7 +106,7 @@ fun CategoriesListItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 5.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { onCategoryItemClicked() },
         verticalAlignment = Alignment.CenterVertically
     ) {

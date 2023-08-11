@@ -1,6 +1,7 @@
 package com.danotech.rinfo.ui.screens.category
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.data.LocalOfflineDatabase
@@ -9,11 +10,11 @@ import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -24,6 +25,32 @@ class CategoryViewModel @Inject constructor(
     logService: LogService
 ) : RinfoViewModel(logService) {
     val uiState = mutableStateOf(CategoryUiState())
+
+    val categoriesSearched: StateFlow<CategoryUiState> = localOfflineDatabase
+        .categoryDao()
+        .getCategoryByName(uiState.value.searchedCategory)
+        .filterNotNull()
+        .map {
+            CategoryUiState(categories = it)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = CategoryUiState()
+        )
+
+    val allCategories: StateFlow<CategoryUiState> = localOfflineDatabase
+        .categoryDao()
+        .getAllCategories()
+        .filterNotNull()
+        .map {
+            CategoryUiState(categories = it)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = CategoryUiState()
+        )
 
     init {
         initializeUIState()
@@ -119,56 +146,25 @@ class CategoryViewModel @Inject constructor(
         }
     }
 
-    fun getAllCategories(): Flow<List<Category>> {
-        var categories: List<Category>
+    fun getAllCategories() = localOfflineDatabase.categoryDao().getAllCategories()
 
-        return flow {
-            if (uiState.value.searchInput == "") {
-                uiState.value = uiState.value.copy(isLoading = true)
-
-                categories = localOfflineDatabase.categoryDao().getAllCategories().first()
-                emit(categories)
-
-                uiState.value = uiState.value.copy(categories = categories, isLoading = false)
-            } else {
-                uiState.value = uiState.value.copy(isLoading = true)
-
-                categories =
-                    localOfflineDatabase.categoryDao().getCategoryByName(uiState.value.searchInput)
-                        .first()
-                emit(categories)
-
-                uiState.value = uiState.value.copy(categories = categories, isLoading = false)
-            }
-        }
-    }
-
-    fun onCategoryItemClicked(searchQuery: String) {
-        flow {
-            uiState.value = uiState.value.copy(isLoading = true)
-
-            val categories =
-                localOfflineDatabase.categoryDao().getCategoryByName(searchQuery).first()
-            emit(categories)
-
-            uiState.value = uiState.value.copy(categories = categories)
-        }.onStart {
-            uiState.value = uiState.value.copy(isLoading = true)
-        }.onCompletion {
-            uiState.value = uiState.value.copy(isLoading = false)
-        }
-    }
+    fun getCategoryByName() =
+        localOfflineDatabase.categoryDao().getCategoryByName(uiState.value.searchedCategory)
 
     fun onSearchInput(newValue: String) {
         uiState.value = uiState.value.copy(searchedCategory = newValue)
     }
 
-    fun onSearch(Search: String) {
-        uiState.value = uiState.value.copy(isLoading = true)
+    fun onSearch(searchQuery: String) {
+        uiState.value = uiState.value.copy(searchedCategory = searchQuery)
     }
 
     fun onClose() {
         uiState.value = uiState.value.copy(searchedCategory = "")
+    }
+
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
     }
 }
 

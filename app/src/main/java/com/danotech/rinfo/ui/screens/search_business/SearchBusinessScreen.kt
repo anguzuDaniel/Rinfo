@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.search
+package com.danotech.rinfo.ui.screens.search_business
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
@@ -6,21 +6,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.components.SearchTextField
-import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.danotech.rinfo.ui.theme.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchPage(
-    onBackPressed: () -> Unit = {}
+    onBackPressed: () -> Unit = {},
+    viewModel: SearchBusinessViewModel = hiltViewModel()
 ) {
     BackHandler {
         onBackPressed()
@@ -29,29 +26,21 @@ fun SearchPage(
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
     var searchResults by remember { mutableStateOf(emptyList<String>()) }
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
-        topBar = {
-            RinfoTopAppBar(
-                isShowingHomePage = false,
-                isSearchPage = true,
-                onBackButtonClicked = onBackPressed,
-                actions = {
-                    SearchTextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        placeholder = R.string.search_by_location_or_business_name,
-                        modifier = Modifier,
-                    )
-                }
+    val uiState = viewModel.uiState.value
+
+    val businesses by viewModel.onSearchInput().collectAsState(initial = emptyList())
+
+    Scaffold {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            BusinessSearchBar(
+                viewModel = viewModel,
+                placeholder = stringResource(R.string.search_for_a_business),
             )
-        },
-    ) { innerPadding ->
-        SearchResults(
-            results = searchResults,
-            innerPadding = innerPadding
-        )
+        }
     }
 
     // Simulate search functionality here
@@ -87,23 +76,4 @@ fun SearchResults(
         }
     }
 }
-
-@Preview
-@Composable
-fun SearchPagePreview() {
-    AppTheme {
-        SearchPage()
-    }
-}
-
-@Preview
-@Composable
-fun SearchPageDarkPreview() {
-    AppTheme(
-        darkTheme = true
-    ) {
-        SearchPage()
-    }
-}
-
 

@@ -31,6 +31,15 @@ constructor(
         return fireStore.collection(BUSINESS_COLLECTION).limit(number.toLong()).dataObjects()
     }
 
+    override suspend fun getBusinessByCategory(category: String): Flow<List<BusinessDocument>> {
+        return fireStore.collection(BUSINESS_COLLECTION).whereEqualTo(CATEGORY_FIELD, category)
+            .dataObjects()
+    }
+
+    override fun getBusinessWhereLike(name: String): Flow<List<BusinessDocument>> {
+        return fireStore.collection(BUSINESS_COLLECTION).whereEqualTo("name", name).dataObjects()
+    }
+
     override suspend fun getBusinessById(businessId: String): BusinessDocument? {
         val documentSnapshot =
             fireStore.collection(BUSINESS_COLLECTION).document(businessId).get().await()
@@ -39,6 +48,10 @@ constructor(
         } else {
             null
         }
+    }
+
+    override suspend fun getBusinessByOwner(owner: String): Flow<List<BusinessDocument>> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun create(businessDocument: BusinessDocument): String =
@@ -61,6 +74,7 @@ constructor(
     }
 
     companion object {
+        private const val CATEGORY_FIELD = "category"
         private const val USER_ID_FIELD = "userId"
         private const val BUSINESS_COLLECTION = "businessAccount"
         private const val SAVE_BUSINESS_TRACE = "saveBusinessAccount"

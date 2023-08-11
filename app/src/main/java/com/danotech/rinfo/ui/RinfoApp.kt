@@ -43,8 +43,8 @@ import com.danotech.rinfo.ui.screens.login.LoginScreen
 import com.danotech.rinfo.ui.screens.notification.NotificationPage
 import com.danotech.rinfo.ui.screens.profile.ProfileScreen
 import com.danotech.rinfo.ui.screens.review.ReviewScreen
-import com.danotech.rinfo.ui.screens.search.SearchCategory
-import com.danotech.rinfo.ui.screens.search.SearchPage
+import com.danotech.rinfo.ui.screens.search_categories.SearchCategory
+import com.danotech.rinfo.ui.screens.search_business.SearchPage
 import com.danotech.rinfo.ui.screens.settings.SettingsScreen
 import com.danotech.rinfo.ui.theme.AppTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi

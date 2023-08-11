@@ -1,6 +1,7 @@
-package com.danotech.rinfo.ui.screens.search
+package com.danotech.rinfo.ui.screens.search_categories
 
 import androidx.compose.runtime.mutableStateOf
+import com.danotech.rinfo.data.CategoryDao
 import com.danotech.rinfo.data.LocalOfflineDatabase
 import com.danotech.rinfo.model.local.Category
 import com.danotech.rinfo.model.service.LogService
@@ -31,6 +32,9 @@ class SearchCategoryViewModel @Inject constructor(
     fun onSearchInput(newValue: String) {
         uiState.value = uiState.value.copy(searchedCategory = newValue)
     }
+
+    fun getCategories() =
+        localOfflineDatabase.categoryDao().getCategoryByName(uiState.value.searchedCategory)
 
     fun onSearch(Search: String) {
         flow {

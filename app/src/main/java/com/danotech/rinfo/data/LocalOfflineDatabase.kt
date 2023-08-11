@@ -6,9 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.danotech.rinfo.model.local.Category
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 
 @Database(entities = [Category::class], version = 1, exportSchema = false)
 abstract class LocalOfflineDatabase : RoomDatabase() {
+
     abstract fun categoryDao(): CategoryDao
 
     companion object {
