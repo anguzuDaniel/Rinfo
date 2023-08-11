@@ -19,7 +19,7 @@ abstract class LocalOfflineDatabase : RoomDatabase() {
             return instance ?: synchronized(this) {
                 Room.databaseBuilder(context, LocalOfflineDatabase::class.java, "app_database")
                     .createFromAsset("database/offline.db")
-                    .fallbackToDestructiveMigration()
+//                    .fallbackToDestructiveMigration()
                     .build()
                     .also { instance = it }
             }

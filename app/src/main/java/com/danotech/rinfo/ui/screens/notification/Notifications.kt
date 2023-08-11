@@ -115,8 +115,8 @@ fun NotificationItem(index: Int) {
     ListItem(modifier = Modifier
         .fillMaxWidth()
         .clickable(onClick = { }),
-        headlineText = { Text("Notification $index") },
-        supportingText = { Text("This is a sample notification message.") },
+        headlineContent = { Text("Notification $index") },
+        supportingContent = { Text("This is a sample notification message.") },
         trailingContent = {
             Icon(
                 imageVector = Icons.Default.Favorite, contentDescription = null, tint = Color.Red

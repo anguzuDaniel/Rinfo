@@ -22,87 +22,82 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.RatingStars
-import com.danotech.rinfo.ui.components.SearchTextField
-import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
+import com.danotech.rinfo.ui.components.RinfoSearchBar
+import com.danotech.rinfo.ui.screens.category.CategoryViewModel
 import com.danotech.rinfo.ui.theme.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchCategory(
+    viewModel: CategoryViewModel = hiltViewModel(),
     onBackPressed: () -> Unit = {}
 ) {
     BackHandler {
         onBackPressed()
     }
 
-    var searchQuery by remember { mutableStateOf(TextFieldValue()) }
-    var searchResults by remember { mutableStateOf(emptyList<String>()) }
+    val uiState = viewModel.uiState.value
+
+    val categories = viewModel.getAllCategories().collectAsState(initial = emptyList()).value
 
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
-        topBar = {
-            RinfoTopAppBar(
-                title = "search",
-                isShowingHomePage = false,
-                isSearchPage = true,
-                onBackButtonClicked = {
-                    onBackPressed()
-                },
-                actions = {
-                    SearchTextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        placeholder = R.string.search,
-                        modifier = Modifier
-                    )
-                }
-            )
-        },
-    ) { innerPadding ->
+    ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues = it),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            SearchCategoryContent(
-                innerPadding = innerPadding
+            RinfoSearchBar(
+                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, start = 8.dp, end = 8.dp),
+                searchInput = uiState.searchedCategory,
+                onSearchInput = viewModel::onSearchInput,
+                onSearch = viewModel::onSearch,
+                onBack = onBackPressed,
+                onClose = viewModel::onClose,
+                viewModel = viewModel,
             )
+//
+//            SearchCategoryContent(
+//                viewModel = viewModel,
+//                searchQuery = uiState.searchedCategory,
+//                onMapClicked = {},
+//                onBackPressed = onBackPressed,
+//            )
         }
     }
 }
 
 @Composable
 fun SearchCategoryContent(
-    innerPadding: PaddingValues,
+    viewModel: SearchCategoryViewModel,
     searchQuery: String = "",
     modifier: Modifier = Modifier,
-    onMapClicked: () -> Unit = {}
+    onMapClicked: () -> Unit = {},
+    onBackPressed: () -> Unit = {},
 ) {
+    val uiState = viewModel.uiState.value
+
     LazyColumn(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface),
-        contentPadding = innerPadding
     ) {
         item {
             MapDisplay(mapUrl = "", onMapClicked = {})
@@ -114,7 +109,6 @@ fun SearchCategoryContent(
                 businessList = businessList
             )
         }
-
     }
 }
 
@@ -129,7 +123,7 @@ fun MapDisplay(
             .fillMaxWidth()
             .size(400.dp)
             .clickable(onClick = onMapClicked)
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
 
     }
