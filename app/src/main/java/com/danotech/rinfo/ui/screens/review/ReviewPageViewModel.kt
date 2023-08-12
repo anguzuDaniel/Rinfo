@@ -2,7 +2,7 @@ package com.danotech.rinfo.ui.screens.review
 
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.data.LocalReviewProvider
-import com.danotech.rinfo.model.BusinessDocument
+import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
@@ -50,7 +50,7 @@ class ReviewPageViewModel @Inject constructor(
      * @return A flow of the business
      * @throws Exception If the business could not be found
      */
-    fun getBusinessById(businessId: String): Flow<BusinessDocument?> {
+    fun getBusinessById(businessId: String): Flow<Business?> {
         return flow {
             // Set isLoading to true
             uiState.value = uiState.value.copy(isLoading = true)

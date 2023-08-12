@@ -17,12 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
-import com.danotech.rinfo.model.BusinessDocument
+import com.danotech.rinfo.model.Business
 
 
 @Composable
 fun BusinessListItem(
-    business: BusinessDocument,
+    business: Business,
     onCategoryItemClicked: () -> Unit
 ) {
     Row(

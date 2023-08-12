@@ -5,12 +5,14 @@ import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.ConfigurationService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.model.service.ProfileService
+import com.danotech.rinfo.model.service.ReviewService
 import com.danotech.rinfo.model.service.StorageService
 import com.danotech.rinfo.model.service.impl.AccountServiceImpl
 import com.danotech.rinfo.model.service.impl.BusinessAccountServiceImpl
 import com.danotech.rinfo.model.service.impl.ConfigurationServiceImpl
 import com.danotech.rinfo.model.service.impl.LogServiceImpl
 import com.danotech.rinfo.model.service.impl.ProfileServiceImpl
+import com.danotech.rinfo.model.service.impl.ReviewServiceImpl
 import com.danotech.rinfo.model.service.impl.StorageServiceImpl
 import dagger.Binds
 import dagger.Module
@@ -37,4 +39,7 @@ abstract class ServiceModule {
 
     @Binds
     abstract fun provideBusinessAccountService(impl: BusinessAccountServiceImpl): BusinessAccountService
+
+    @Binds
+    abstract fun provideReviewService(impl: ReviewServiceImpl): ReviewService
 }

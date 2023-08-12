@@ -21,7 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
-import com.danotech.rinfo.model.BusinessDocument
+import com.danotech.rinfo.model.Business
 
 /**
  * Review card
@@ -32,9 +32,9 @@ import com.danotech.rinfo.model.BusinessDocument
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewCard(
-    business: BusinessDocument,
+    business: Business,
     modifier: Modifier = Modifier,
-    onReviewCardClicked: (BusinessDocument) -> Unit = {}
+    onReviewCardClicked: (Business) -> Unit = {}
 ) {
     Card(
         shape = MaterialTheme.shapes.small,

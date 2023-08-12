@@ -1,6 +1,6 @@
 package com.danotech.rinfo.model.service.impl
 
-import com.danotech.rinfo.model.BusinessDocument
+import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.trace
@@ -20,52 +20,52 @@ constructor(
     private val auth: AccountService
 ) : BusinessAccountService {
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val currentUserBusinessAccount: Flow<List<BusinessDocument>>
+    override val currentUserBusinessAccount: Flow<List<Business>>
         get() =
             auth.currentUser.flatMapLatest { user ->
                 fireStore.collection(BUSINESS_COLLECTION).whereEqualTo(USER_ID_FIELD, user.id)
                     .dataObjects()
             }
 
-    override suspend fun getAllBusiness(number: Int): Flow<List<BusinessDocument>> {
+    override suspend fun getAllBusiness(number: Int): Flow<List<Business>> {
         return fireStore.collection(BUSINESS_COLLECTION).limit(number.toLong()).dataObjects()
     }
 
-    override suspend fun getBusinessByCategory(category: String): Flow<List<BusinessDocument>> {
+    override suspend fun getBusinessByCategory(category: String): Flow<List<Business>> {
         return fireStore.collection(BUSINESS_COLLECTION).whereEqualTo(CATEGORY_FIELD, category)
             .dataObjects()
     }
 
-    override suspend fun getBusinessWhereLike(name: String): Flow<List<BusinessDocument>> {
+    override suspend fun getBusinessWhereLike(name: String): Flow<List<Business>> {
         return fireStore.collection(BUSINESS_COLLECTION).whereEqualTo("name", name).dataObjects()
     }
 
-    override suspend fun getBusinessById(businessId: String): BusinessDocument? {
+    override suspend fun getBusinessById(businessId: String): Business? {
         val documentSnapshot =
             fireStore.collection(BUSINESS_COLLECTION).document(businessId).get().await()
         return if (documentSnapshot.exists()) {
-            documentSnapshot.toObject(BusinessDocument::class.java)
+            documentSnapshot.toObject(Business::class.java)
         } else {
             null
         }
     }
 
-    override suspend fun getBusinessByOwner(owner: String): Flow<List<BusinessDocument>> {
+    override suspend fun getBusinessByOwner(owner: String): Flow<List<Business>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun create(businessDocument: BusinessDocument): String =
+    override suspend fun create(business: Business): String =
         trace(SAVE_BUSINESS_TRACE) {
             val businessWithUserId =
-                businessDocument.copy(id = FirebaseAuth.getInstance().currentUser!!.email.toString())
+                business.copy(id = FirebaseAuth.getInstance().currentUser!!.email.toString())
             fireStore.collection(BUSINESS_COLLECTION).document(businessWithUserId.id)
                 .set(businessWithUserId).await().toString()
         }
 
-    override suspend fun update(businessDocument: BusinessDocument): Unit =
+    override suspend fun update(business: Business): Unit =
         trace(UPDATE_BUSINESS_TRACE) {
-            val businessId = businessDocument.id
-            fireStore.collection(BUSINESS_COLLECTION).document(businessId).set(businessDocument)
+            val businessId = business.id
+            fireStore.collection(BUSINESS_COLLECTION).document(businessId).set(business)
                 .await()
         }
 

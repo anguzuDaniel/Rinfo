@@ -3,7 +3,7 @@ package com.danotech.rinfo.ui.screens.home
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.RinfoViewModel
 import com.danotech.rinfo.data.LocalReviewProvider
-import com.danotech.rinfo.model.BusinessDocument
+import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
@@ -28,7 +28,7 @@ class HomesScreenViewModel @Inject constructor(
 ) : RinfoViewModel(logService) {
     val uiState = mutableStateOf(HomeScreenUiState())
 
-    val businessFlow: Flow<List<BusinessDocument>> = flow {
+    val businessFlow: Flow<List<Business>> = flow {
         uiState.value = uiState.value.copy(isLoading = true)
 
         val businesses = businessAccountService.getAllBusiness(5).first()

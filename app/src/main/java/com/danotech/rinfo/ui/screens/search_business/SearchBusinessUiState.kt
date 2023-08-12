@@ -1,6 +1,6 @@
 package com.danotech.rinfo.ui.screens.search_business
 
-import com.danotech.rinfo.model.BusinessDocument
+import com.danotech.rinfo.model.Business
 
 /**
  * Represents the state in which the [SearchBusinessScreen] can be
@@ -16,6 +16,6 @@ import com.danotech.rinfo.model.BusinessDocument
 data class SearchBusinessUiState(
     var query: String = "",
     val isLoading: Boolean = false,
-    val businesses: List<BusinessDocument> = emptyList(),
+    val businesses: List<Business> = emptyList(),
     val error: String = ""
 )

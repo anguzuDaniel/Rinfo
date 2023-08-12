@@ -15,11 +15,11 @@ import com.google.firebase.firestore.DocumentId
  * @param businessCategory: the category of the business
  * @param reviews: the number of reviews of the business
  * @return a business
- * @see BusinessDocument
+ * @see Business
  * @see Category
  * @see DocumentId
  */
-data class BusinessDocument(
+data class Business(
     @DocumentId val id: String = "",
     val userId: String = "",
     val name: String = "",

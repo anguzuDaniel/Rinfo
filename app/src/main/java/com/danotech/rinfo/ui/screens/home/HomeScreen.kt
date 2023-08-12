@@ -40,7 +40,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
-import com.danotech.rinfo.model.BusinessDocument
+import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.components.CategoryIconButton
 import com.danotech.rinfo.ui.components.ReviewCard
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
@@ -57,7 +57,7 @@ fun HomeScreen(
     onTabSelected: (RInfoScreen) -> Unit = {},
     onBackPressed: () -> Unit = {},
     onFabClicked: () -> Unit = {},
-    onReviewCardClicked: (BusinessDocument) -> Unit = {},
+    onReviewCardClicked: (Business) -> Unit = {},
     onFilterClicked: () -> Unit = {},
     onCategoryClicked: () -> Unit = {},
     onSearchIconClicked: () -> Unit = {},
@@ -135,7 +135,7 @@ fun HomeScreen(
 fun HomePageContent(
     viewModel: HomesScreenViewModel,
     innerPadding: PaddingValues,
-    onReviewCardClicked: (BusinessDocument) -> Unit = {},
+    onReviewCardClicked: (Business) -> Unit = {},
     onBackPressed: () -> Unit = {},
     onCategoryClicked: () -> Unit = {},
     onFilterClicked: () -> Unit = {},

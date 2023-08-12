@@ -31,7 +31,7 @@ import androidx.navigation.navArgument
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.common.composable.PermissionDialog
 import com.danotech.rinfo.common.composable.RationaleDialog
-import com.danotech.rinfo.model.BusinessDocument
+import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
@@ -138,7 +138,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             onBackPressed = {
                 appState.popUp()
             },
-            onReviewCardClicked = { business: BusinessDocument ->
+            onReviewCardClicked = { business: Business ->
                 if (!appState.isLoggedIn) {
                     appState.navigate(RInfoScreen.Login.name)
                     return@HomeScreen

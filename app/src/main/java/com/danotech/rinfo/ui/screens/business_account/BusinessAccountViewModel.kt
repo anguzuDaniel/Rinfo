@@ -3,7 +3,7 @@ package com.danotech.rinfo.ui.screens.business_account
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
-import com.danotech.rinfo.model.BusinessDocument
+import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.local.Category
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.BusinessAccountService
@@ -109,7 +109,7 @@ class BusinessAccountViewModel @Inject constructor(
         launchCatching {
             val updateUiState = uiState.value
 
-            val business = BusinessDocument(
+            val business = Business(
                 userId = FirebaseAuth.getInstance().currentUser!!.email.toString(),
                 name = updateUiState.name,
                 email = updateUiState.email,

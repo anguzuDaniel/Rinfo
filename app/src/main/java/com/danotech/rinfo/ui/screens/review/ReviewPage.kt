@@ -44,7 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
-import com.danotech.rinfo.model.BusinessDocument
+import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.components.RatingStars
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import kotlinx.coroutines.flow.Flow
@@ -62,7 +62,7 @@ fun ReviewScreen(
         onBackPressed()
     }
 
-    val businessState: State<BusinessDocument?> =
+    val businessState: State<Business?> =
         viewModel.getBusinessById(businessId = businessId).collectAsState(
             initial = null
         )
@@ -120,7 +120,7 @@ fun ReviewScreen(
                     }
                 } else {
                     ReviewContent(
-                        business = businessState.value ?: BusinessDocument(),
+                        business = businessState.value ?: Business(),
                     )
                 }
             }
@@ -129,7 +129,7 @@ fun ReviewScreen(
 }
 
 @Composable
-fun CollectBusinessState(businessFlow: Flow<BusinessDocument?>): State<BusinessDocument?> {
+fun CollectBusinessState(businessFlow: Flow<Business?>): State<Business?> {
     // Collect the flow and convert it into a Compose State
     return businessFlow.collectAsState(initial = null)
 }
@@ -137,7 +137,7 @@ fun CollectBusinessState(businessFlow: Flow<BusinessDocument?>): State<BusinessD
 @Composable
 fun ReviewContent(
     modifier: Modifier = Modifier,
-    business: BusinessDocument = BusinessDocument()
+    business: Business = Business()
 ) {
     Column(
         modifier = modifier.fillMaxSize()

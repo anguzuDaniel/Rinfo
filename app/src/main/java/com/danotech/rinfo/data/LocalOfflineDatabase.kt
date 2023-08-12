@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Database(entities = [Category::class], version = 1, exportSchema = false)
 abstract class LocalOfflineDatabase : RoomDatabase() {
-
     abstract fun categoryDao(): CategoryDao
 
     companion object {
