@@ -36,14 +36,14 @@ import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
 import com.danotech.rinfo.ui.screens.business_account.BusinessAccount
-import com.danotech.rinfo.ui.screens.category.MoreCategoriesPage
+import com.danotech.rinfo.ui.screens.category.CategoryScreen
 import com.danotech.rinfo.ui.screens.favorites.FavoriteScreen
 import com.danotech.rinfo.ui.screens.home.HomeScreen
 import com.danotech.rinfo.ui.screens.login.LoginScreen
 import com.danotech.rinfo.ui.screens.notification.NotificationPage
 import com.danotech.rinfo.ui.screens.profile.ProfileScreen
 import com.danotech.rinfo.ui.screens.review.ReviewScreen
-import com.danotech.rinfo.ui.screens.search_categories.SearchCategory
+import com.danotech.rinfo.ui.screens.selected_category.SelectedCategoryScreen
 import com.danotech.rinfo.ui.screens.search_business.SearchPage
 import com.danotech.rinfo.ui.screens.settings.SettingsScreen
 import com.danotech.rinfo.ui.theme.AppTheme
@@ -160,7 +160,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                     return@HomeScreen
                 }
 
-                appState.navigate(RInfoScreen.MoreCategories.name)
+                appState.navigate(RInfoScreen.Categories.name)
             },
             onSearchIconClicked = {
                 if (!appState.isLoggedIn) {
@@ -253,15 +253,15 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             },
         )
     }
-    composable(route = RInfoScreen.MoreCategories.name) {
-        MoreCategoriesPage(onBackPressed = {
+    composable(route = RInfoScreen.Categories.name) {
+        CategoryScreen(onBackPressed = {
             appState.popUp()
         }, onCategoryItemClicked = {
-            appState.navigate(RInfoScreen.Category.name)
+            appState.navigate(RInfoScreen.SelectedCategory.name)
         })
     }
-    composable(route = RInfoScreen.Category.name) {
-        SearchCategory(onBackPressed = {
+    composable(route = RInfoScreen.SelectedCategory.name) {
+        SelectedCategoryScreen(onBackPressed = {
             appState.popUp()
         })
     }

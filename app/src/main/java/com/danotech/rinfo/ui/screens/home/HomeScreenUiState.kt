@@ -1,7 +1,7 @@
 package com.danotech.rinfo.ui.screens.home
 
 import com.danotech.rinfo.ui.components.Review
-import com.danotech.rinfo.ui.screens.search_categories.Business
+import com.danotech.rinfo.ui.screens.selected_category.Business
 
 data class HomeScreenUiState(
     val reviews: List<Review> = emptyList(),

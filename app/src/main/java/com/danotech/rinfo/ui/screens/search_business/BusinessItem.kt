@@ -14,7 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.danotech.rinfo.R
 import com.danotech.rinfo.model.BusinessDocument
 
 
@@ -39,7 +41,7 @@ fun BusinessListItem(
         Spacer(modifier = Modifier.width(16.dp))
         Icon(
             imageVector = Icons.Filled.ArrowRight,
-            contentDescription = "Right Arrow",
+            contentDescription = stringResource(R.string.right_arrow),
             tint = MaterialTheme.colorScheme.onSurface
         )
     }

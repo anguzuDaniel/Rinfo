@@ -24,7 +24,7 @@ import com.danotech.rinfo.ui.theme.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MoreCategoriesPage(
+fun CategoryScreen(
     viewModel: CategoryViewModel = hiltViewModel(),
     addCategoriesToDatabase: () -> Unit = {},
     onCategoryItemClicked: () -> Unit = {},
@@ -45,6 +45,7 @@ fun MoreCategoriesPage(
                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, start = 8.dp, end = 8.dp),
                 onBack = onBackPressed,
                 onClose = viewModel::onClose,
+                navigateToCategoryPage = onCategoryItemClicked,
                 viewModel = viewModel,
             )
         }
@@ -129,7 +130,7 @@ fun CategoriesListItem(
 @Composable
 fun MoreCategoriesPagePreview() {
     AppTheme {
-        MoreCategoriesPage()
+        CategoryScreen()
     }
 }
 
@@ -139,6 +140,6 @@ fun MoreCategoriesPageDarkPreview() {
     AppTheme(
         darkTheme = true
     ) {
-        MoreCategoriesPage()
+        CategoryScreen()
     }
 }

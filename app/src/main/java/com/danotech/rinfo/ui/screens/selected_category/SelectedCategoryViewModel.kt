@@ -1,7 +1,6 @@
-package com.danotech.rinfo.ui.screens.search_categories
+package com.danotech.rinfo.ui.screens.selected_category
 
 import androidx.compose.runtime.mutableStateOf
-import com.danotech.rinfo.data.CategoryDao
 import com.danotech.rinfo.data.LocalOfflineDatabase
 import com.danotech.rinfo.model.local.Category
 import com.danotech.rinfo.model.service.LogService
@@ -15,18 +14,18 @@ import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchCategoryViewModel @Inject constructor(
+class SelectedCategoryViewModel @Inject constructor(
     private val localOfflineDatabase: LocalOfflineDatabase,
     logService: LogService
 ) : RinfoViewModel(logService) {
-    val uiState = mutableStateOf(SearchCategoryUiState())
+    val uiState = mutableStateOf(SelectedCategoryUiState())
 
     init {
         initializeUIState()
     }
 
     private fun initializeUIState() {
-        uiState.value = SearchCategoryUiState()
+        uiState.value = SelectedCategoryUiState()
     }
 
     fun onSearchInput(newValue: String) {

@@ -36,7 +36,7 @@ constructor(
             .dataObjects()
     }
 
-    override fun getBusinessWhereLike(name: String): Flow<List<BusinessDocument>> {
+    override suspend fun getBusinessWhereLike(name: String): Flow<List<BusinessDocument>> {
         return fireStore.collection(BUSINESS_COLLECTION).whereEqualTo("name", name).dataObjects()
     }
 

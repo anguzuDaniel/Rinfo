@@ -7,11 +7,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.danotech.rinfo.R
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -28,8 +26,6 @@ fun SearchPage(
 
     val uiState = viewModel.uiState.value
 
-    val businesses by viewModel.onSearchInput().collectAsState(initial = emptyList())
-
     Scaffold {
         Column(
             modifier = Modifier
@@ -38,7 +34,7 @@ fun SearchPage(
         ) {
             BusinessSearchBar(
                 viewModel = viewModel,
-                placeholder = stringResource(R.string.search_for_a_business),
+                onBack = onBackPressed,
             )
         }
     }

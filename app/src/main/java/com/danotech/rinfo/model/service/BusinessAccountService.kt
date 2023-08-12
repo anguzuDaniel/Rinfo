@@ -5,10 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface BusinessAccountService {
     val currentUserBusinessAccount: Flow<List<BusinessDocument>>
-
     suspend fun getAllBusiness(number: Int): Flow<List<BusinessDocument>>
     suspend fun getBusinessByCategory(category: String): Flow<List<BusinessDocument>>
-    fun getBusinessWhereLike(name: String): Flow<List<BusinessDocument>>
+    suspend fun getBusinessWhereLike(name: String): Flow<List<BusinessDocument>>
     suspend fun getBusinessById(businessId: String): BusinessDocument?
     suspend fun getBusinessByOwner(owner: String): Flow<List<BusinessDocument>>
     suspend fun create(businessDocument: BusinessDocument): String

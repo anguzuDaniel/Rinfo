@@ -100,4 +100,7 @@
     <string name="all_categories_added">Categories added successfully</string>
     <string name="search_for_a_business">Search for a business</string>
     <string name="close">close</string>
+    <string name="location_on">location on</string>
+    <string name="search_categories">Search categories</string>
+    <string name="right_arrow">Right Arrow</string>
 </resources>

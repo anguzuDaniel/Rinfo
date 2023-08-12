@@ -1,15 +1,13 @@
-package com.danotech.rinfo.ui.screens.search_business
+package com.danotech.rinfo.ui.screens.selected_category
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -18,46 +16,33 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.danotech.rinfo.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BusinessSearchBar(
+fun SelectedSearchBar(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
-    onClose: () -> Unit = {},
-    viewModel: SearchBusinessViewModel,
+    viewModel: SelectedCategoryViewModel,
 ) {
-    BackHandler {
+    BackHandler() {
         onBack()
     }
 
-    var active by remember {
-        mutableStateOf(true)
-    }
-
     val uiState = viewModel.uiState.value
-
-    val businesses = uiState.businesses
-
 
     Scaffold { innerPadding ->
         SearchBar(modifier = modifier
             .fillMaxWidth()
             .padding(paddingValues = innerPadding)
             .background(MaterialTheme.colorScheme.background),
-            query = uiState.query,
-            onQueryChange = viewModel::onQueryChanged,
-            onSearch = viewModel::onSearch,
-            active = active,
-            onActiveChange = { active = it },
+            query = uiState.searchedCategory,
+            onQueryChange = { },
+            onSearch = { },
+            active = false,
+            onActiveChange = { },
             leadingIcon = {
                 Icon(
                     modifier = Modifier.clickable { onBack() },
@@ -66,36 +51,20 @@ fun BusinessSearchBar(
                 )
             },
             trailingIcon = {
-                if (active) {
-                    Icon(
-                        modifier = Modifier.clickable {
-                            if (uiState.query.isNotEmpty()) {
-                                onClose()
-                            } else {
-                                active = false
-                            }
-                        }, imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(id = R.string.close)
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Filled.LocationOn,
+                    contentDescription = stringResource(R.string.location_on)
+                )
             },
             colors = SearchBarDefaults.colors(
                 containerColor = MaterialTheme.colorScheme.background,
             ),
             placeholder = {
                 Text(
-                    text = stringResource(R.string.search_categories),
+                    text = "Hotels",
                     style = MaterialTheme.typography.labelSmall
                 )
             }) {
-            LazyColumn {
-                items(businesses) { business ->
-                    BusinessListItem(
-                        business = business,
-                        onCategoryItemClicked = {}
-                    )
-                }
-            }
         }
     }
 }

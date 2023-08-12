@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.search_categories
+package com.danotech.rinfo.ui.screens.selected_category
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
@@ -36,22 +36,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.RatingStars
-import com.danotech.rinfo.ui.components.CategorySearchBar
-import com.danotech.rinfo.ui.screens.category.CategoryViewModel
 import com.danotech.rinfo.ui.theme.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SearchCategory(
-    viewModel: CategoryViewModel = hiltViewModel(),
+fun SelectedCategoryScreen(
+    viewModel: SelectedCategoryViewModel = hiltViewModel(),
     onBackPressed: () -> Unit = {}
 ) {
     BackHandler {
         onBackPressed()
     }
-
-    val uiState = viewModel.uiState.value
-
 
     Scaffold(
         modifier = Modifier
@@ -63,19 +58,20 @@ fun SearchCategory(
                 .padding(paddingValues = it),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            CategorySearchBar(
+            SelectedSearchBar(
                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, start = 8.dp, end = 8.dp),
                 onBack = onBackPressed,
-                onClose = viewModel::onClose,
                 viewModel = viewModel,
             )
+
+            SearchCategoryContent(viewModel = viewModel)
         }
     }
 }
 
 @Composable
 fun SearchCategoryContent(
-    viewModel: SearchCategoryViewModel,
+    viewModel: SelectedCategoryViewModel,
     searchQuery: String = "",
     modifier: Modifier = Modifier,
     onMapClicked: () -> Unit = {},
@@ -111,7 +107,7 @@ fun MapDisplay(
             .fillMaxWidth()
             .size(400.dp)
             .clickable(onClick = onMapClicked)
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
 
     }
@@ -295,7 +291,7 @@ fun SearchCategoryPreview() {
 @Composable
 fun SearchCategoryLightPreview() {
     AppTheme {
-        SearchCategory()
+        SelectedCategoryScreen()
     }
 }
 
@@ -305,6 +301,6 @@ fun SearchCategoryDarkPreview() {
     AppTheme(
         darkTheme = true
     ) {
-        SearchCategory()
+        SelectedCategoryScreen()
     }
 }
