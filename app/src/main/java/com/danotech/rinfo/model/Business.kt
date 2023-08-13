@@ -29,4 +29,5 @@ data class Business(
     val email: String = "",
     val businessCategory: String = Category(name = "").name,
     val reviews: Int = 0,
+    val allReview: List<Review> = listOf(),
 )

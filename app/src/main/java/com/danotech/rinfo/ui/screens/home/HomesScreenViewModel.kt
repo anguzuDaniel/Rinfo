@@ -2,12 +2,12 @@ package com.danotech.rinfo.ui.screens.home
 
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.RinfoViewModel
-import com.danotech.rinfo.data.LocalReviewProvider
 import com.danotech.rinfo.model.Business
+import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
-import com.danotech.rinfo.ui.components.Review
+import com.danotech.rinfo.model.service.ReviewService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -23,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomesScreenViewModel @Inject constructor(
     private val businessAccountService: BusinessAccountService,
+    private val reviewService: ReviewService,
     private val accountService: AccountService,
     logService: LogService,
 ) : RinfoViewModel(logService) {
@@ -48,9 +49,6 @@ class HomesScreenViewModel @Inject constructor(
     }
 
     fun showReviews(): List<Review> {
-        uiState.value = uiState.value.copy(
-            reviews = LocalReviewProvider.reviews
-        )
         return uiState.value.reviews
     }
 

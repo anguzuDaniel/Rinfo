@@ -103,4 +103,12 @@
     <string name="location_on">location on</string>
     <string name="search_categories">Search categories</string>
     <string name="right_arrow">Right Arrow</string>
+    <string name="bookmark_business">BookMark Business</string>
+    <string name="add_review">"Add Review "</string>
+    <string name="submit">Submit</string>
+    <string name="title">Title</string>
+    <string name="rating">rating</string>
+    <string name="review_added">Review Added</string>
+    <string name="review_title_empty">Review can\'t be left empty</string>
+    <string name="review_empty">Review can\'t be left empty</string>
 </resources>

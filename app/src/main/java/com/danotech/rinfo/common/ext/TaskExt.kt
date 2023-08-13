@@ -1,6 +1,6 @@
 package com.danotech.rinfo.common.ext
 
-import com.danotech.rinfo.ui.components.Review
+import com.danotech.rinfo.model.Review
 
 
 fun Review?.hasDueDate(): Boolean {

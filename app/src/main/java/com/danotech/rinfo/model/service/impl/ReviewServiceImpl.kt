@@ -1,17 +1,18 @@
 package com.danotech.rinfo.model.service.impl
 
+import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.ReviewService
-import com.danotech.rinfo.ui.components.Review
+import com.danotech.rinfo.model.service.trace
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class ReviewServiceImpl
 @Inject
 constructor(
     private val fireStore: FirebaseFirestore,
-    private val auth: AccountService
 ) : ReviewService {
     override val reviews: List<Review>
         get() = fireStore.collection(REVIEW_COLLECTION).get().result!!.toObjects(Review::class.java)
@@ -28,9 +29,11 @@ constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun create(review: Review): String {
-        TODO("Not yet implemented")
-    }
+    override suspend fun create(review: Review): String =
+        trace(SAVE_REVIEW_TRACE) {
+            fireStore.collection(REVIEW_COLLECTION)
+                .document().set(review).await().toString()
+        }
 
     override suspend fun update(review: Review) {
         TODO("Not yet implemented")

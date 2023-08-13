@@ -21,10 +21,10 @@ fun SearchPage(
         onBackPressed()
     }
 
-    var searchQuery by remember { mutableStateOf(TextFieldValue()) }
+    val searchQuery by remember { mutableStateOf(TextFieldValue()) }
     var searchResults by remember { mutableStateOf(emptyList<String>()) }
 
-    val uiState = viewModel.uiState.value
+    viewModel.uiState.value
 
     Scaffold {
         Column(

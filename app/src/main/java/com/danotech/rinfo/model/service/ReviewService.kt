@@ -1,6 +1,6 @@
 package com.danotech.rinfo.model.service
 
-import com.danotech.rinfo.ui.components.Review
+import com.danotech.rinfo.model.Review
 import kotlinx.coroutines.flow.Flow
 
 /**

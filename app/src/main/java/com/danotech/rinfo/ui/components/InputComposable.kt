@@ -2,6 +2,7 @@ package com.danotech.rinfo.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -34,7 +34,6 @@ import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.theme.AppTheme
 
 // reusable text input
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextInput(
     labelText: String,
@@ -72,7 +71,6 @@ fun TextInput(
     Spacer(modifier = modifier.height(5.dp))
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextInputWithLabel(
     @StringRes placeholder: Int = R.string.empty,
@@ -108,7 +106,35 @@ fun TextInputWithLabel(
     Spacer(modifier = modifier.height(5.dp))
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ReviewInputWithLabel(
+    @StringRes placeholder: Int = R.string.empty,
+    value: String,
+    modifier: Modifier = Modifier,
+    onValueChanged: (String) -> Unit = {},
+    onSearchInputClicked: () -> Unit = {},
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = { onValueChanged(it) },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            autoCorrect = true,
+            imeAction = ImeAction.Next,
+        ),
+        placeholder = {
+            Text(
+                text = stringResource(placeholder),
+                style = MaterialTheme.typography.labelSmall,
+            )
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = { onSearchInputClicked() }),
+    )
+    Spacer(modifier = modifier.height(5.dp))
+}
+
 @Composable
 fun EmailField(
     value: String,
@@ -137,7 +163,7 @@ fun EmailField(
     Spacer(modifier = modifier.height(5.dp))
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchTextField(
     value: TextFieldValue,
@@ -184,5 +210,23 @@ fun TextInputPreview() {
             value = "",
             leadingIcon = Icons.Filled.Person
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ReviewInputPreview() {
+    AppTheme(
+        darkTheme = true
+    ) {
+        Column(
+            modifier = Modifier.padding(5.dp)
+        ) {
+            ReviewInputWithLabel(
+                placeholder = R.string.review,
+                value = "",
+                modifier = Modifier.height(150.dp)
+            )
+        }
     }
 }

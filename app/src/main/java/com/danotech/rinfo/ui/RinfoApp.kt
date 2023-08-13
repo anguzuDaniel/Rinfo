@@ -32,7 +32,7 @@ import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.common.composable.PermissionDialog
 import com.danotech.rinfo.common.composable.RationaleDialog
 import com.danotech.rinfo.model.Business
-import com.danotech.rinfo.ui.components.Review
+import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
 import com.danotech.rinfo.ui.screens.business_account.BusinessAccount
@@ -51,6 +51,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -270,11 +272,13 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         arguments = listOf(navArgument("businessId") { type = NavType.StringType })
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
+        val userId = FirebaseAuth.getInstance().currentUser?.email
 
         if (businessId != null) {
             // Use the businessId to fetch data or perform other operations
             ReviewScreen(
                 businessId = businessId,
+                reviewerUserId = userId ?: "",
                 onBackPressed = {
                     appState.popUp()
                 }

@@ -137,6 +137,22 @@ fun AddImageButton(
 }
 
 @Composable
+fun AddReviewButton(
+    modifier: Modifier = Modifier,
+    action: () -> Unit,
+) {
+    RinfoButton(
+        name = R.string.add_review,
+        onClicked = action,
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .border(1.dp, MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.small)
+            .clip(MaterialTheme.shapes.small)
+            .padding(8.dp)
+    )
+}
+
+@Composable
 fun SaveProfileButton(
     modifier: Modifier = Modifier,
     action: () -> Unit,

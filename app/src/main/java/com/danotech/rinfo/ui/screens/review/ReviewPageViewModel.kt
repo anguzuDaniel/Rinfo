@@ -1,7 +1,6 @@
 package com.danotech.rinfo.ui.screens.review
 
 import androidx.compose.runtime.mutableStateOf
-import com.danotech.rinfo.data.LocalReviewProvider
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
@@ -19,6 +18,14 @@ class ReviewPageViewModel @Inject constructor(
     logService: LogService
 ) : RinfoViewModel(logService) {
     val uiState = mutableStateOf(ReviewPageUiState())
+
+    // Calculate total reviews
+    val totalReviews: Int
+        get() = uiState.value.currentBusiness.reviews
+
+    // Calculate positive reviews
+    val positiveReviews: Int
+        get() = uiState.value.currentReview.count { it.postive }
 
     private val currentBusinessId: String
         get() = uiState.value.currentBusiness.id
@@ -39,8 +46,20 @@ class ReviewPageViewModel @Inject constructor(
 
     fun getReview() {
         uiState.value = uiState.value.copy(
-            currentReview = LocalReviewProvider.defaultReview,
+            currentReview = emptyList(),
             showReviewPage = true
+        )
+    }
+
+    fun onReviewPageInput(review: String) {
+        uiState.value = uiState.value.copy(
+            reviewInput = review
+        )
+    }
+
+    fun onSearch(search: String) {
+        uiState.value = uiState.value.copy(
+            isLoading = true
         )
     }
 

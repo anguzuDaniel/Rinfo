@@ -2,37 +2,36 @@ package com.danotech.rinfo.data
 
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.local.Category
-import com.danotech.rinfo.ui.components.Review
 import com.danotech.rinfo.ui.screens.account.AccountType
 
 object LocalReviewProvider {
-    val defaultReview = Review(
-        id = 1,
-        avatarResource = R.drawable.baseline_person_24,
-        imageUrl = R.drawable.cafe_javas,
-        businessName = "Cafe Javas",
-        rating = 4,
-        comment = "This place has the best coffee and sandwiches in town!"
-    )
-
-    val reviews = listOf(
-        Review(
-            id = 1,
-            avatarResource = R.drawable.baseline_person_24,
-            imageUrl = R.drawable.cafe_javas,
-            businessName = "Cafe Javas",
-            rating = 4,
-            comment = "This place has the best coffee and sandwiches in town!"
-        ),
-        Review(
-            id = 2,
-            avatarResource = R.drawable.baseline_person_24,
-            imageUrl = R.drawable.kfc,
-            businessName = "KFC",
-            rating = 3,
-            comment = "This kitchen place in town!"
-        )
-    )
+//    val defaultReview = Review(
+//        id = 1,
+//        avatarResource = R.drawable.baseline_person_24,
+//        imageUrl = R.drawable.cafe_javas,
+//        businessName = "Cafe Javas",
+//        rating = 4,
+//        comment = "This place has the best coffee and sandwiches in town!"
+//    )
+//
+//    val reviews = listOf(
+//        Review(
+//            id = 1,
+//            avatarResource = R.drawable.baseline_person_24,
+//            imageUrl = R.drawable.cafe_javas,
+//            businessName = "Cafe Javas",
+//            rating = 4,
+//            comment = "This place has the best coffee and sandwiches in town!"
+//        ),
+//        Review(
+//            id = 2,
+//            avatarResource = R.drawable.baseline_person_24,
+//            imageUrl = R.drawable.kfc,
+//            businessName = "KFC",
+//            rating = 3,
+//            comment = "This kitchen place in town!"
+//        )
+//    )
 
 //    val categories = listOf(
 //        Category("Hotels", Icons.Default.Hotel, R.drawable.baseline_local_hotel_24),

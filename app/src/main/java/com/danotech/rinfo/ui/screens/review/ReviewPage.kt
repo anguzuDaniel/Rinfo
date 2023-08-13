@@ -17,26 +17,31 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -45,15 +50,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Business
+import com.danotech.rinfo.ui.components.BusinessBottomAppBar
 import com.danotech.rinfo.ui.components.RatingStars
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
+import com.danotech.rinfo.ui.screens.review.bottomSheet.ReviewInputBottomSheet
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ReviewScreen(
-    businessId: String = "",
+    businessId: String,
+    reviewerUserId: String,
     viewModel: ReviewPageViewModel = hiltViewModel(),
     onBackPressed: () -> Unit = {},
     onSearchIconClicked: () -> Unit = {},
@@ -61,6 +70,15 @@ fun ReviewScreen(
     BackHandler {
         onBackPressed()
     }
+
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberStandardBottomSheetState(
+            initialValue = SheetValue.Hidden,
+            skipHiddenState = false,
+        )
+    )
+
+    val coroutineScope = rememberCoroutineScope()
 
     val businessState: State<Business?> =
         viewModel.getBusinessById(businessId = businessId).collectAsState(
@@ -70,78 +88,104 @@ fun ReviewScreen(
     Log.d("ReviewScreen", "businessState: $businessState")
     Log.d("ReviewScreen", "businessId: $businessId")
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
-        topBar = {
-            RinfoTopAppBar(
-                isShowingHomePage = false,
-                showBackgroundColor = false,
-                onBackButtonClicked = onBackPressed,
-                actions = {
-                    IconButton(
-                        onClick = onSearchIconClicked,
-                        modifier = Modifier
-                            .padding(1.dp)
-                            .background(MaterialTheme.colorScheme.surface, shape = CircleShape),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Bookmark,
-                            contentDescription = "BookMark Business",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-            )
+    ReviewInputBottomSheet(
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
+        onCancel = {
+            coroutineScope.launch {
+                bottomSheetScaffoldState.bottomSheetState.hide()
+            }
         },
-    ) { innerPadding ->
-
-        LazyColumn {
-            item {
-                if (viewModel.uiState.value.isLoading) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp, vertical = 12.dp)
-                            .animateContentSize(
-                                animationSpec = (tween(
-                                    durationMillis = 300,
-                                    easing = LinearOutSlowInEasing
-                                ))
-                            ),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                } else {
-                    ReviewContent(
-                        business = businessState.value ?: Business(),
+        onSubmit = {},
+        reviewedBusinessId = businessId,
+        reviewerUserId = ""
+    ) {
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize(),
+            topBar = if (viewModel.uiState.value.isLoading) {
+                {}
+            } else {
+                {
+                    RinfoTopAppBar(
+                        isShowingHomePage = false,
+                        showBackgroundColor = false,
+                        onBackButtonClicked = onBackPressed,
+                        actions = {
+                            IconButton(
+                                onClick = onSearchIconClicked,
+                                modifier = Modifier
+                                    .padding(1.dp)
+                                    .background(
+                                        MaterialTheme.colorScheme.surface,
+                                        shape = CircleShape
+                                    ),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Favorite,
+                                    contentDescription = stringResource(R.string.bookmark_business),
+                                    tint = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
                     )
                 }
+            },
+            bottomBar = if (viewModel.uiState.value.isLoading) {
+                {}
+            } else {
+                {
+                    BusinessBottomAppBar(
+                        onClick = {
+                            coroutineScope.launch {
+                                bottomSheetScaffoldState.bottomSheetState.expand()
+                            }
+                        }
+                    )
+                }
+            }
+        ) {
+            if (viewModel.uiState.value.isLoading) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .animateContentSize(
+                            animationSpec = (tween(
+                                durationMillis = 300,
+                                easing = LinearOutSlowInEasing
+                            ))
+                        ),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            } else {
+                ReviewContent(
+                    business = businessState.value ?: Business(),
+                )
             }
         }
     }
 }
 
 @Composable
-fun CollectBusinessState(businessFlow: Flow<Business?>): State<Business?> {
+fun collectBusinessState(businessFlow: Flow<Business?>): State<Business?> {
     // Collect the flow and convert it into a Compose State
     return businessFlow.collectAsState(initial = null)
 }
 
 @Composable
 fun ReviewContent(
+    viewModel: ReviewPageViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     business: Business = Business()
 ) {
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
+    Column {
         Image(
             painter = painterResource(id = R.drawable.cafe_javas),
             contentDescription = null,
@@ -151,142 +195,147 @@ fun ReviewContent(
             contentScale = ContentScale.Crop
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        LazyColumn(
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.body_padding))
+        ) {
+            item {
+                Text(
+                    text = business.name,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.padding(5.dp))
+            }
 
-        Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.body_padding))) {
+            item {
+                RatingRow(business = business)
+            }
 
+            item {
+                Text(
+                    text = business.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            item {
+                val totalReviews = 50
+                val positiveReviews = 10
+                val negativeReviews = totalReviews - positiveReviews
+                val count = business.reviews
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                ReviewStatistics(
+                    count = count,
+                    totalReviews = totalReviews,
+                    positiveReviews = positiveReviews,
+                    negativeReviews = negativeReviews
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ReviewStatistics(
+    count: Int,
+    totalReviews: Int,
+    positiveReviews: Int,
+    negativeReviews: Int,
+    modifier: Modifier = Modifier
+) {
+    Card {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
-                text = business.name,
+                text = "Review Statistics",
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row {
-                    RatingStars(rating = business.reviews)
-
-                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.spacer_medium)))
-
-                    Text(
-                        text = business.reviews.toString(),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = stringResource(id = R.string.favorites),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
             Text(
-                text = business.description,
-                style = MaterialTheme.typography.bodySmall,
+                text = "$count.0",
+                style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_medium)))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Reviews",
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_medium)))
-
-                Text(
-                    text = stringResource(R.string.view_all),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_medium)))
-
-            ReviewCard(
-                review = CustomerReview(
-                    name = "Anguzu Daniel",
-                    rating = 3,
-                    review = "This is a very good restaurant."
-                )
-            )
-
-            ReviewCard(
-                review = CustomerReview(
-                    name = "Mugabi Alex",
-                    rating = 5,
-                    review = "The waiters were not friendly."
-                )
-            )
-        }
-    }
-}
-
-@Composable
-fun ReviewCard(
-    review: CustomerReview,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-    ) {
-        Column(
-            modifier = modifier.padding(dimensionResource(id = R.dimen.card_padding))
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = null
-                )
-
-                Text(
-                    text = review.name,
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
-
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.text_spacer)))
-
-            RatingStars(
-                rating = review.rating
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = review.review,
-                style = MaterialTheme.typography.bodySmall
+                text = "Total Reviews: $totalReviews",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                progress = positiveReviews.toFloat() / totalReviews.toFloat(),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = "Positive Reviews: $positiveReviews (${(positiveReviews.toFloat() / totalReviews.toFloat() * 100).toInt()}%)",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                progress = negativeReviews.toFloat() / totalReviews.toFloat(),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = "Negative Reviews: $negativeReviews (${(negativeReviews.toFloat() / totalReviews.toFloat() * 100).toInt()}%)",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
-
-    Spacer(modifier = Modifier.height(10.dp))
 }
 
-data class CustomerReview(
-    val name: String,
-    val rating: Int,
-    val review: String
-)
+
+@Composable
+fun RatingRow(
+    business: Business
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RatingStars(rating = business.reviews)
+
+        Icon(
+            imageVector = Icons.Default.Bookmark,
+            contentDescription = stringResource(id = R.string.favorites),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+    Spacer(modifier = Modifier.padding(5.dp))
+}

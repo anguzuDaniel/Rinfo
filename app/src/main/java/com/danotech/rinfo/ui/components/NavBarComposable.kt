@@ -2,6 +2,8 @@ package com.danotech.rinfo.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -18,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.BottomMenuItem
 import com.danotech.rinfo.ui.screens.RInfoScreen
@@ -87,6 +90,26 @@ fun RinfoBottomNavigation(
                     enabled = true,
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun BusinessBottomAppBar(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier.fillMaxSize()) {
+        NavigationBar(
+            modifier = Modifier.align(alignment = Alignment.BottomCenter)
+        ) {
+            RinfoButton(
+                name = R.string.add_review,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                onClicked = onClick
+            )
         }
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +37,6 @@ import com.danotech.rinfo.ui.theme.AppTheme
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationPage(
     onBackPressed: () -> Unit = {},
@@ -109,7 +107,6 @@ fun NotificationList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationItem(index: Int) {
     ListItem(modifier = Modifier

@@ -23,7 +23,6 @@ class BusinessAccountViewModel @Inject constructor(
 ) : RinfoViewModel(logService) {
     val uiState = mutableStateOf(BusinessAccountUiState())
 
-
     init {
         initializeUIState()
     }

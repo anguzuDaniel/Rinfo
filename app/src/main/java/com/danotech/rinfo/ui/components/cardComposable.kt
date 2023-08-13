@@ -82,13 +82,3 @@ fun ReviewCard(
     }
 }
 
-data class Review(
-    val id: Int = 0,
-    // to be changed to receive url links
-    @DrawableRes val imageUrl: Int,
-    val avatarResource: Int,
-    val businessName: String,
-    val rating: Int = 0,
-    val comment: String
-)
-
