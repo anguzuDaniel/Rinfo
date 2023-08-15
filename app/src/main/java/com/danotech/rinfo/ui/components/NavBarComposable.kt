@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -107,7 +108,7 @@ fun BusinessBottomAppBar(
                 name = R.string.add_review,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(8.dp),
                 onClicked = onClick
             )
         }
@@ -135,16 +136,16 @@ private fun prepareBottomMenu(): List<BottomMenuItem> {
     )
     bottomMenuItemsList.add(
         BottomMenuItem(
-            rinfoScreen = RInfoScreen.Favourites,
-            label = R.string.favorites,
-            icon = Icons.Filled.Favorite
+            rinfoScreen = RInfoScreen.Search,
+            icon = Icons.Filled.Search,
+            label = R.string.search
         )
     )
     bottomMenuItemsList.add(
         BottomMenuItem(
-            rinfoScreen = RInfoScreen.Notification,
-            icon = Icons.Filled.Notifications,
-            label = R.string.notifications
+            rinfoScreen = RInfoScreen.Favourites,
+            label = R.string.favorites,
+            icon = Icons.Filled.Favorite
         )
     )
     bottomMenuItemsList.add(

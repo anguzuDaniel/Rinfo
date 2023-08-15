@@ -1,8 +1,10 @@
 package com.danotech.rinfo.ui.screens.review
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -57,6 +59,7 @@ import com.danotech.rinfo.ui.screens.review.bottomSheet.ReviewInputBottomSheet
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable

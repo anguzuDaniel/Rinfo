@@ -14,14 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -46,7 +43,6 @@ import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     openAndPopUp: (String, String) -> Unit,
@@ -61,7 +57,6 @@ fun SettingsScreen(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         topBar = {
             RinfoTopAppBar(
                 title = stringResource(id = R.string.settings),
@@ -76,19 +71,7 @@ fun SettingsScreen(
                     onTabSelected = onTabSelected,
                     modifier = Modifier.fillMaxWidth()
                 )
-            }, fab = {
-                FloatingActionButton(
-                    onClick = onFabClicked,
-                    modifier = Modifier.padding(bottom = 10.dp),
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = stringResource(id = R.string.search)
-                    )
-                }
-            })
+            }, fab = {})
         },
     ) { innerPadding ->
         EditAccountContent(
@@ -226,7 +209,6 @@ fun EditAccountContent(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsClickableComp(
     icon: ImageVector,

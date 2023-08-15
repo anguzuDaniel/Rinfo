@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
+import com.danotech.rinfo.model.service.ReviewService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
