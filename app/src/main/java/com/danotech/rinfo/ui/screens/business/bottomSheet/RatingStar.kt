@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.review.bottomSheet
+package com.danotech.rinfo.ui.screens.business.bottomSheet
 
 import android.content.res.ColorStateList
 import android.graphics.BlendMode

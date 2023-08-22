@@ -42,7 +42,8 @@ import com.danotech.rinfo.ui.screens.home.HomeScreen
 import com.danotech.rinfo.ui.screens.login.LoginScreen
 import com.danotech.rinfo.ui.screens.notification.NotificationPage
 import com.danotech.rinfo.ui.screens.profile.ProfileScreen
-import com.danotech.rinfo.ui.screens.review.ReviewScreen
+import com.danotech.rinfo.ui.screens.business.BusinessScreen
+import com.danotech.rinfo.ui.screens.review.ReviewForm
 import com.danotech.rinfo.ui.screens.selected_category.SelectedCategoryScreen
 import com.danotech.rinfo.ui.screens.search_business.SearchPage
 import com.danotech.rinfo.ui.screens.settings.SettingsScreen
@@ -52,9 +53,9 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.CoroutineScope
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RinfoApp() {
@@ -124,6 +125,7 @@ fun resources(): Resources {
     return LocalContext.current.resources
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @ExperimentalMaterialApi
 fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
 
@@ -276,9 +278,34 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
 
         if (businessId != null) {
             // Use the businessId to fetch data or perform other operations
-            ReviewScreen(
+            BusinessScreen(
                 businessId = businessId,
                 reviewerUserId = userId ?: "",
+                onBackPressed = {
+                    appState.popUp()
+                },
+                onFabBtnClicked = {
+                    appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId")
+                },
+            )
+        } else {
+            // Handle the case where businessId is null
+        }
+    }
+    composable(
+        route = "${RInfoScreen.ReviewForm.name}/{businessId}/{reviewId}",
+        arguments = listOf(navArgument("businessId") { type = NavType.StringType })
+    ) { backStackEntry ->
+        val businessId = backStackEntry.arguments?.getString("businessId")
+        val userId = FirebaseAuth.getInstance().currentUser?.email
+
+        if (businessId != null) {
+            ReviewForm(
+                reviewedBusinessId = businessId,
+                reviewerUserId = userId ?: "",
+                onCancel = {
+                    appState.popUp()
+                },
                 onBackPressed = {
                     appState.popUp()
                 }

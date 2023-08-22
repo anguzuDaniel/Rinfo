@@ -9,7 +9,6 @@ import com.danotech.rinfo.R
  * @param route the route of the screen
  * @param icon the icon of the screen
  * @param isBottomBarVisible whether the bottom bar should be visible or not
- *
  */
 enum class RInfoScreen(@StringRes val title: Int) {
     // the start page is the home page
@@ -24,6 +23,7 @@ enum class RInfoScreen(@StringRes val title: Int) {
     Search(title = R.string.search),
     Login(title = R.string.login),
     Register(title = R.string.create_account),
+    ReviewForm(title = R.string.review),
     SelectedCategory(title = R.string.categories),
     Categories(title = R.string.more_categories),
 }

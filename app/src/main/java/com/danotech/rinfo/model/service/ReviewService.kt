@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.Flow
  *  @see Review
  */
 interface ReviewService {
-    val reviews: List<Review>
     suspend fun getAllReviews(): Flow<List<Review>>
     suspend fun getReviewsByBusinessId(businessId: String): Flow<List<Review>>
     suspend fun getReviewsByUserId(userId: String): Flow<List<Review>>

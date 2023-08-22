@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.review.bottomSheet
+package com.danotech.rinfo.ui.screens.business.bottomSheet
 
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.R

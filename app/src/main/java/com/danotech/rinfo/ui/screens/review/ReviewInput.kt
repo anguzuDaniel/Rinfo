@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.screens.business.BusinessViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +33,7 @@ fun ReviewInput(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     onClose: () -> Unit = {},
-    viewModel: ReviewPageViewModel,
+    viewModel: BusinessViewModel,
 ) {
     BackHandler {
         onBack()

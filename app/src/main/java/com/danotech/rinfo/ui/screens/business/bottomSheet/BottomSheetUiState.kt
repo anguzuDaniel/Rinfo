@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.review.bottomSheet
+package com.danotech.rinfo.ui.screens.business.bottomSheet
 
 /**
  * Represents the state of the bottom sheet

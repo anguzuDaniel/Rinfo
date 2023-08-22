@@ -50,7 +50,6 @@ import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomesScreenViewModel = hiltViewModel(),
@@ -71,8 +70,7 @@ fun HomeScreen(
 
 
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             RinfoTopAppBar(
                 isShowingHomePage = true,
@@ -135,11 +133,11 @@ fun HomeScreen(
 fun HomePageContent(
     viewModel: HomesScreenViewModel,
     innerPadding: PaddingValues,
+    modifier: Modifier = Modifier,
     onReviewCardClicked: (Business) -> Unit = {},
     onBackPressed: () -> Unit = {},
     onCategoryClicked: () -> Unit = {},
     onFilterClicked: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     val reviews = viewModel.showReviews()
     val businessState by viewModel.businessFlow.collectAsState(initial = emptyList())

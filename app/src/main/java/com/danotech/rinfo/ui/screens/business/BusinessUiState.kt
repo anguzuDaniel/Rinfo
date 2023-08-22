@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.review
+package com.danotech.rinfo.ui.screens.business
 
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
@@ -15,7 +15,7 @@ import com.danotech.rinfo.model.Review
  * @param reviewInput The review input to display.
  * @see ReviewPageScreen
  */
-data class ReviewPageUiState(
+data class BusinessUiState(
     val currentReview: List<Review> = emptyList(),
     val currentBusiness: Business = Business(),
     val currentUserId: String = "",

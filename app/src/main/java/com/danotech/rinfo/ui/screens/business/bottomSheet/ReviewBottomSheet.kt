@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.review.bottomSheet
+package com.danotech.rinfo.ui.screens.business.bottomSheet
 
 import android.os.Build
 import androidx.annotation.RequiresApi
