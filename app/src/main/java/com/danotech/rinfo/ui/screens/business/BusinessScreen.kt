@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,15 +21,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,23 +40,28 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.components.RatingStars
+import com.danotech.rinfo.ui.components.RinfoButton
 import com.danotech.rinfo.ui.components.RinfoFAB
+import com.danotech.rinfo.ui.components.TruncateText
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import kotlinx.coroutines.flow.Flow
 
 @RequiresApi(Build.VERSION_CODES.Q)
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun BusinessScreen(
@@ -62,6 +71,7 @@ fun BusinessScreen(
     onBackPressed: () -> Unit = {},
     onSearchIconClicked: () -> Unit = {},
     onFabBtnClicked: () -> Unit = {},
+    onShowReviewPageClicked: () -> Unit = {},
 ) {
     BackHandler {
         onBackPressed()
@@ -111,8 +121,9 @@ fun BusinessScreen(
         floatingActionButtonPosition = FabPosition.End,
     ) {
         if (!uiState.isLoading) {
-            ReviewContent(
-                business = uiState.currentBusiness
+            BusinessContent(
+                business = uiState.currentBusiness,
+                onShowReviewPageClicked = onShowReviewPageClicked
             )
         } else {
             Column(
@@ -145,10 +156,17 @@ fun collectBusinessState(businessFlow: Flow<Business?>): State<Business?> {
 }
 
 @Composable
-fun ReviewContent(
+fun BusinessContent(
     modifier: Modifier = Modifier,
     business: Business,
+    onShowReviewPageClicked: () -> Unit = {},
 ) {
+    var isShowingAllDescriptionText by remember {
+        mutableStateOf(false)
+    }
+
+    val clickableText = if (isShowingAllDescriptionText) "less" else "See more"
+
     Column {
         Image(
             painter = painterResource(id = R.drawable.cafe_javas),
@@ -176,15 +194,77 @@ fun ReviewContent(
             }
 
             item {
+                RinfoButton(
+                    name = R.string.call,
+                    onClicked = { /*TODO*/ },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(10.dp))
+                Divider()
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+
+            item {
                 Text(
-                    text = business.description,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = stringResource(id = R.string.about),
+                    style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+
+            item {
+                if (!isShowingAllDescriptionText) {
+                    TruncateText(
+                        text = business.description,
+                        maxWords = 20,  // Set the desired maximum number of words
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                } else {
+                    Text(
+                        text = business.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                ClickableText(
+                    text = AnnotatedString(clickableText),
+                    style = MaterialTheme.typography.bodyMedium.copy(color = if (isShowingAllDescriptionText) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary),
+                    onClick = { isShowingAllDescriptionText = !isShowingAllDescriptionText }
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(10.dp))
+                Divider()
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+
+            item {
+                OutlinedButton(
+                    onClick = onShowReviewPageClicked,
+                    modifier = Modifier.fillMaxWidth(),
+                    border = BorderStroke(
+                        1.dp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.see_reviews),
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun RatingRow(

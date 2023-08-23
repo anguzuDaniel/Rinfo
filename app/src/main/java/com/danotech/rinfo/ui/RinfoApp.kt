@@ -44,6 +44,7 @@ import com.danotech.rinfo.ui.screens.notification.NotificationPage
 import com.danotech.rinfo.ui.screens.profile.ProfileScreen
 import com.danotech.rinfo.ui.screens.business.BusinessScreen
 import com.danotech.rinfo.ui.screens.review.ReviewForm
+import com.danotech.rinfo.ui.screens.review.ReviewsScreen
 import com.danotech.rinfo.ui.screens.selected_category.SelectedCategoryScreen
 import com.danotech.rinfo.ui.screens.search_business.SearchPage
 import com.danotech.rinfo.ui.screens.settings.SettingsScreen
@@ -148,7 +149,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                     return@HomeScreen
                 }
 
-                appState.navigate("${RInfoScreen.Review.name}/${business.id}")
+                appState.navigate("${RInfoScreen.Business.name}/${business.id}")
             },
             onFabClicked = {
                 if (!appState.isLoggedIn) {
@@ -215,7 +216,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         }, onTabSelected = { screen ->
             appState.navigate(screen.name)
         }, onReviewCardClicked = { review: Review ->
-            appState.navigate(RInfoScreen.Review.name)
+            appState.navigate(RInfoScreen.Business.name)
         })
     }
     composable(route = RInfoScreen.Notification.name) {
@@ -270,7 +271,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         })
     }
     composable(
-        route = "${RInfoScreen.Review.name}/{businessId}",
+        route = "${RInfoScreen.Business.name}/{businessId}",
         arguments = listOf(navArgument("businessId") { type = NavType.StringType })
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
@@ -285,7 +286,12 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                     appState.popUp()
                 },
                 onFabBtnClicked = {
-                    appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId")
+                    // send user to review form
+                    // width businessId and userId
+                    appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId/''")
+                },
+                onShowReviewPageClicked = {
+                    appState.navigate("${RInfoScreen.Reviews.name}/$businessId")
                 },
             )
         } else {
@@ -297,16 +303,38 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         arguments = listOf(navArgument("businessId") { type = NavType.StringType })
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
+        val reviewId = backStackEntry.arguments?.getString("reviewId")
         val userId = FirebaseAuth.getInstance().currentUser?.email
 
         if (businessId != null) {
             ReviewForm(
                 reviewedBusinessId = businessId,
+                reviewId = reviewId ?: "",
                 reviewerUserId = userId ?: "",
                 onCancel = {
                     appState.popUp()
                 },
                 onBackPressed = {
+                    appState.popUp()
+                },
+
+                )
+        } else {
+            // Handle the case where businessId is null
+        }
+    }
+    composable(
+        route = "${RInfoScreen.Reviews.name}/{businessId}",
+        arguments = listOf(navArgument("businessId") { type = NavType.StringType })
+    ) { backStackEntry ->
+        val businessId = backStackEntry.arguments?.getString("businessId")
+        val userId = FirebaseAuth.getInstance().currentUser?.email
+
+        if (businessId != null) {
+            ReviewsScreen(
+                businessId = businessId,
+                userId = userId ?: "",
+                onBackButtonClick = {
                     appState.popUp()
                 }
             )

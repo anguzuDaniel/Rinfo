@@ -19,11 +19,13 @@ constructor(
     }
 
     override suspend fun getReviewsByBusinessId(businessId: String): Flow<List<Review>> {
-        TODO("Not yet implemented")
+        return fireStore.collection(REVIEW_COLLECTION).whereEqualTo(BUSINESS_ID_FIELD, businessId)
+            .dataObjects()
     }
 
     override suspend fun getReviewsByUserId(userId: String): Flow<List<Review>> {
-        TODO("Not yet implemented")
+        return fireStore.collection(REVIEW_COLLECTION).whereEqualTo(USER_ID_FIELD, userId)
+            .dataObjects()
     }
 
     override suspend fun create(review: Review): String =

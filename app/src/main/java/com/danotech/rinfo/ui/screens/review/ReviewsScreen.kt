@@ -1,6 +1,9 @@
 package com.danotech.rinfo.ui.screens.review
 
-import android.annotation.SuppressLint
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,8 +12,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,6 +27,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,60 +38,111 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.data.LocalReviewProvider
+import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.model.local.Category
 import com.danotech.rinfo.ui.components.ProfileImage
 import com.danotech.rinfo.ui.components.RatingStars
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.danotech.rinfo.ui.theme.AppTheme
 
 @Composable
-fun AllReviews() {
+fun ReviewsScreen(
+    viewModel: ReviewScreenViewModel = hiltViewModel(),
+    businessId: String,
+    userId: String,
+    onBackButtonClick: () -> Unit = {}
+) {
+    val reviewUiState = viewModel.uiState.collectAsState().value
+
+    LaunchedEffect(viewModel) {
+        viewModel.getReviewByBusinessId(businessId)
+    }
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
-        topBar = {
-            RinfoTopAppBar(
-                isShowingHomePage = false,
-                title = stringResource(id = R.string.reviews),
-                onBackButtonClicked = {}
-            )
+        topBar = if (!reviewUiState.isLoading) {
+            {
+                RinfoTopAppBar(
+                    isShowingHomePage = false,
+                    title = stringResource(id = R.string.reviews),
+                    onBackButtonClicked = onBackButtonClick
+                )
+            }
+        } else {
+            {}
         },
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            contentPadding = it
-        ) {
-            item {
-                ReviewStatistics(
-                    count = 50,
-                    positiveReviews = 45,
-                    negativeReviews = 5,
-                    totalReviews = 50
+        if (!reviewUiState.isLoading) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentPadding = it
+            ) {
+                item {
+                    ReviewStatistics(
+                        count = 50,
+                        positiveReviews = 45,
+                        negativeReviews = 5,
+                        totalReviews = 50
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+
+//            item {
+//                SelectBusinessCategory()
+//            }
+
+                if (reviewUiState.reviews.isEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.no_reviews_added_yet),
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
+                } else {
+                    items(reviewUiState.reviews, key = { review -> review.id }) { review ->
+                        ReviewItem(
+                            review = review,
+                            onReviewItemClicked = {}
+                        )
+                    }
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .animateContentSize(
+                        animationSpec = (tween(
+                            durationMillis = 300,
+                            easing = LinearOutSlowInEasing
+                        ))
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
-                Spacer(modifier = Modifier.height(20.dp))
-            }
-
-            item {
-                SelectBusinessCategory()
-            }
-
-            items(10) {
-                ReviewItem()
             }
         }
     }
 }
 
-
 @Composable
 fun ReviewItem(
-    modifier: Modifier = Modifier
+    review: Review,
+    modifier: Modifier = Modifier,
+    onReviewItemClicked: (String) -> Unit = {}
 ) {
     Column(
         modifier = modifier.padding(10.dp)
@@ -106,7 +165,7 @@ fun ReviewItem(
                     verticalAlignment = Alignment.Bottom
                 ) {
                     Text(
-                        text = "Anguzu Daniel",
+                        text = review.reviewerUserId,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(2f)
                     )
@@ -119,12 +178,12 @@ fun ReviewItem(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                RatingStars(rating = 4)
+                RatingStars(rating = review.rating)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "I really love this restaurant",
+                    text = review.review,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -203,25 +262,5 @@ fun SelectBusinessCategory(
                 }
             }
         }
-    }
-}
-
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview(showBackground = true)
-@Composable
-fun ReviewPreview() {
-    AppTheme {
-        AllReviews()
-    }
-}
-
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview(showBackground = true)
-@Composable
-fun ReviewDarkPreview() {
-    AppTheme(
-        darkTheme = true
-    ) {
-        AllReviews()
     }
 }

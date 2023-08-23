@@ -66,8 +66,9 @@ fun ReviewCard(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                Text(
+                TruncateText(
                     text = business.description,
+                    maxWords = 10,  // Set the desired maximum number of words
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )

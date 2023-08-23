@@ -6,8 +6,11 @@ import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.model.service.ReviewService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
+import com.danotech.rinfo.ui.screens.business.BusinessUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
@@ -22,24 +25,37 @@ constructor(
     logService: LogService
 ) :
     RinfoViewModel(logService) {
-    val uiState = mutableStateOf(ReviewUiState())
+    private val _uiState =
+        MutableStateFlow(ReviewUiState(isLoading = false, businessId = Business().id))
+    val uiState = _uiState.asStateFlow()
 
-    init {
-        initializer()
-    }
-
-    private fun initializer() {
-        uiState.value = ReviewUiState()
-    }
 
     val reviewsFlow: Flow<List<Review>> = flow {
-        uiState.value = uiState.value.copy(isLoading = true)
+        _uiState.value = _uiState.value.copy(isLoading = true)
 
         val reviews = reviewService.getReviewsByBusinessId(uiState.value.businessId).first()
         emit(reviews)
     }.onStart {
-        uiState.value = uiState.value.copy(isLoading = true)
+        _uiState.value = _uiState.value.copy(isLoading = true)
     }.onCompletion {
-        uiState.value = uiState.value.copy(isLoading = false)
+        _uiState.value = _uiState.value.copy(isLoading = false)
+    }
+
+    fun getReviewByBusinessId(businessId: String) {
+        launchCatching {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
+            try {
+                val reviews = reviewService.getReviewsByBusinessId(businessId).first()
+                _uiState.value = _uiState.value.copy(reviews = reviews)
+            } catch (e: Exception) {
+                // Handle error
+                _uiState.value = _uiState.value.copy(isLoading = true)
+            } finally {
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            }
+        }.invokeOnCompletion {
+            _uiState.value = _uiState.value.copy(isLoading = false)
+        }
     }
 }
