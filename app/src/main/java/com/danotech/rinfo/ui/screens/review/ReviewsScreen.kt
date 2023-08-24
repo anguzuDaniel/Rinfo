@@ -47,6 +47,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -138,7 +139,7 @@ fun ReviewsScreen(
                         )
                     }
                 } else {
-                    items(reviewUiState.reviews, key = { review -> review.id }) { review ->
+                    items(reviewUiState.reviews, key = { r -> r.id }) { review ->
                         ReviewItem(
                             viewModel = viewModel,
                             review = review,
@@ -251,7 +252,7 @@ fun ReviewItem(
             ) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Bottom
                 ) {
                     Text(
                         text = reviewUiState.reviewUserName,
@@ -265,24 +266,57 @@ fun ReviewItem(
 
                     Spacer(modifier = Modifier.width(4.dp))
 
-                    // if the review has a date
-                    if (review.date.isNotEmpty()) {
-                        // shows the time difference between the current time and the time the review was added
-                        // to display eg 1 min ago
-                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                        // val storedDateTimeString = "2023-08-13 10:00:00" // Not needed
-                        val storedDateTime = LocalDateTime.parse(review.date.trim(), formatter)
-                        val currentDateTime = LocalDateTime.now()
+                    if (!review.edited) {
+                        // if the review has a date
+                        if (review.date.isNotEmpty()) {
+                            // shows the time difference between the current time and the time the review was added
+                            // to display eg 1 min ago
+                            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                            // val storedDateTimeString = "2023-08-13 10:00:00" // Not needed
+                            val storedDateTime = LocalDateTime.parse(review.date.trim(), formatter)
+                            val currentDateTime = LocalDateTime.now()
 
-                        val timeDifference = timeAgo(storedDateTime, currentDateTime)
+                            val timeDifference = timeAgo(storedDateTime, currentDateTime)
 
+                            Text(
+                                text = timeDifference,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Light
+                            )
+                        }
+                    } else {
                         Text(
-                            text = timeDifference,
+                            text = stringResource(R.string.edited),
                             style = MaterialTheme.typography.bodySmall,
                             fontSize = 10.sp,
-                            fontWeight = FontWeight.Light
+                            fontWeight = FontWeight.Light,
+                            fontStyle = FontStyle.Italic
                         )
+
+                        Spacer(modifier = Modifier.width(2.dp))
+
+                        // if the review has a date
+                        if (review.date.isNotEmpty()) {
+                            // shows the time difference between the current time and the time the review was added
+                            // to display eg 1 min ago
+                            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                            // val storedDateTimeString = "2023-08-13 10:00:00" // Not needed
+                            val storedDateTime = LocalDateTime.parse(review.date.trim(), formatter)
+                            val currentDateTime = LocalDateTime.now()
+
+                            val timeDifference = timeAgo(storedDateTime, currentDateTime)
+
+                            Text(
+                                text = timeDifference,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Light,
+                                fontStyle = FontStyle.Italic
+                            )
+                        }
                     }
+
                 }
 
                 Spacer(modifier = Modifier.height(4.dp))

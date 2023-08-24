@@ -117,4 +117,6 @@
     <string name="no_reviews_added_yet">No reviews added yet</string>
     <string name="most_popular">Most Popular</string>
     <string name="add_a_review">Add a review</string>
+    <string name="review_updated">Review updated</string>
+    <string name="edited">Edited</string>
 </resources>

@@ -12,6 +12,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -36,7 +38,14 @@ fun ReviewForm(
     onSubmit: () -> Unit = {},
     onBackPressed: () -> Unit
 ) {
-    val uiState = viewModel.uiState.value
+
+    if (reviewId.isNotEmpty()) {
+        LaunchedEffect(viewModel) {
+            viewModel.getReview(reviewId)
+        }
+    }
+
+    val uiState = viewModel.uiState.collectAsState().value
 
     Scaffold {
         Column(
@@ -64,11 +73,10 @@ fun ReviewForm(
                 onValueChanged = { title ->
                     // title is less than 10 characters
                     // return
-                    if (title.length == 10) {
-                        return@ReviewInputWithLabel
+                    if (title.length <= 10) {
+                        viewModel.onTitleInput(title)
                     }
 
-                    viewModel.onTitleInput(title)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -102,8 +110,18 @@ fun ReviewForm(
                     val formattedDateTime = currentDateTime.format(formatter)
                     viewModel.onDateInput(formattedDateTime)
 
-                    // adds the review to the database
-                    viewModel.addReview()
+                    // if the review id is not empty
+                    // update the review
+                    if (reviewId.isNotEmpty()) {
+                        viewModel.updateReview(reviewId)
+
+                    }
+
+                    if (reviewId.isEmpty()) {
+                        // adds the review to the database
+                        viewModel.addReview()
+                    }
+
                     onCancel()
                 },
                 submitButtonEnabled = uiState.review.isNotEmpty() && uiState.title.isNotEmpty(),

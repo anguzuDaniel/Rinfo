@@ -18,6 +18,11 @@ constructor(
         TODO("Not yet implemented")
     }
 
+    override suspend fun getReviewById(reviewId: String): Review {
+        return fireStore.collection(REVIEW_COLLECTION).document(reviewId).get().await()
+            .toObject(Review::class.java)!!
+    }
+
     override suspend fun getReviewsByBusinessId(businessId: String): Flow<List<Review>> {
         return fireStore.collection(REVIEW_COLLECTION).whereEqualTo(BUSINESS_ID_FIELD, businessId)
             .dataObjects()

@@ -275,6 +275,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         arguments = listOf(navArgument("businessId") { type = NavType.StringType })
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
+        val reviewId = null
         val userId = FirebaseAuth.getInstance().currentUser?.email
 
         if (businessId != null) {
@@ -288,7 +289,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 onFabBtnClicked = {
                     // send user to review form
                     // width businessId and userId
-                    appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId/''")
+                    appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId/$reviewId")
                 },
                 onShowReviewPageClicked = {
                     appState.navigate("${RInfoScreen.Reviews.name}/$businessId")
@@ -317,8 +318,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 onBackPressed = {
                     appState.popUp()
                 },
-
-                )
+            )
         } else {
             // Handle the case where businessId is null
         }

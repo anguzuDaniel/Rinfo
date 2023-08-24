@@ -23,5 +23,6 @@ data class Review(
     val rating: Int = 0,
     val review: String = "",
     var postive: Boolean = false,
-    var date: String = ""
+    var date: String = "",
+    var edited: Boolean = false
 )

@@ -8,5 +8,6 @@ data class ReviewFormUiState(
     val review: String = "",
     val isPositive: Boolean = false,
     var submitButtonEnabled: Boolean = false,
-    val date: String = ""
+    val date: String = "",
+    var isLoading: Boolean = false
 )

@@ -10,6 +10,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
@@ -39,7 +40,10 @@ fun ButtonRow(
             onClick = onSubmit,
             enabled = submitButtonEnabled
         ) {
-            Text(stringResource(R.string.ok).uppercase(Locale.getDefault()))
+            Text(
+                stringResource(R.string.ok).uppercase(Locale.getDefault()),
+                color = Color.White
+            )
         }
     }
 }
