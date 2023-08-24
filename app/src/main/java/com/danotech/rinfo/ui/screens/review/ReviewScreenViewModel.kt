@@ -58,10 +58,13 @@ constructor(
         }
     }
 
-    fun deleteReview(reviewId: String) {
+    fun deleteReview(reviewId: String, businessId: String) {
         launchCatching {
             try {
                 reviewService.delete(reviewId)
+
+                val reviews = reviewService.getReviewsByBusinessId(businessId).first()
+                _uiState.value = _uiState.value.copy(reviews = reviews)
             } catch (e: Exception) {
                 // Handle error
                 _uiState.value = _uiState.value.copy(isLoading = true)

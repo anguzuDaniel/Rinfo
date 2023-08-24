@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
@@ -43,7 +44,7 @@ fun ReviewForm(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Add a review",
+                text = stringResource(R.string.add_a_review),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -60,7 +61,15 @@ fun ReviewForm(
             ReviewInputWithLabel(
                 placeholder = R.string.title,
                 value = uiState.title,
-                onValueChanged = viewModel::onTitleInput,
+                onValueChanged = { title ->
+                    // title is less than 10 characters
+                    // return
+                    if (title.length == 10) {
+                        return@ReviewInputWithLabel
+                    }
+
+                    viewModel.onTitleInput(title)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
             )

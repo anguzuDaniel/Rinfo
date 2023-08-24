@@ -14,15 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -34,7 +31,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -53,6 +49,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.data.LocalReviewProvider
@@ -63,7 +60,6 @@ import com.danotech.rinfo.ui.components.RatingStars
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.danotech.rinfo.ui.screens.home.FilterRow
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -170,11 +166,11 @@ fun ReviewsScreen(
                                 confirmButton = {
                                     TextButton(
                                         onClick = {
-                                            viewModel.deleteReview(review.id)
+                                            viewModel.deleteReview(review.id, businessId)
                                             openDialog.value = false
                                         }
                                     ) {
-                                        Text("Confirm")
+                                        Text("Delete")
                                     }
                                 },
                                 dismissButton = {
@@ -183,7 +179,7 @@ fun ReviewsScreen(
                                             openDialog.value = false
                                         }
                                     ) {
-                                        Text("Dismiss")
+                                        Text("Cancel")
                                     }
                                 }
                             )
@@ -241,7 +237,7 @@ fun ReviewItem(
         Row(
             modifier = modifier
                 .padding(bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             ProfileImage(
                 size = 35.dp,
@@ -281,8 +277,10 @@ fun ReviewItem(
                         val timeDifference = timeAgo(storedDateTime, currentDateTime)
 
                         Text(
-                            text = timeDifference ?: "",
-                            style = MaterialTheme.typography.bodyMedium
+                            text = timeDifference,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Light
                         )
                     }
                 }
@@ -326,14 +324,16 @@ fun ReviewItem(
 
         Text(
             text = review.title,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = review.review,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Light
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -488,7 +488,10 @@ fun CurrentUserReviewDropdownActionOptions(
             )
             DropdownMenuItem(
                 text = { Text("Delete") },
-                onClick = onDeleteClicked
+                onClick = {
+                    onDeleteClicked()
+                    expanded = false
+                }
             )
         }
     }
