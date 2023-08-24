@@ -3,7 +3,9 @@ package com.danotech.rinfo.ui.screens.review
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
+import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
+import com.danotech.rinfo.model.service.ProfileService
 import com.danotech.rinfo.model.service.ReviewService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
 import com.danotech.rinfo.ui.screens.business.BusinessUiState
@@ -21,6 +23,7 @@ import javax.inject.Inject
 class ReviewScreenViewModel
 @Inject
 constructor(
+    private val profileService: ProfileService,
     private val reviewService: ReviewService,
     logService: LogService
 ) :
@@ -39,6 +42,33 @@ constructor(
         _uiState.value = _uiState.value.copy(isLoading = true)
     }.onCompletion {
         _uiState.value = _uiState.value.copy(isLoading = false)
+    }
+
+    fun getUserNameById(userId: String) {
+        launchCatching {
+            try {
+                val profileName = profileService.getProfile(userId)!!.profileName
+                _uiState.value = _uiState.value.copy(reviewUserName = profileName)
+            } catch (e: Exception) {
+                // Handle error
+                _uiState.value = _uiState.value.copy(isLoading = true)
+            } finally {
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            }
+        }
+    }
+
+    fun deleteReview(reviewId: String) {
+        launchCatching {
+            try {
+                reviewService.delete(reviewId)
+            } catch (e: Exception) {
+                // Handle error
+                _uiState.value = _uiState.value.copy(isLoading = true)
+            } finally {
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            }
+        }
     }
 
     fun getReviewByBusinessId(businessId: String) {

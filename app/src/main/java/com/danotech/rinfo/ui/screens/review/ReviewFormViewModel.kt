@@ -34,6 +34,10 @@ class ReviewFormViewModel @Inject constructor(
         uiState.value = uiState.value.copy(review = review)
     }
 
+    fun onDateInput(date: String) {
+        uiState.value = uiState.value.copy(date = date)
+    }
+
     fun addBusinessIdInformation(reviewedBusinessId: String, reviewerUserId: String) {
         uiState.value = uiState.value.copy(
             reviewedBusinessId = reviewedBusinessId,
@@ -71,6 +75,7 @@ class ReviewFormViewModel @Inject constructor(
                     rating = uiState.value.rating,
                     review = uiState.value.review,
                     postive = uiState.value.isPositive,
+                    date = uiState.value.date
                 )
             )
         }.invokeOnCompletion {

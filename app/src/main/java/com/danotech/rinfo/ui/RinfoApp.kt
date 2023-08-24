@@ -336,6 +336,9 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 userId = userId ?: "",
                 onBackButtonClick = {
                     appState.popUp()
+                },
+                onEditClicked = {
+                    appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId/$it")
                 }
             )
         } else {

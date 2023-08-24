@@ -7,5 +7,6 @@ data class ReviewFormUiState(
     val title: String = "",
     val review: String = "",
     val isPositive: Boolean = false,
-    var submitButtonEnabled: Boolean = false
+    var submitButtonEnabled: Boolean = false,
+    val date: String = ""
 )

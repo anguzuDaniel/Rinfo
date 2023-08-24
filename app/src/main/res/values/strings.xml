@@ -115,4 +115,5 @@
     <string name="call">Call</string>
     <string name="see_reviews">See reviews</string>
     <string name="no_reviews_added_yet">No reviews added yet</string>
+    <string name="most_popular">Most Popular</string>
 </resources>

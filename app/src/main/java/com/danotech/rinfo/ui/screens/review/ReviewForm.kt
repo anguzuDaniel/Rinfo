@@ -20,6 +20,8 @@ import com.danotech.rinfo.ui.components.ReviewInputWithLabel
 import com.danotech.rinfo.ui.screens.business.bottomSheet.ButtonRow
 import com.danotech.rinfo.ui.screens.business.bottomSheet.RatingInputRow
 import com.google.firebase.auth.FirebaseAuth
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -83,6 +85,15 @@ fun ReviewForm(
                         reviewedBusinessId = reviewedBusinessId,
                         reviewerUserId = FirebaseAuth.getInstance().currentUser!!.email.toString()
                     )
+
+                    // get the current data and time
+                    // add the date and time before calling the add review method
+                    val currentDateTime = LocalDateTime.now()
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                    val formattedDateTime = currentDateTime.format(formatter)
+                    viewModel.onDateInput(formattedDateTime)
+
+                    // adds the review to the database
                     viewModel.addReview()
                     onCancel()
                 },

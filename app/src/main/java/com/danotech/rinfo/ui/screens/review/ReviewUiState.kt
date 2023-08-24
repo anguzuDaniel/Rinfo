@@ -8,6 +8,7 @@ import com.danotech.rinfo.model.Review
 data class ReviewUiState(
     val businessId: String = "",
     val reviews: List<Review> = emptyList(),
+    val reviewUserName: String = "",
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
 )

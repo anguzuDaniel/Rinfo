@@ -17,10 +17,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -201,8 +204,10 @@ fun HomePageContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterRow(
+    heading: String = stringResource(R.string.most_popular),
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -211,7 +216,7 @@ fun FilterRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Most Popular",
+            text = heading,
             style = MaterialTheme.typography.displayMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -221,7 +226,6 @@ fun FilterRow(
             color = MaterialTheme.colorScheme.onSurface,
         )
     }
-
 }
 
 /**
@@ -290,22 +294,13 @@ fun ShowOptionRow(
 
     var clicked by remember { mutableStateOf(false) }
 
+    var selected by remember { mutableStateOf(false) }
+
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        ShowOptionButton(
-            name = R.string.all,
-            active = clicked,
-            modifier = Modifier
-                .weight(1f),
-            onFilterClicked = {
-                clicked = !clicked
-                onFilterClicked()
-            }
-        )
-
         ShowOptionButton(
             name = R.string.popular,
             active = clicked,

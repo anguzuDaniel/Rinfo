@@ -14,18 +14,15 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class BusinessAccountServiceImpl
-@Inject
-constructor(
-    private val fireStore: FirebaseFirestore,
-    private val auth: AccountService
+@Inject constructor(
+    private val fireStore: FirebaseFirestore, private val auth: AccountService
 ) : BusinessAccountService {
     @OptIn(ExperimentalCoroutinesApi::class)
     override val currentUserBusinessAccount: Flow<List<Business>>
-        get() =
-            auth.currentUser.flatMapLatest { user ->
-                fireStore.collection(BUSINESS_COLLECTION).whereEqualTo(USER_ID_FIELD, user.id)
-                    .dataObjects()
-            }
+        get() = auth.currentUser.flatMapLatest { user ->
+            fireStore.collection(BUSINESS_COLLECTION).whereEqualTo(USER_ID_FIELD, user.id)
+                .dataObjects()
+        }
 
     override suspend fun getAllBusiness(number: Int): Flow<List<Business>> {
         return fireStore.collection(BUSINESS_COLLECTION).limit(number.toLong()).dataObjects()
@@ -37,7 +34,8 @@ constructor(
     }
 
     override suspend fun getBusinessWhereLike(name: String): Flow<List<Business>> {
-        return fireStore.collection(BUSINESS_COLLECTION).whereEqualTo("name", name).dataObjects()
+        return fireStore.collection(BUSINESS_COLLECTION).whereEqualTo(BUSINESS_NAME, name)
+            .dataObjects()
     }
 
     override suspend fun getBusinessById(businessId: String): Business? {
@@ -54,20 +52,17 @@ constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun create(business: Business): String =
-        trace(SAVE_BUSINESS_TRACE) {
-            val businessWithUserId =
-                business.copy(id = FirebaseAuth.getInstance().currentUser!!.email.toString())
-            fireStore.collection(BUSINESS_COLLECTION).document(businessWithUserId.id)
-                .set(businessWithUserId).await().toString()
-        }
+    override suspend fun create(business: Business): String = trace(SAVE_BUSINESS_TRACE) {
+        val businessWithUserId =
+            business.copy(id = FirebaseAuth.getInstance().currentUser!!.email.toString())
+        fireStore.collection(BUSINESS_COLLECTION).document(businessWithUserId.id)
+            .set(businessWithUserId).await().toString()
+    }
 
-    override suspend fun update(business: Business): Unit =
-        trace(UPDATE_BUSINESS_TRACE) {
-            val businessId = business.id
-            fireStore.collection(BUSINESS_COLLECTION).document(businessId).set(business)
-                .await()
-        }
+    override suspend fun update(business: Business): Unit = trace(UPDATE_BUSINESS_TRACE) {
+        val businessId = business.id
+        fireStore.collection(BUSINESS_COLLECTION).document(businessId).set(business).await()
+    }
 
     override suspend fun delete(business: String) {
         fireStore.collection(BUSINESS_COLLECTION).document(business).delete().await()
@@ -76,6 +71,7 @@ constructor(
     companion object {
         private const val CATEGORY_FIELD = "category"
         private const val USER_ID_FIELD = "userId"
+        private const val BUSINESS_NAME = "name"
         private const val BUSINESS_COLLECTION = "businessAccount"
         private const val SAVE_BUSINESS_TRACE = "saveBusinessAccount"
         private const val UPDATE_BUSINESS_TRACE = "updateBusinessAccount"

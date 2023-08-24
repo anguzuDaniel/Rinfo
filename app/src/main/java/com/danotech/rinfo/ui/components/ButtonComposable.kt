@@ -18,10 +18,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -257,6 +261,7 @@ fun CategoryIconButton(
  * reusable text input
  * show options for the search screen
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowOptionButton(
     @StringRes name: Int,
@@ -268,23 +273,29 @@ fun ShowOptionButton(
     val containerColor =
         if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
 
-    Button(
-        onClick = onFilterClicked,
-        shape = MaterialTheme.shapes.small,
-        colors = buttonColors(
-            containerColor = containerColor,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        ),
-        enabled = active,
-        modifier = modifier
-    ) {
-        Text(
-            text = stringResource(id = name),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 10.sp,
-        )
-    }
+    var selected by remember { mutableStateOf(false) }
+    FilterChip(
+        selected = selected,
+        onClick = { selected = !selected },
+        label = { Text(stringResource(id = name)) },
+        leadingIcon = if (selected) {
+            {
+                Icon(
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = "Localized Description",
+                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                )
+            }
+        } else {
+            {
+                Icon(
+                    imageVector = Icons.Filled.Home,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                )
+            }
+        }
+    )
 }
 
 @Composable

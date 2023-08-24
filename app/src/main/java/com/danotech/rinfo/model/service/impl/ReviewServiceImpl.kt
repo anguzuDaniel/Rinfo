@@ -35,17 +35,21 @@ constructor(
         }
 
     override suspend fun update(review: Review) {
-        TODO("Not yet implemented")
+        trace(UPDATE_REVIEW_TRACE) {
+            fireStore.collection(REVIEW_COLLECTION).document(review.id).set(review).await()
+        }
     }
 
     override suspend fun delete(reviewId: String) {
-        TODO("Not yet implemented")
+        trace(UPDATE_REVIEW_TRACE) {
+            fireStore.collection(REVIEW_COLLECTION).document(reviewId).delete().await()
+        }
     }
 
     companion object {
         private const val REVIEW_FIELD = "review"
-        private const val USER_ID_FIELD = "userId"
-        private const val BUSINESS_ID_FIELD = "businessId"
+        private const val USER_ID_FIELD = "reviewerUserId"
+        private const val BUSINESS_ID_FIELD = "reviewedBusinessId"
         private const val REVIEW_COLLECTION = "reviews"
         private const val SAVE_REVIEW_TRACE = "saveReview"
         private const val UPDATE_REVIEW_TRACE = "updateReview"
