@@ -167,13 +167,13 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
 
                 appState.navigate(RInfoScreen.Categories.name)
             },
-            onSearchIconClicked = {
+            onNotificationClicked = {
                 if (!appState.isLoggedIn) {
                     appState.navigate(RInfoScreen.Login.name)
                     return@HomeScreen
                 }
 
-                appState.navigate(RInfoScreen.Search.name)
+                appState.navigate(RInfoScreen.Notification.name)
             },
         )
     }

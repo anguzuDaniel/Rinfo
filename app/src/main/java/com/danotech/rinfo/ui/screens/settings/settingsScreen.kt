@@ -24,6 +24,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,9 +52,14 @@ fun SettingsScreen(
     onTabSelected: (RInfoScreen) -> Unit = {},
     onLogoutClicked: () -> Unit = {},
     onNavClicked: (String) -> Unit = {},
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     BackHandler {
         onBackPressed()
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.getProfile()
     }
 
     Scaffold(
@@ -73,18 +80,19 @@ fun SettingsScreen(
             }, fab = {})
         },
     ) { innerPadding ->
-        EditAccountContent(
+        SettingsContent(
             openAndPopUp = openAndPopUp,
             innerPadding = innerPadding,
             settingType = SettingType.TEXT,
             onLogoutClicked = onLogoutClicked,
-            onNavClicked = onNavClicked
+            onNavClicked = onNavClicked,
+            viewModel = viewModel
         )
     }
 }
 
 @Composable
-fun EditAccountContent(
+fun SettingsContent(
     modifier: Modifier = Modifier,
     openAndPopUp: (String, String) -> Unit,
     settingsViewModel: SettingsViewModel = hiltViewModel(),
@@ -92,7 +100,10 @@ fun EditAccountContent(
     settingType: SettingType,
     onLogoutClicked: () -> Unit,
     onNavClicked: (String) -> Unit = {},
+    viewModel: SettingsViewModel,
 ) {
+    val uiState = viewModel.uiState.collectAsState().value
+
     LazyColumn(
         modifier = Modifier
             .padding(dimensionResource(id = R.dimen.body_padding)),
@@ -113,14 +124,14 @@ fun EditAccountContent(
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
-                    androidx.compose.material.Text(
-                        text = "Cafe Javas",
+                    Text(
+                        text = uiState.profileName,
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    androidx.compose.material.Text(
-                        text = "Kampala, Uganda",
+                    Text(
+                        text = uiState.profile,
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onBackground
                     )

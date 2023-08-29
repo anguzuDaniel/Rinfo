@@ -56,27 +56,6 @@ fun NotificationPage(
                 modifier = Modifier.background(MaterialTheme.colorScheme.background)
             )
         },
-        bottomBar = {
-            CenteredBottomBarLayout(bottomBar = {
-                RinfoBottomNavigation(
-                    currentScreen = RInfoScreen.Notification,
-                    onTabSelected = onTabSelected,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }, fab = {
-//                FloatingActionButton(
-//                    onClick = onFabClicked,
-//                    modifier = Modifier.padding(bottom = 10.dp),
-//                    contentColor = MaterialTheme.colorScheme.onPrimary,
-//                    containerColor = MaterialTheme.colorScheme.primary
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.Default.Search,
-//                        contentDescription = stringResource(id = R.string.search)
-//                    )
-//                }
-            })
-        },
     ) { innerPadding ->
         Column(
             modifier = Modifier.fillMaxSize(),

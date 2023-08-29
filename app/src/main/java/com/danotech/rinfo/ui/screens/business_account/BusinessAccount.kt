@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
@@ -39,7 +38,6 @@ import com.danotech.rinfo.ui.components.Loading
 import com.danotech.rinfo.ui.components.TextInputWithLabel
 import com.danotech.rinfo.ui.screens.account.SelectBusinessCategory
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
-import com.danotech.rinfo.ui.theme.AppTheme
 import com.togitech.ccp.component.TogiCountryCodePicker
 import com.togitech.ccp.data.utils.checkPhoneNumber
 import com.togitech.ccp.data.utils.getDefaultLangCode
@@ -130,22 +128,20 @@ fun BusinessAccountContent(
         }
 
         item {
-            InputWithCountryCode(
-                text = uiState.phone,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(Alignment.CenterStart),
-                onTextChange = viewModel::onPhoneChange
+            TextInputWithLabel(
+                labelText = stringResource(id = R.string.phone),
+                value = uiState.phone,
+                placeholder = R.string.placeholder_business_phone,
+                onValueChanged = viewModel::onPhoneChange
             )
         }
 
         item {
-            InputWithCountryCode(
-                text = uiState.whatsapp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(Alignment.CenterStart),
-                onTextChange = viewModel::onWhatsappChange
+            TextInputWithLabel(
+                labelText = stringResource(id = R.string.whatsapp),
+                value = uiState.whatsapp,
+                placeholder = R.string.whatsapp,
+                onValueChanged = viewModel::onWhatsappChange
             )
         }
 

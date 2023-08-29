@@ -17,13 +17,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -62,7 +59,7 @@ fun HomeScreen(
     onReviewCardClicked: (Business) -> Unit = {},
     onFilterClicked: () -> Unit = {},
     onCategoryClicked: () -> Unit = {},
-    onSearchIconClicked: () -> Unit = {},
+    onNotificationClicked: () -> Unit = {},
 ) {
     BackHandler {
         onBackPressed()
@@ -81,11 +78,11 @@ fun HomeScreen(
                 isSearchPage = true,
                 actions = {
                     IconButton(
-                        onClick = onSearchIconClicked,
+                        onClick = onNotificationClicked,
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "search",
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "notifications",
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }

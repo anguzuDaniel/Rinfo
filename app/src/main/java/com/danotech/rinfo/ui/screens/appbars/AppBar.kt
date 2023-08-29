@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIos
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,8 +48,6 @@ fun RinfoTopAppBar(
                     modifier = modifier
                 )
             }
-        } else if (isSearchPage) {
-            { Box {} }
         } else {
             {
                 Text(
@@ -65,13 +63,9 @@ fun RinfoTopAppBar(
                      * if background color is true or shown
                      * show rounded back arrow
                      */
-                    /**
-                     * if background color is true or shown
-                     * show rounded back arrow
-                     */
                     if (showBackgroundColor) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBackIos,
+                            imageVector = Icons.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.back_button)
                         )
                     } else {
