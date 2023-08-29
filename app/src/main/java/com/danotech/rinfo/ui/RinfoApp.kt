@@ -45,8 +45,9 @@ import com.danotech.rinfo.ui.screens.profile.ProfileScreen
 import com.danotech.rinfo.ui.screens.business.BusinessScreen
 import com.danotech.rinfo.ui.screens.review.ReviewForm
 import com.danotech.rinfo.ui.screens.review.ReviewsScreen
-import com.danotech.rinfo.ui.screens.selected_category.SelectedCategoryScreen
+import com.danotech.rinfo.ui.screens.map.MapScreen
 import com.danotech.rinfo.ui.screens.search_business.SearchPage
+import com.danotech.rinfo.ui.screens.selected_category.SelectedCategoryScreen
 import com.danotech.rinfo.ui.screens.settings.SettingsScreen
 import com.danotech.rinfo.ui.theme.AppTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -129,7 +130,6 @@ fun resources(): Resources {
 @RequiresApi(Build.VERSION_CODES.Q)
 @ExperimentalMaterialApi
 fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
-
     composable(route = RInfoScreen.Home.name) {
         HomeScreen(
             onTabSelected = { screen ->
@@ -275,8 +275,8 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         arguments = listOf(navArgument("businessId") { type = NavType.StringType })
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
-        val reviewId = null
         val userId = FirebaseAuth.getInstance().currentUser?.email
+
 
         if (businessId != null) {
             // Use the businessId to fetch data or perform other operations
@@ -289,11 +289,33 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 onFabBtnClicked = {
                     // send user to review form
                     // width businessId and userId
-                    appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId/$reviewId")
+                    appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId/'")
                 },
                 onShowReviewPageClicked = {
                     appState.navigate("${RInfoScreen.Reviews.name}/$businessId")
                 },
+                onDirectionClicked = { location ->
+                    appState.navigate("${RInfoScreen.Map.name}/$location")
+                }
+            )
+        } else {
+            // Handle the case where businessId is null
+        }
+    }
+    composable(
+        route = "${RInfoScreen.Map.name}/{city}/{country}",
+        arguments = listOf(navArgument("city") { type = NavType.StringType })
+    ) { backStackEntry ->
+        val country = backStackEntry.arguments?.getString("country")
+        val city = backStackEntry.arguments?.getString("city")
+
+        if (country != null) {
+            MapScreen(
+                onBack = {
+                    appState.popUp()
+                },
+                city = city ?: "",
+                country = "Nigeria"
             )
         } else {
             // Handle the case where businessId is null

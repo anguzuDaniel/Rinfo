@@ -4,6 +4,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 
 /**
  * used the truncate the text
@@ -25,6 +26,7 @@ fun TruncateText(
     Text(
         text = truncatedText,
         style = style,
-        color = color
+        color = color,
+        textAlign = TextAlign.Justify
     )
 }

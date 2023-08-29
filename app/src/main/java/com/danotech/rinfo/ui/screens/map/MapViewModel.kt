@@ -1,9 +1,10 @@
-package com.danotech.rinfo.ui.screens.search_business
+package com.danotech.rinfo.ui.screens.map
 
 import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
+import com.google.android.gms.maps.model.MapStyleOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,15 +13,32 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchBusinessViewModel @Inject constructor(
+class MapViewModel @Inject constructor(
     private val businessAccountService: BusinessAccountService,
     logService: LogService
 ) : RinfoViewModel(logService) {
-    private val _uiState = MutableStateFlow(SearchBusinessUiState())
+    private val _uiState = MutableStateFlow(MapUiState())
     val uiState = _uiState.asStateFlow()
 
     fun onClose() {
         _uiState.value = _uiState.value.copy(query = "")
+    }
+
+    fun onEvent(event: MapEvent) {
+        when (event) {
+            is MapEvent.toggleFalloutMap -> {
+                _uiState.value = _uiState.value.copy(
+                    properties = _uiState.value.properties.copy(
+                        mapStyleOptions = if (_uiState.value.isFalloutMap) {
+                            null
+                        } else {
+                            MapStyleOptions(MapStyle.json)
+                        }
+                    ),
+                    isFalloutMap = !_uiState.value.isFalloutMap
+                )
+            }
+        }
     }
 
     fun onSearchInput() {

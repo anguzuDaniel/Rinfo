@@ -4,12 +4,13 @@ import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.danotech.rinfo.model.Business
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -20,11 +21,6 @@ fun SearchPage(
     BackHandler {
         onBackPressed()
     }
-
-    val searchQuery by remember { mutableStateOf(TextFieldValue()) }
-    var searchResults by remember { mutableStateOf(emptyList<String>()) }
-
-    viewModel.uiState.value
 
     Scaffold {
         Column(
@@ -38,21 +34,12 @@ fun SearchPage(
             )
         }
     }
-
-    // Simulate search functionality here
-    LaunchedEffect(searchQuery.text) {
-        // You can perform actual search operations here based on the `searchQuery` value.
-        // For demonstration purposes, we are just using a simple list.
-        searchResults = listOf("Result 1", "Result 2", "Result 3").filter {
-            it.contains(searchQuery.text, ignoreCase = true)
-        }
-    }
 }
 
 
 @Composable
 fun SearchResults(
-    results: List<String>,
+    results: List<Business>,
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -61,9 +48,9 @@ fun SearchResults(
             .fillMaxSize(),
         contentPadding = innerPadding
     ) {
-        items(results.size) { index ->
+        items(results, key = { r -> r.id }) { review ->
             Text(
-                text = results[index],
+                text = review.name,
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(20.dp)

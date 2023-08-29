@@ -155,7 +155,7 @@ fun EditAccountContent(
 
         item {
             SettingsClickableComp(
-                name = R.string.account,
+                name = R.string.business_account,
                 icon = Icons.Rounded.FavoriteBorder,
                 iconDesc = R.string.account,
                 settingType = settingType,

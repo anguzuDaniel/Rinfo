@@ -10,6 +10,8 @@ import com.danotech.rinfo.model.service.ProfileService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,7 +20,8 @@ class ProfileViewModel @Inject constructor(
     private val accountService: AccountService,
     logService: LogService
 ) : RinfoViewModel(logService) {
-    val uiState = mutableStateOf(ProfileUiState())
+    private val _uiState = MutableStateFlow(ProfileUiState())
+    val uiState = _uiState.asStateFlow()
 
 //    val profile = launchCatching {
 //        profileService.profiles.firstOrNull { it.profileId == accountService.currentUserId }
@@ -29,34 +32,34 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun initializeUIState() {
-        uiState.value = ProfileUiState()
+        _uiState.value = ProfileUiState()
     }
 
     fun onProfileNameChanged(profileName: String) {
-        uiState.value = uiState.value.copy(profileName = profileName)
+        _uiState.value = _uiState.value.copy(profileName = profileName)
     }
 
     fun onProfileFirstNameChanged(name: String) {
-        uiState.value = uiState.value.copy(profileFirstName = name)
+        _uiState.value = _uiState.value.copy(profileFirstName = name)
     }
 
     fun profileLastNameChanged(name: String) {
-        uiState.value = uiState.value.copy(profileLastName = name)
+        _uiState.value = _uiState.value.copy(profileLastName = name)
     }
 
     fun profileImage(url: String) {
-        uiState.value = uiState.value.copy(profileImage = url)
+        _uiState.value = _uiState.value.copy(profileImage = url)
     }
 
     fun saveProfile() {
-        uiState.value = uiState.value.copy(isLoading = true)
+        _uiState.value = _uiState.value.copy(isLoading = true)
 
         launchCatching {
             val profile = Profile(
-                profileName = uiState.value.profileName,
-                firstName = uiState.value.profileFirstName,
-                lastName = uiState.value.profileLastName,
-                profileImageUrl = uiState.value.profileImage
+                profileName = _uiState.value.profileName,
+                firstName = _uiState.value.profileFirstName,
+                lastName = _uiState.value.profileLastName,
+                profileImageUrl = _uiState.value.profileImage
             )
             if (profileService.getProfile(FirebaseAuth.getInstance().currentUser!!.email.toString()) == null) {
                 profileService.create(profile)
@@ -67,20 +70,27 @@ class ProfileViewModel @Inject constructor(
             }
         }.invokeOnCompletion {
             getProfile()
-            uiState.value = uiState.value.copy(isLoading = false)
+            _uiState.value = uiState.value.copy(isLoading = false)
         }
     }
 
     fun getProfile() {
         launchCatching {
-            profileService.getProfile(accountService.currentUserId)?.let {
-                uiState.value = uiState.value.copy(
-                    profileName = it.profileName,
-                    profileFirstName = it.firstName,
-                    profileLastName = it.lastName,
-                    profileImage = it.profileImageUrl
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
+            val profile =
+                profileService.getProfile(FirebaseAuth.getInstance().currentUser!!.email.toString())
+
+            if (profile != null) {
+                _uiState.value = _uiState.value.copy(
+                    profileName = profile.profileName,
+                    profileFirstName = profile.firstName,
+                    profileLastName = profile.lastName,
+                    profileImage = profile.profileImageUrl
                 )
             }
+        }.invokeOnCompletion {
+            _uiState.value = _uiState.value.copy(isLoading = false)
         }
     }
 }

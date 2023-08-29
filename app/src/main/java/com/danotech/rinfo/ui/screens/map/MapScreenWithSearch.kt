@@ -1,15 +1,16 @@
-package com.danotech.rinfo.ui.screens.search_business
+package com.danotech.rinfo.ui.screens.map
 
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.LocationOff
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,17 +27,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.Loading
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BusinessSearchBar(
+fun MapScreenWithSearch(
+    city: String,
+    country: String,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     onClose: () -> Unit = {},
-    viewModel: SearchBusinessViewModel,
+    viewModel: MapViewModel = hiltViewModel(),
 ) {
     BackHandler {
         onBack()
@@ -70,18 +74,11 @@ fun BusinessSearchBar(
                 )
             },
             trailingIcon = {
-                if (active) {
-                    Icon(
-                        modifier = Modifier.clickable {
-                            if (uiState.query.isNotEmpty()) {
-                                onClose()
-                            } else {
-                                active = false
-                            }
-                        }, imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(id = R.string.close)
-                    )
-                }
+                Icon(
+                    modifier = Modifier.clickable { onClose() },
+                    imageVector = if (uiState.isFalloutMap) Icons.Filled.LocationOff else Icons.Filled.LocationOn,
+                    contentDescription = stringResource(id = R.string.location_on)
+                )
             },
             colors = SearchBarDefaults.colors(
                 containerColor = MaterialTheme.colorScheme.background,
@@ -95,22 +92,11 @@ fun BusinessSearchBar(
             if (uiState.isLoading) {
                 Loading()
             } else {
-                if (uiState.businesses.isEmpty() && uiState.query.isNotEmpty()) {
-                    Text(
-                        text = stringResource(R.string.no_businesses_found),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                } else {
-                    LazyColumn {
-                        items(uiState.businesses, key = { b -> b.id }) { business ->
-                            BusinessListItem(
-                                business = business,
-                                onCategoryItemClicked = {}
-                            )
-                        }
-                    }
-                }
+                MapDisplay(
+                    viewModel = viewModel,
+                    country = country,
+                    city = city
+                )
             }
         }
     }

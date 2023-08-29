@@ -77,6 +77,46 @@ fun BusinessAccountButton(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun AddLogoImage(
+    isLoading: Boolean = false,
+    modifier: Modifier = Modifier,
+    action: () -> Unit,
+) {
+    Button(
+        onClick = action,
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = modifier
+                .animateContentSize(
+                    animationSpec = (tween(
+                        durationMillis = 300,
+                        easing = LinearOutSlowInEasing
+                    ))
+                )
+                .background(MaterialTheme.colorScheme.primary),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = if (isLoading) "Add Logo" else "Saving Logo..",
+                color = Color.White,
+            )
+            if (isLoading) {
+                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun ProfileButton(
     isLoading: Boolean = false,
     modifier: Modifier = Modifier,

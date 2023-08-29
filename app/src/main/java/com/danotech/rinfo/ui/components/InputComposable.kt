@@ -72,6 +72,41 @@ fun TextInput(
 }
 
 @Composable
+fun NumberInputWithLabel(
+    @StringRes placeholder: Int = R.string.empty,
+    labelText: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    onValueChanged: (String) -> Unit = {},
+    onSearchInputClicked: () -> Unit = {},
+) {
+    Text(
+        text = labelText,
+        style = MaterialTheme.typography.labelSmall,
+    )
+    Spacer(modifier = modifier.height(5.dp))
+    OutlinedTextField(
+        value = value,
+        onValueChange = { onValueChanged(it) },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            autoCorrect = false,
+            imeAction = ImeAction.Next,
+        ),
+        placeholder = {
+            Text(
+                text = stringResource(placeholder),
+                style = MaterialTheme.typography.labelSmall,
+            )
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = { onSearchInputClicked() }),
+    )
+    Spacer(modifier = modifier.height(5.dp))
+}
+
+@Composable
 fun TextInputWithLabel(
     @StringRes placeholder: Int = R.string.empty,
     labelText: String,

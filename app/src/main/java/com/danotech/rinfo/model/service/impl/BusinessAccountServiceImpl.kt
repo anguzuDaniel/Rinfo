@@ -7,6 +7,7 @@ import com.danotech.rinfo.model.service.trace
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.dataObjects
+import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 class BusinessAccountServiceImpl
 @Inject constructor(
-    private val fireStore: FirebaseFirestore, private val auth: AccountService
+    private val fireStore: FirebaseFirestore,
+    private val auth: AccountService
 ) : BusinessAccountService {
     @OptIn(ExperimentalCoroutinesApi::class)
     override val currentUserBusinessAccount: Flow<List<Business>>
@@ -33,20 +35,17 @@ class BusinessAccountServiceImpl
             .dataObjects()
     }
 
-    override suspend fun getBusinessWhereLike(name: String): Flow<List<Business>> {
-        return fireStore.collection(BUSINESS_COLLECTION).whereEqualTo(BUSINESS_NAME, name)
-            .dataObjects()
-    }
+    override suspend fun getBusinessWhereLike(name: String): Flow<List<Business>> =
+        fireStore.collection(BUSINESS_COLLECTION).whereEqualTo(BUSINESS_NAME, name).dataObjects()
 
-    override suspend fun getBusinessById(businessId: String): Business? {
-        val documentSnapshot =
-            fireStore.collection(BUSINESS_COLLECTION).document(businessId).get().await()
-        return if (documentSnapshot.exists()) {
-            documentSnapshot.toObject(Business::class.java)
-        } else {
-            null
-        }
-    }
+
+    override suspend fun getBusinessById(businessId: String): Business? =
+        fireStore.collection(BUSINESS_COLLECTION)
+            .document(businessId)
+            .get()
+            .await()
+            .toObject(Business::class.java)
+
 
     override suspend fun getBusinessByOwner(owner: String): Flow<List<Business>> {
         TODO("Not yet implemented")

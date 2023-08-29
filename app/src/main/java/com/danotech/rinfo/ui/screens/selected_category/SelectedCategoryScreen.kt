@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.RatingStars
+import com.danotech.rinfo.ui.screens.map.MapDisplay
 import com.danotech.rinfo.ui.theme.AppTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -71,9 +72,9 @@ fun SelectedCategoryScreen(
 
 @Composable
 fun SearchCategoryContent(
+    modifier: Modifier = Modifier,
     viewModel: SelectedCategoryViewModel,
     searchQuery: String = "",
-    modifier: Modifier = Modifier,
     onMapClicked: () -> Unit = {},
     onBackPressed: () -> Unit = {},
 ) {
@@ -84,7 +85,7 @@ fun SearchCategoryContent(
             .background(MaterialTheme.colorScheme.surface),
     ) {
         item {
-            MapDisplay(mapUrl = "", onMapClicked = {})
+
         }
 
         item {

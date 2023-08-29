@@ -8,6 +8,7 @@ data class BusinessAccountUiState(
     val address: String = "",
     val phone: String = "",
     val email: String = "",
+    val whatsapp: String = "",
     val businessCategory: Category = Category(name = ""),
     val reviews: Int = 0,
     val isLoading: Boolean = false,
