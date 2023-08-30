@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -70,7 +69,6 @@ import com.togitech.ccp.data.utils.checkPhoneNumber
 import com.togitech.ccp.data.utils.getDefaultLangCode
 import com.togitech.ccp.data.utils.getDefaultPhoneCode
 import com.togitech.ccp.data.utils.getLibCountries
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.R)
@@ -85,11 +83,17 @@ fun BusinessAccount(
         onBackClicked()
     }
 
-    LaunchedEffect(viewModel) {
-        viewModel.getBusinessAccount()
-    }
-
     val context = LocalContext.current
+
+    val defaultProfilePicture: Bitmap = BitmapFactory.decodeResource(
+        context.resources,
+        R.drawable.no_image
+    )
+
+    LaunchedEffect(viewModel) {
+        viewModel.setDefaultImage(defaultProfilePicture)
+        viewModel.getBusinessAccount(FirebaseAuth.getInstance().currentUser?.email!!)
+    }
 
     val uiState = viewModel.uiState.collectAsState().value
 
@@ -98,10 +102,10 @@ fun BusinessAccount(
     var showBottomSheet by remember { mutableStateOf(false) }
 
 
-    val logoImage: Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
+//    val logoImage: Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
 
     val bitmap = remember {
-        mutableStateOf(logoImage)
+        mutableStateOf(uiState.profilePicture)
     }
 
     val launcher = rememberLauncherForActivityResult(
@@ -163,16 +167,6 @@ fun BusinessAccount(
                             launcher.launch()
                         }
                     )
-                    // Sheet content
-                    Button(onClick = {
-                        scope.launch { sheetState.hide() }.invokeOnCompletion {
-                            if (!sheetState.isVisible) {
-                                viewModel.openBottomSheet(false)
-                            }
-                        }
-                    }) {
-                        Text("Hide bottom sheet")
-                    }
                 }
             }
         } else {
@@ -186,42 +180,69 @@ fun BottomSheetAddImage(
     onAddImageClick: () -> Unit,
     onCameraImageAddClick: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.Center)
-            .padding(20.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalAlignment = Alignment.Start
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.baseline_camera_alt_24),
-            contentDescription = "upload image",
-            alignment = Alignment.BottomEnd,
-            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+        Row(
             modifier = Modifier
-                .clip(MaterialTheme.shapes.small)
-                .size(100.dp)
-                .background(color = MaterialTheme.colorScheme.surface)
-                .padding(5.dp)
-                .clickable {
-                    onCameraImageAddClick()
-                }
-        )
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center)
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.baseline_camera_alt_24),
+                contentDescription = "upload image",
+                alignment = Alignment.BottomEnd,
+                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .size(50.dp)
+                    .background(color = MaterialTheme.colorScheme.surface)
+                    .padding(5.dp)
+                    .clickable {
+                        onCameraImageAddClick()
+                    }
+            )
 
-        Image(
-            painter = painterResource(id = R.drawable.baseline_image_24),
-            contentDescription = "upload image",
-            alignment = Alignment.BottomEnd,
-            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+            Text(
+                text = "Camera",
+                style = MaterialTheme.typography.titleMedium,
+
+                )
+        }
+
+        Row(
             modifier = Modifier
-                .clip(MaterialTheme.shapes.small)
-                .size(100.dp)
-                .background(color = MaterialTheme.colorScheme.surface)
-                .padding(5.dp)
-                .clickable {
-                    onAddImageClick()
-                }
-        )
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center)
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.baseline_image_24),
+                contentDescription = "upload image",
+                alignment = Alignment.BottomEnd,
+                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .size(50.dp)
+                    .background(color = MaterialTheme.colorScheme.surface)
+                    .padding(5.dp)
+                    .clickable {
+                        onAddImageClick()
+                    }
+            )
+
+            Text(
+                text = "Gallery",
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
     }
 }
 
@@ -243,7 +264,6 @@ fun BusinessAccountContent(
         contentPadding = innerPadding
     ) {
         item {
-
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
@@ -252,7 +272,7 @@ fun BusinessAccountContent(
                 Column {
                     val borderWidth = 1.dp
                     Image(
-                        bitmap = bitmap.value.asImageBitmap(),
+                        bitmap = uiState.profilePicture.asImageBitmap(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -264,7 +284,9 @@ fun BusinessAccountContent(
                             painter = painterResource(id = R.drawable.baseline_camera_alt_24),
                             contentDescription = "upload image",
                             alignment = Alignment.BottomEnd,
-                            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
+                                MaterialTheme.colorScheme.onSurface
+                            ),
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .size(24.dp)

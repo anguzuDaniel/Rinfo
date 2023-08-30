@@ -13,6 +13,7 @@ import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -97,6 +98,10 @@ class BusinessAccountViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(showBottomSheet = open)
     }
 
+    fun setDefaultImage(image: Bitmap) {
+        _uiState.value = _uiState.value.copy(profilePicture = image)
+    }
+
 
     fun onBusinessAccountCreated() {
         if (_uiState.value.name.isEmpty()) {
@@ -155,14 +160,37 @@ class BusinessAccountViewModel @Inject constructor(
         }
     }
 
-    fun getBusinessAccount() {
+    fun getBusinessAccount(userId: String) {
         launchCatching {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                imageLoading = true
+            )
 
             val business =
                 businessAccountService.getBusinessById(FirebaseAuth.getInstance().currentUser!!.email.toString())
 
             if (business != null) {
+                // Inside your function
+                val storage = FirebaseStorage.getInstance()
+                val storageRef = storage.reference
+
+                val imageName = "${userId}.jpg"
+                // Replace with the actual image name
+                val imageRef = storageRef.child("logos/${imageName}")
+
+                imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
+                    // Successfully retrieved image bytes
+                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    // Use the bitmap as needed (e.g., display in ImageView)
+                    _uiState.value = _uiState.value.copy(
+                        profilePicture = bitmap,
+                        imageLoading = false
+                    )
+                }.addOnFailureListener {
+                    // Handle failure
+                }
+
                 _uiState.value = _uiState.value.copy(
                     name = business.name,
                     email = business.email,
@@ -210,7 +238,7 @@ class BusinessAccountViewModel @Inject constructor(
             // sets loading to true
             _uiState.value = _uiState.value.copy(isLoading = true)
 
-            val imageName = "${userId}_${System.currentTimeMillis()}.jpg"
+            val imageName = "${userId}.jpg"
             val imageRef = storageRef.child("logos/${imageName}")
 
             val stream = ByteArrayOutputStream()
