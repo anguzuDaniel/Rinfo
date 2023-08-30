@@ -34,6 +34,10 @@ fun CategoryScreen(
         onBackPressed()
     }
 
+    LaunchedEffect(viewModel) {
+        viewModel.onAddCategories()
+    }
+
     val uiState = viewModel.uiState.value
 
     Scaffold {

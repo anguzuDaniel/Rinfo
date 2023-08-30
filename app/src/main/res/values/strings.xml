@@ -613,4 +613,6 @@
     <string name="slovenia_hint" translatable="false">070 123 456</string>
     <string name="select_country">Select Country</string>
     <string name="invalid_number">Invalid Phone Number</string>
+    <string name="image_uploaded_successfully">Image uploading successfully</string>
+    <string name="something_went_wrong">Some thing went wrong</string>
 </resources>

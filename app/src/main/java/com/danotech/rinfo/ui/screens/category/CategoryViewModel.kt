@@ -2,8 +2,6 @@ package com.danotech.rinfo.ui.screens.category
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import com.danotech.rinfo.R
-import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.data.LocalOfflineDatabase
 import com.danotech.rinfo.model.local.Category
 import com.danotech.rinfo.model.service.LogService
@@ -60,7 +58,7 @@ class CategoryViewModel @Inject constructor(
         uiState.value = CategoryUiState()
     }
 
-    fun onAddCategoryClick() {
+    fun onAddCategories() {
         val categories = listOf(
             Category(name = "Restaurants"),
             Category(name = "Cafes"),
@@ -140,7 +138,6 @@ class CategoryViewModel @Inject constructor(
                     localOfflineDatabase.categoryDao().insertCategory(category)
                 }
             }.invokeOnCompletion {
-                SnackbarManager.showMessage(R.string.all_categories_added)
                 uiState.value = uiState.value.copy(isLoading = false)
             }
         }

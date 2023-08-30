@@ -1,8 +1,10 @@
 package com.danotech.rinfo.ui.screens.business_account
 
-import androidx.compose.runtime.mutableStateOf
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
+import com.danotech.rinfo.data.LocalOfflineDatabase
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.local.Category
 import com.danotech.rinfo.model.service.AccountService
@@ -10,10 +12,16 @@ import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @Suppress("REPLACED_WITH_EXPRESSION")
@@ -21,6 +29,7 @@ import javax.inject.Inject
 class BusinessAccountViewModel @Inject constructor(
     private val accountService: AccountService,
     private val businessAccountService: BusinessAccountService,
+    private val localOfflineDatabase: LocalOfflineDatabase,
     logService: LogService
 ) : RinfoViewModel(logService) {
     private val _uiState = MutableStateFlow(BusinessAccountUiState())
@@ -84,6 +93,10 @@ class BusinessAccountViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(businessCategory = newValue)
     }
 
+    fun openBottomSheet(open: Boolean) {
+        _uiState.value = _uiState.value.copy(showBottomSheet = open)
+    }
+
 
     fun onBusinessAccountCreated() {
         if (_uiState.value.name.isEmpty()) {
@@ -125,8 +138,10 @@ class BusinessAccountViewModel @Inject constructor(
                 address = updateUiState.address,
                 description = updateUiState.description,
                 businessCategory = updateUiState.businessCategory.name,
-                reviews = 0
+                logo = updateUiState.logo,
+                reviews = 0,
             )
+
             if (businessAccountService.getBusinessById(accountService.currentUserId) == null) {
                 businessAccountService.create(business)
                 SnackbarManager.showMessage(R.string.business_account_created)
@@ -144,7 +159,8 @@ class BusinessAccountViewModel @Inject constructor(
         launchCatching {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
-            val business = businessAccountService.getBusinessById(FirebaseAuth.getInstance().currentUser!!.email.toString())
+            val business =
+                businessAccountService.getBusinessById(FirebaseAuth.getInstance().currentUser!!.email.toString())
 
             if (business != null) {
                 _uiState.value = _uiState.value.copy(
@@ -154,11 +170,149 @@ class BusinessAccountViewModel @Inject constructor(
                     address = business.address,
                     description = business.description,
                     whatsapp = business.whatsapp,
-                    businessCategory = getCategory(business.businessCategory)
+                    businessCategory = getCategory(business.businessCategory),
+                    logo = business.logo
                 )
             }
         }.invokeOnCompletion {
             _uiState.value = _uiState.value.copy(isLoading = false)
+        }
+    }
+
+    /**
+     * Gets image from firebase storage
+     * @param userId
+     * uses the user id to get the image
+     */
+    fun getImageFromFireBase(userId: String) {
+        val storageRef = Firebase.storage.reference
+        val imageRef = storageRef.child("logos/${userId}.jpg")
+
+        val ONE_MEGABYTE: Long = 1024 * 1024
+        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+            val bmp: Bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+            _uiState.value = _uiState.value.copy(profilePicture = bmp)
+        }.addOnFailureListener {
+            // Handle any errors
+        }
+    }
+
+    /**
+     * Uploads image to firebase storage
+     * @param image
+     * uses the user id as the name of the image
+     */
+    fun upLoadImageToFireBase(image: Bitmap, userId: String) {
+        // Inside your Composable function
+        val storageRef = Firebase.storage.reference
+
+        launchCatching {
+            // sets loading to true
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
+            val imageName = "${userId}_${System.currentTimeMillis()}.jpg"
+            val imageRef = storageRef.child("logos/${imageName}")
+
+            val stream = ByteArrayOutputStream()
+            image.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+
+            val data = stream.toByteArray()
+            val uploadTask = imageRef.putBytes(data)
+
+            uploadTask.addOnSuccessListener {
+                SnackbarManager.showMessage(R.string.image_uploaded_successfully)
+            }.addOnFailureListener {
+                // Handle upload failure
+                SnackbarManager.showMessage(R.string.something_went_wrong)
+            }
+
+            _uiState.value = _uiState.value.copy(logo = data.toString())
+        }.invokeOnCompletion {
+            _uiState.value = _uiState.value.copy(isLoading = false)
+        }
+    }
+
+    fun getAllCategories() = localOfflineDatabase.categoryDao().getAllCategories()
+
+    fun onAddCategories() {
+        val categories = listOf(
+            Category(name = "Restaurants"),
+            Category(name = "Cafes"),
+            Category(name = "Hotels"),
+            Category(name = "Bars"),
+            Category(name = "Grocery Stores"),
+            Category(name = "Clothing Stores"),
+            Category(name = "Shoe Stores"),
+            Category(name = "Electronics Stores"),
+            Category(name = "Bookstores"),
+            Category(name = "Pharmacies"),
+            Category(name = "Bakeries"),
+            Category(name = "Fitness Centers"),
+            Category(name = "Beauty Salons"),
+            Category(name = "Spas"),
+            Category(name = "Car Dealerships"),
+            Category(name = "Gas Stations"),
+            Category(name = "Auto Repair Shops"),
+            Category(name = "Banks"),
+            Category(name = "ATMs"),
+            Category(name = "Hospitals"),
+            Category(name = "Clinics"),
+            Category(name = "Dentists"),
+            Category(name = "Optometrists"),
+            Category(name = "Veterinarians"),
+            Category(name = "Pet Stores"),
+            Category(name = "Home Improvement Stores"),
+            Category(name = "Furniture Stores"),
+            Category(name = "Jewelry Stores"),
+            Category(name = "Toy Stores"),
+            Category(name = "Art Galleries"),
+            Category(name = "Museums"),
+            Category(name = "Movie Theaters"),
+            Category(name = "Parks"),
+            Category(name = "Zoos"),
+            Category(name = "Libraries"),
+            Category(name = "Schools"),
+            Category(name = "Universities"),
+            Category(name = "Stadiums"),
+            Category(name = "Music Venues"),
+            Category(name = "Nightclubs"),
+            Category(name = "Airports"),
+            Category(name = "Train Stations"),
+            Category(name = "Bus Stops"),
+            Category(name = "Taxi Services"),
+            Category(name = "Car Rentals"),
+            Category(name = "African Cuisine"),
+            Category(name = "Art and Craft"),
+            Category(name = "Fashion and Apparel"),
+            Category(name = "Jewelry and Accessories"),
+            Category(name = "Beauty and Cosmetics"),
+            Category(name = "Textiles and Fabrics"),
+            Category(name = "Furniture and Home Decor"),
+            Category(name = "Music and Entertainment"),
+            Category(name = "Handmade Products"),
+            Category(name = "Spices and Herbs"),
+            Category(name = "Traditional Medicine"),
+            Category(name = "Tourism and Safaris"),
+            Category(name = "Technology and Innovation"),
+            Category(name = "Education and Training"),
+            Category(name = "Agriculture and Farming"),
+            Category(name = "Construction and Real Estate"),
+            Category(name = "Transportation Services"),
+            Category(name = "Language and Cultural Services"),
+            Category(name = "Sports and Recreation"),
+            Category(name = "Health and Wellness"),
+            Category(name = "Financial Services"),
+            Category(name = "Media and Communication"),
+            Category(name = "Automotive Services")
+            // Add more categories as needed
+        )
+
+        runBlocking {
+            launch(Dispatchers.IO) {
+                for (category in categories) {
+                    localOfflineDatabase.categoryDao().insertCategory(category)
+                }
+            }
         }
     }
 

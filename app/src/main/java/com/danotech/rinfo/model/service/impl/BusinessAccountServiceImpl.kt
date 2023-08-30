@@ -1,5 +1,6 @@
 package com.danotech.rinfo.model.service.impl
 
+import android.graphics.Bitmap
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.BusinessAccountService
@@ -7,11 +8,13 @@ import com.danotech.rinfo.model.service.trace
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.dataObjects
-import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 class BusinessAccountServiceImpl
@@ -65,6 +68,18 @@ class BusinessAccountServiceImpl
 
     override suspend fun delete(business: String) {
         fireStore.collection(BUSINESS_COLLECTION).document(business).delete().await()
+    }
+
+    /**
+     * Uploads images to firebase store
+     * @param businessId
+     * @param image
+     */
+    override suspend fun upLoadImage(businessId: String, image: Bitmap?) {
+
+
+        fireStore.collection(BUSINESS_COLLECTION).document(businessId).update("image", image.toString())
+            .await()
     }
 
     companion object {
