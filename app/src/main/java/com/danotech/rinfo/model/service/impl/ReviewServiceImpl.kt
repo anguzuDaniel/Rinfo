@@ -35,8 +35,7 @@ constructor(
 
     override suspend fun create(review: Review): String =
         trace(SAVE_REVIEW_TRACE) {
-            fireStore.collection(REVIEW_COLLECTION)
-                .document().set(review).await().toString()
+            fireStore.collection(REVIEW_COLLECTION).document().set(review).await().toString()
         }
 
     override suspend fun update(review: Review) {

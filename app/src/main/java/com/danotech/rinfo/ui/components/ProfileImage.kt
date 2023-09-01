@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.components
 
+import android.graphics.Bitmap
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -39,6 +41,24 @@ fun ProfileImage(
     val borderWidth = 1.dp
     Image(
         painter = painterResource(id = imageUrI),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .size(size)
+            .clip(CircleShape)
+    )
+}
+
+@Composable
+fun ProfileImageBitmap(
+    size: Dp,
+    bitmap: Bitmap,
+    onProfileImageClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    val borderWidth = 1.dp
+    Image(
+        bitmap = bitmap.asImageBitmap(),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = Modifier

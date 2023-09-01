@@ -112,12 +112,9 @@ fun ReviewForm(
 
                     // if the review id is not empty
                     // update the review
-                    if (reviewId.isNotEmpty()) {
+                    if (reviewId == "") {
                         viewModel.updateReview(reviewId)
-
-                    }
-
-                    if (reviewId.isEmpty()) {
+                    } else {
                         // adds the review to the database
                         viewModel.addReview()
                     }

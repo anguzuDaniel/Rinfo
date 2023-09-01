@@ -1,18 +1,16 @@
 package com.danotech.rinfo.ui.screens.business
 
-import androidx.lifecycle.viewModelScope
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -66,6 +64,12 @@ constructor(
         )
     }
 
+    fun addImages(images: List<Bitmap>) {
+        _uiState.value = _uiState.value.copy(
+            currentBusinessImages = images
+        )
+    }
+
     /**
      * Gets a business by id
      * @param businessId The id of the business to get
@@ -86,6 +90,45 @@ constructor(
                 _uiState.value = _uiState.value.copy(isLoading = true)
             } finally {
                 _uiState.value = _uiState.value.copy(isLoading = false)
+            }
+        }.invokeOnCompletion {
+            _uiState.value = _uiState.value.copy(isLoading = false)
+        }
+    }
+
+    /**
+     * add business Images
+     *
+     */
+    fun addBusinessImages(
+        businessId: String,
+        imageList: List<Bitmap>,
+        onComplete: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        launchCatching {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            val storage = FirebaseStorage.getInstance()
+            val storageRef = storage.reference
+
+            val imagesLoadingCount = imageList.size
+
+            imageList.forEachIndexed { index, bitmap ->
+                val imageName = "${businessId}_${index}.jpg"
+                val imageRef = storageRef.child("business_images/$imageName")
+
+                val baos = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                val data = baos.toByteArray()
+
+                val uploadTask = imageRef.putBytes(data)
+                uploadTask.addOnSuccessListener {
+                    if (index == imagesLoadingCount - 1) {
+                        onComplete.invoke()
+                    }
+                }.addOnFailureListener { exception ->
+                    onError.invoke(exception)
+                }
             }
         }.invokeOnCompletion {
             _uiState.value = _uiState.value.copy(isLoading = false)

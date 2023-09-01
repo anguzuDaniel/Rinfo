@@ -229,6 +229,38 @@ fun RinfoButton(
     }
 }
 
+@Composable
+fun BusinessImageButton(
+    @DrawableRes icon: Int,
+    @StringRes name: Int,
+    onClicked: () -> Unit = {},
+    modifier: Modifier = Modifier,
+) {
+    Button(
+        onClick = onClicked,
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(20.dp)
+            )
+
+            Text(
+                text = stringResource(id = name),
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White
+            )
+        }
+    }
+}
+
 /**
  * FAB for the search button
  * provide a click handler

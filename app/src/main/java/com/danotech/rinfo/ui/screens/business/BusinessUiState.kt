@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.screens.business
 
+import android.graphics.Bitmap
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
 
@@ -20,8 +21,10 @@ data class BusinessUiState(
     val currentBusiness: Business = Business(),
     val currentUserId: String = "",
     val currentBusinessReviews: List<Review> = emptyList(),
+    var currentBusinessImages: List<Bitmap> = emptyList(),
     val currentBusinessId: String = "",
     val showReviewPage: Boolean = false,
     val isLoading: Boolean = false,
     var reviewInput: String = "",
+    var imagesLoading: Boolean = false
 )

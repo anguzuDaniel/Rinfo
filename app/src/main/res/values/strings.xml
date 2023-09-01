@@ -615,4 +615,9 @@
     <string name="invalid_number">Invalid Phone Number</string>
     <string name="image_uploaded_successfully">Image uploading successfully</string>
     <string name="something_went_wrong">Some thing went wrong</string>
+    <string name="take_picture">Take Picture</string>
+    <string name="from_gallery">From gallery</string>
+    <string name="save_change">Save change</string>
+    <string name="images_uploaded_successfully">Images uploaded successfully</string>
+    <string name="edit_review">Edit review</string>
 </resources>

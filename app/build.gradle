@@ -80,6 +80,10 @@ dependencies {
 
     implementation 'com.github.togisoft:jetpack_compose_country_code_picker:1.1.2'
 
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+    implementation "com.tbuonomo:dotsindicator:4.2"
+
+
 
     implementation("androidx.ui:ui-tooling:1.0.0-alpha07")
     implementation("androidx.compose.runtime:runtime:1.5.0")

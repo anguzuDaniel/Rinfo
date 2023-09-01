@@ -26,6 +26,7 @@ enum class RInfoScreen(@StringRes val title: Int) {
     Register(title = R.string.create_account),
     Map(title = R.string.direction),
     ReviewForm(title = R.string.review),
+    EditReviewForm(title = R.string.edit_review),
     SelectedCategory(title = R.string.categories),
     Categories(title = R.string.more_categories),
 }

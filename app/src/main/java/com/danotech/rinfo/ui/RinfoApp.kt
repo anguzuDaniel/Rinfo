@@ -195,11 +195,13 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         })
     }
     composable(route = RInfoScreen.BusinessAccount.name) {
-        BusinessAccount(
-            onBackClicked = {
-                appState.popUp()
-            }
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            BusinessAccount(
+                onBackClicked = {
+                    appState.popUp()
+                }
+            )
+        }
     }
     composable(route = RInfoScreen.EditAccount.name) {
         ProfileScreen(
@@ -289,7 +291,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 onFabBtnClicked = {
                     // send user to review form
                     // width businessId and userId
-                    appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId/'")
+                    appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId")
                 },
                 onShowReviewPageClicked = {
                     appState.navigate("${RInfoScreen.Reviews.name}/$businessId")
@@ -310,19 +312,44 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         val city = backStackEntry.arguments?.getString("city")
 
         if (country != null) {
-            MapScreen(
-                onBack = {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                MapScreen(
+                    onBack = {
+                        appState.popUp()
+                    },
+                    city = city ?: "",
+                    country = "Nigeria"
+                )
+            }
+        } else {
+            // Handle the case where businessId is null
+        }
+    }
+    composable(
+        route = "${RInfoScreen.ReviewForm.name}/{businessId}",
+        arguments = listOf(navArgument("businessId") { type = NavType.StringType })
+    ) { backStackEntry ->
+        val businessId = backStackEntry.arguments?.getString("businessId")
+        val userId = FirebaseAuth.getInstance().currentUser?.email
+
+        if (businessId != null) {
+            ReviewForm(
+                reviewedBusinessId = businessId,
+                reviewId = "",
+                reviewerUserId = userId ?: "",
+                onCancel = {
                     appState.popUp()
                 },
-                city = city ?: "",
-                country = "Nigeria"
+                onBackPressed = {
+                    appState.popUp()
+                },
             )
         } else {
             // Handle the case where businessId is null
         }
     }
     composable(
-        route = "${RInfoScreen.ReviewForm.name}/{businessId}/{reviewId}",
+        route = "${RInfoScreen.EditReviewForm.name}/{businessId}/{reviewId}",
         arguments = listOf(navArgument("businessId") { type = NavType.StringType })
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
@@ -360,7 +387,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                     appState.popUp()
                 },
                 onEditClicked = {
-                    appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId/$it")
+                    appState.navigate("${RInfoScreen.EditReviewForm.name}/$businessId/$it")
                 }
             )
         } else {

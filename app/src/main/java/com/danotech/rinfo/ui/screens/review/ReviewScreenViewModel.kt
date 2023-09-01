@@ -1,5 +1,7 @@
 package com.danotech.rinfo.ui.screens.review
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
@@ -9,6 +11,8 @@ import com.danotech.rinfo.model.service.ProfileService
 import com.danotech.rinfo.model.service.ReviewService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
 import com.danotech.rinfo.ui.screens.business.BusinessUiState
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

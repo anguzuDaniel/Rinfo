@@ -1,6 +1,7 @@
 package com.danotech.rinfo.ui.screens.home
 
-import androidx.compose.runtime.mutableStateOf
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.danotech.rinfo.RinfoViewModel
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
@@ -8,8 +9,11 @@ import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.model.service.ReviewService
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
@@ -27,17 +31,19 @@ class HomesScreenViewModel @Inject constructor(
     private val accountService: AccountService,
     logService: LogService,
 ) : RinfoViewModel(logService) {
-    val uiState = mutableStateOf(HomeScreenUiState())
+    private val _uiState = MutableStateFlow(HomeScreenUiState())
+    val uiState = _uiState.asStateFlow()
 
     val businessFlow: Flow<List<Business>> = flow {
-        uiState.value = uiState.value.copy(isLoading = true)
+        _uiState.value = _uiState.value.copy(isLoading = true)
 
         val businesses = businessAccountService.getAllBusiness(5).first()
+
         emit(businesses)
     }.onStart {
-        uiState.value = uiState.value.copy(isLoading = true)
+        _uiState.value = _uiState.value.copy(isLoading = true)
     }.onCompletion {
-        uiState.value = uiState.value.copy(isLoading = false)
+        _uiState.value = _uiState.value.copy(isLoading = false)
     }
 
     init {
@@ -45,11 +51,11 @@ class HomesScreenViewModel @Inject constructor(
     }
 
     private fun initializeUIState() {
-        uiState.value = HomeScreenUiState()
+        _uiState.value = HomeScreenUiState()
     }
 
     fun showReviews(): List<Review> {
-        return uiState.value.reviews
+        return _uiState.value.reviews
     }
 
     fun isLoggedIn(): Boolean {
@@ -57,16 +63,13 @@ class HomesScreenViewModel @Inject constructor(
     }
 
     fun getBusinesses() {
-        uiState.value = uiState.value.copy(isLoading = true)
+        _uiState.value = _uiState.value.copy(isLoading = true)
 
         launchCatching {
             val businesses = businessAccountService.getAllBusiness(5).first()
 
-//            uiState.value = uiState.value.copy(
-//                businesses = businesses
-//            )
         }.invokeOnCompletion {
-            uiState.value = uiState.value.copy(isLoading = false)
+            _uiState.value = _uiState.value.copy(isLoading = false)
         }
     }
 }

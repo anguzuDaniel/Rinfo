@@ -1,6 +1,8 @@
 package com.danotech.rinfo.ui.screens.home
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -27,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -42,12 +46,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.components.CategoryIconButton
+import com.danotech.rinfo.ui.components.Loading
+import com.danotech.rinfo.ui.components.LoadingCard
 import com.danotech.rinfo.ui.components.ReviewCard
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.components.ShowOptionButton
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
+import com.google.firebase.auth.FirebaseAuth
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -67,7 +74,6 @@ fun HomeScreen(
 
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
     var searchResults by remember { mutableStateOf(emptyList<String>()) }
-
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -169,26 +175,7 @@ fun HomePageContent(
 
         if (viewModel.uiState.value.isLoading) {
             item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                        .animateContentSize(
-                            animationSpec = (tween(
-                                durationMillis = 300,
-                                easing = LinearOutSlowInEasing
-                            ))
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text = "Loading reviews...")
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
+                LoadingCard()
             }
         } else {
             items(businessState) { business ->
