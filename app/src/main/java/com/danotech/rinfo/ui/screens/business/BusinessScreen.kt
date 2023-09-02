@@ -44,15 +44,12 @@ import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -61,10 +58,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -79,24 +75,23 @@ import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.components.BusinessImageButton
-import com.danotech.rinfo.ui.components.RatingStars
 import com.danotech.rinfo.ui.components.RinfoButton
 import com.danotech.rinfo.ui.components.RinfoFAB
 import com.danotech.rinfo.ui.components.TruncateText
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun BusinessScreen(
     businessId: String,
-    reviewerUserId: String,
     viewModel: BusinessViewModel = hiltViewModel(),
     onBackPressed: () -> Unit = {},
-    onSearchIconClicked: () -> Unit = {},
     onFabBtnClicked: () -> Unit = {},
     onShowReviewPageClicked: () -> Unit = {},
     onDirectionClicked: (String) -> Unit = {},
@@ -153,6 +148,7 @@ fun BusinessScreen(
     ) {
         if (!uiState.isLoading) {
             BusinessContent(
+                businessId = businessId,
                 business = uiState.currentBusiness,
                 onShowReviewPageClicked = onShowReviewPageClicked,
                 onDirectionClicked = {
@@ -184,14 +180,10 @@ fun BusinessScreen(
     }
 }
 
-@Composable
-fun collectBusinessState(businessFlow: Flow<Business?>): State<Business?> {
-    // Collect the flow and convert it into a Compose State
-    return businessFlow.collectAsState(initial = null)
-}
 
 @Composable
 fun BusinessContent(
+    businessId: String,
     viewModel: BusinessViewModel,
     modifier: Modifier = Modifier,
     business: Business,
@@ -243,163 +235,146 @@ fun BusinessContent(
         mutableStateOf(false)
     }
 
-    val imagesToRetrieve = 3 // Replace with the number of images you want to retrieve
-    val retrievedImages = mutableListOf<Bitmap>()
+    val downloadedImages = remember { mutableStateListOf<Bitmap>() }
 
-    for (index in 0 until imagesToRetrieve) {
-        getBusinessImages(
-            businessId = business.userId,
-            index = index,
-            onSuccess = { bitmap ->
-                retrievedImages.add(bitmap)
-                if (retrievedImages.size == imagesToRetrieve) {
-//                        uiState.currentBusinessImages = retrievedImages
-                    viewModel.addImages(retrievedImages)
-                }
+    LaunchedEffect(key1 = Unit) {
+        downloadImages(
+            businessId = businessId,
+            startIndex = 0,
+            onSuccess = { index, bitmap ->
+                // Convert the downloaded bitmap to a Composable Painter
+                downloadedImages.add(bitmap)
             },
-            onError = { exception ->
-                // Handle error
+            onError = { index, exception ->
+                // Handle error for image at index
+                println("Error downloading image at index $index: ${exception.message}")
             }
         )
     }
 
-    val uiState = viewModel.uiState.collectAsState().value
 
     val clickableText = if (isShowingAllDescriptionText) "less" else "Read more"
 
-    Column {
-        Box(
-            modifier = modifier
-                .height(250.dp)
-                .fillMaxWidth()
-                .background(Color.White),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            /**
-             * if image is loading the the default image is added
-             *
-             */
-            if (uiState.currentBusinessImages.isEmpty()) {
-                ImageListViewImageItem(
-                    imageList = imageList,
-                )
-            } else {
-                ImageListViewBitmap(
-                    imageList = uiState.currentBusinessImages
-                )
+    LazyColumn {
+        item {
+            Box(
+                modifier = modifier
+                    .height(250.dp)
+                    .fillMaxWidth()
+                    .background(Color.White),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                if (imageList.isEmpty() && downloadedImages.isEmpty()) {
+                    Image(
+                        bitmap = defaultProfilePicture.asImageBitmap(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                /**
+                 * if image is loading the the default image is added
+                 *
+                 */
+                if (downloadedImages.isEmpty()) {
+                    ImageListViewImageItem(
+                        imageList = imageList,
+                    )
+                } else {
+                    ImageListViewBitmap(
+                        imageList = downloadedImages
+                    )
+                }
             }
         }
 
 
-        LazyColumn(
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.body_padding))
-        ) {
-            /**
-             * If userId is equal to the current logged in in user then
-             * show add image buttons
-             */
-            if (business.userId == FirebaseAuth.getInstance().currentUser?.email) {
-                item {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(5.dp),
-                    ) {
-                        BusinessImageButton(
-                            icon = R.drawable.baseline_camera_alt_24,
-                            name = R.string.take_picture,
-                            onClicked = {
-                                launcher.launch(null)
-                            },
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        BusinessImageButton(
-                            icon = R.drawable.baseline_image_24,
-                            name = R.string.from_gallery,
-                            onClicked = {
-                                launchImage.launch("image/*")
-                            },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-            }
-
+        /**
+         * If userId is equal to the current logged in in user then
+         * show add image buttons
+         */
+        if (business.userId == FirebaseAuth.getInstance().currentUser?.email) {
             item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                Row(
+                    modifier = Modifier.padding(
+                        vertical = 8.dp,
+                        horizontal = dimensionResource(id = R.dimen.body_padding)
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = business.name,
-                            style = MaterialTheme.typography.headlineLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.ExtraBold
-                        )
+                    BusinessImageButton(
+                        icon = R.drawable.baseline_camera_alt_24,
+                        name = R.string.take_picture,
+                        onClicked = {
+                            launcher.launch(null)
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
 
-                        // if business is added to favorites then primary color is used for tint else white
-                        if (!addToFavorite) {
-                            Icon(
-                                imageVector = Icons.Default.Favorite,
-                                contentDescription = stringResource(R.string.bookmark_business),
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.clickable {
-                                    addToFavorite = !addToFavorite
-                                }
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Default.Favorite,
-                                contentDescription = stringResource(R.string.bookmark_business),
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.clickable {
-                                    addToFavorite = !addToFavorite
-                                }
-                            )
-                        }
-                    }
+                    BusinessImageButton(
+                        icon = R.drawable.baseline_image_24,
+                        name = R.string.from_gallery,
+                        onClicked = {
+                            launchImage.launch("image/*")
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
             }
+        }
 
-            item {
-                Column(
+        item {
+            Column(
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.body_padding)),
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                Row(
                     modifier = Modifier
                         .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = business.name,
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+
+                    // if business is added to favorites then primary color is used for tint else white
+                    if (!addToFavorite) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = stringResource(R.string.bookmark_business),
+                            tint = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.clickable {
+                                addToFavorite = !addToFavorite
+                            }
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = stringResource(R.string.bookmark_business),
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.clickable {
+                                addToFavorite = !addToFavorite
+                            }
+                        )
+                    }
+                }
+
+                Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(20.dp),
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
-                        )
-
-                        Text(
-                            text = "${business.reviews}.0 / 5.0",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-
-                        Text(
-                            text = "( ${business.reviews} reviews )",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                    }
+                    IconAndText(
+                        icon = Icons.Filled.Star,
+                        iconDes = "ratings",
+                        text = "${business.reviews}.0 / 5.0 (${business.reviews} reviews)"
+                    )
 
                     IconAndText(
                         icon = Icons.Filled.LocationOn,
@@ -413,10 +388,18 @@ fun BusinessContent(
                         text = "${business.reviews} recommendations"
                     )
                 }
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_medium)))
             }
+        }
 
-            item {
+        item {
+            Column(
+                modifier = Modifier
+                    .padding(
+                        vertical = 8.dp,
+                        horizontal = dimensionResource(id = R.dimen.body_padding)
+                    )
+                    .fillMaxWidth(),
+            ) {
                 ActionDetailsRow(
                     businessName = business.name,
                     email = business.email,
@@ -426,10 +409,15 @@ fun BusinessContent(
                         onDirectionClicked(business.address)
                     },
                 )
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_medium)))
             }
+        }
 
-            item {
+        item {
+            Column(
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.body_padding))
+                    .fillMaxWidth(),
+            ) {
                 Text(
                     text = stringResource(id = R.string.description),
                     style = MaterialTheme.typography.headlineSmall,
@@ -437,9 +425,7 @@ fun BusinessContent(
                     fontWeight = FontWeight.ExtraBold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-            }
 
-            item {
                 if (!isShowingAllDescriptionText) {
                     TruncateText(
                         text = business.description,
@@ -464,11 +450,18 @@ fun BusinessContent(
                         .copy(color = MaterialTheme.colorScheme.primary),
                     onClick = { isShowingAllDescriptionText = !isShowingAllDescriptionText }
                 )
-
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_medium)))
             }
+        }
 
-            item {
+        item {
+            Column(
+                modifier = Modifier
+                    .padding(
+                        vertical = 8.dp,
+                        horizontal = dimensionResource(id = R.dimen.body_padding)
+                    )
+                    .fillMaxWidth(),
+            ) {
                 OutlinedButton(
                     onClick = onShowReviewPageClicked,
                     modifier = Modifier.fillMaxWidth(),
@@ -482,10 +475,8 @@ fun BusinessContent(
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
-            }
 
-            if (business.userId == FirebaseAuth.getInstance().currentUser?.email) {
-                item {
+                if (business.userId == FirebaseAuth.getInstance().currentUser?.email) {
                     RinfoButton(
                         name = R.string.save_change,
                         onClicked = {
@@ -501,7 +492,7 @@ fun BusinessContent(
                                         // Handle successful completion
                                         SnackbarManager.showMessage(R.string.images_uploaded_successfully)
                                     },
-                                    onError = { exception ->
+                                    onError = {
                                         // Handle error
                                         SnackbarManager.showMessage(R.string.something_went_wrong)
                                     }
@@ -527,7 +518,7 @@ fun ActionDetailsRow(
     val context = LocalContext.current
     val sendEmailLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
-    ) { _ ->
+    ) {
         // Handle the result if needed
     }
 
@@ -565,10 +556,8 @@ fun ActionDetailsRow(
                 onClicked = {
                     dialerLauncher.launch(callIntent)
                 },
-//                modifier = Modifier.weight(1f)
             )
         }
-
 
         item {
             CallToActionButton(
@@ -577,7 +566,6 @@ fun ActionDetailsRow(
                 onClicked = {
                     context.startActivity(whatsappIntent)
                 },
-//                modifier = Modifier.weight(1f)
             )
         }
 
@@ -588,17 +576,14 @@ fun ActionDetailsRow(
                 onClicked = {
                     sendEmailLauncher.launch(emailIntent)
                 },
-//                modifier = Modifier.weight(1f)
             )
         }
-
 
         item {
             CallToActionButton(
                 icon = Icons.Filled.Directions,
                 name = R.string.directions,
                 onClicked = onDirectionClicked,
-//                modifier = Modifier.weight(1f)
             )
         }
 
@@ -607,156 +592,9 @@ fun ActionDetailsRow(
                 icon = Icons.Filled.Share,
                 name = R.string.share,
                 onClicked = { /*TODO*/ },
-//                modifier = Modifier.weight(1f)
             )
         }
     }
-}
-
-@Composable
-fun CallToActionButton(
-    icon: ImageVector,
-    name: Int,
-    onClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-
-    Column(
-        verticalArrangement = Arrangement.spacedBy(5.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .clip(shape = MaterialTheme.shapes.medium)
-        ) {
-            IconButton(
-                onClick = onClicked,
-                modifier = modifier
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Icon(
-                    imageVector = icon,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    contentDescription = stringResource(id = name)
-                )
-            }
-        }
-
-        Text(
-            text = stringResource(id = name),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
-
-//@Composable
-//fun CallToActionButton(
-//    icon: ImageVector,
-//    name: Int,
-//    onClicked: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    Box(
-//        modifier = Modifier
-//            .clip(CircleShape)
-//            .background(MaterialTheme.colorScheme.surfaceVariant)
-//    ) {
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.spacedBy(2.dp)
-//        ) {
-//            IconButton(
-//                onClick = onClicked,
-//                modifier = Modifier
-//                    .background(MaterialTheme.colorScheme.surfaceVariant),
-//                colors = IconButtonDefaults.iconButtonColors(
-//                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-//                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-//                )
-//            ) {
-//                Icon(
-//                    imageVector = icon,
-//                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-//                    contentDescription = stringResource(id = name)
-//                )
-//            }
-//
-//            Text(
-//                text = stringResource(id = name),
-//                style = MaterialTheme.typography.labelSmall,
-//                color = MaterialTheme.colorScheme.onBackground
-//            )
-//        }
-//    }
-//}
-
-
-@Composable
-fun RecommendButton(
-    onClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    RinfoButton(
-        name = R.string.recommend,
-        onClicked = onClicked,
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape = MaterialTheme.shapes.medium)
-    )
-}
-
-
-@Composable
-fun IconAndText(
-    icon: ImageVector,
-    iconDes: String,
-    text: String,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = iconDes,
-            modifier = Modifier.size(15.dp),
-        )
-
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Light
-        )
-    }
-}
-
-@Composable
-fun RatingRow(
-    reviews: Int = 0
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RatingStars(rating = reviews)
-
-        Text(
-            text = "${reviews}.0",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.ExtraBold
-        )
-    }
-    Spacer(modifier = Modifier.padding(5.dp))
 }
 
 /**
@@ -766,26 +604,36 @@ fun RatingRow(
  * @param onSuccess function called if successful
  * @param onError function called if there is an error
  */
-private fun getBusinessImages(
+suspend fun downloadImages(
     businessId: String,
-    index: Int,
-    onSuccess: (Bitmap) -> Unit,
-    onError: (Exception) -> Unit
+    startIndex: Int,
+    onSuccess: (Int, Bitmap) -> Unit,
+    onError: (Int, Exception) -> Unit
 ) {
-
     val storage = FirebaseStorage.getInstance()
     val storageRef = storage.reference
 
-    val imageName = "${businessId}_${index}.jpg"
-    val imageRef = storageRef.child("business_images/${imageName}")
+    suspend fun downloadImage(index: Int) {
+        val imageName = "${businessId}_${index}.jpg"
+        val imageRef = storageRef.child("business_images/${imageName}")
 
-    imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
-        val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-        onSuccess(bitmap)
-    }.addOnFailureListener { exception ->
-        onError(exception)
+        try {
+            val bytes = withContext(Dispatchers.IO) {
+                imageRef.getBytes(Long.MAX_VALUE).await()
+            }
+            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            onSuccess(index, bitmap)
+            // Continue downloading the next image
+            downloadImage(index + 1)
+        } catch (exception: Exception) {
+            onError(index, exception)
+        }
     }
+
+    // Start downloading images, beginning from the specified startIndex
+    downloadImage(startIndex)
 }
+
 
 @Preview
 @Composable

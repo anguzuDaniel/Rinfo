@@ -29,13 +29,13 @@ import com.danotech.rinfo.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RinfoTopAppBar(
+    modifier: Modifier = Modifier,
     title: String = "",
     onBackButtonClicked: () -> Unit,
     isShowingHomePage: Boolean,
     showBackgroundColor: Boolean = true,
     isSearchPage: Boolean = false,
     actions: @Composable () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     TopAppBar(
         title = if (!isShowingHomePage && !isSearchPage) {
@@ -113,7 +113,8 @@ fun RinfoTopAppBar(
             )
         } else {
             modifier
-        }
+        },
+        scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     )
 }
 

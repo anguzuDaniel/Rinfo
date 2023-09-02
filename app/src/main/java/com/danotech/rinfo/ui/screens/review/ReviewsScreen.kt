@@ -72,7 +72,6 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewsScreen(
     viewModel: ReviewScreenViewModel = hiltViewModel(),
@@ -163,10 +162,10 @@ fun ReviewsScreen(
                                     openDialog.value = false
                                 },
                                 title = {
-                                    Text(text = "Delete Review")
+                                    Text(text = stringResource(R.string.delete_review))
                                 },
                                 text = {
-                                    Text(text = "Are you sure you want to delete this review?")
+                                    Text(text = stringResource(R.string.are_you_sure_you_want_to_delete_this_review))
                                 },
                                 confirmButton = {
                                     TextButton(
@@ -230,7 +229,6 @@ fun ReviewItem(
     onLikeClicked: () -> Unit = {},
     onShareClicked: () -> Unit = {},
 ) {
-
     val reviewUiState = viewModel.uiState.collectAsState().value
 
     val context = LocalContext.current
@@ -256,7 +254,7 @@ fun ReviewItem(
     }
 
     Column {
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Row(
             modifier = modifier
@@ -357,7 +355,7 @@ fun ReviewItem(
                         Spacer(modifier = Modifier.width(4.dp))
 
                         Text(
-                            text = "${review.rating.toString()}.0",
+                            text = "${review.rating}.0",
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -392,10 +390,7 @@ fun ReviewItem(
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Light
         )
-
-        Spacer(modifier = Modifier.height(20.dp))
     }
-    Divider()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -430,7 +425,6 @@ fun SelectBusinessCategory(
                 .fillMaxWidth()
                 .focusRequester(focusRequester)
         ) {
-
             TextField(
                 value = selectedItem.name,
                 onValueChange = { onAccountTypeSelected(selectedItem) },
@@ -469,7 +463,6 @@ fun SelectBusinessCategory(
         }
     }
 }
-
 
 @Composable
 fun ReviewDropdownActionOptions(
@@ -565,8 +558,4 @@ fun timeAgo(from: LocalDateTime, to: LocalDateTime = LocalDateTime.now()): Strin
         duration == 86400L -> "1 day ago"
         else -> "${duration / 86400} days ago"
     }
-}
-
-fun getImageFromFireBase(userId: String) {
-
 }

@@ -29,7 +29,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onAccountClick(openAndPopUp: (String, String) -> Unit) {
-        openAndPopUp(RInfoScreen.Account.name, RInfoScreen.Settings.name)
+        openAndPopUp(RInfoScreen.CreateAccount.name, RInfoScreen.Settings.name)
     }
 
     fun getProfile() {

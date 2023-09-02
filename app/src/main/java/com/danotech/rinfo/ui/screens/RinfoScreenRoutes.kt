@@ -16,6 +16,7 @@ enum class RInfoScreen(@StringRes val title: Int) {
     Favourites(title = R.string.favorites),
     Notification(title = R.string.notifications),
     Settings(title = R.string.settings),
+    CreateAccount(title = R.string.account),
     Account(title = R.string.account),
     BusinessAccount(title = R.string.business),
     EditAccount(title = R.string.edit_account),
@@ -29,4 +30,8 @@ enum class RInfoScreen(@StringRes val title: Int) {
     EditReviewForm(title = R.string.edit_review),
     SelectedCategory(title = R.string.categories),
     Categories(title = R.string.more_categories),
+    About(title = R.string.about),
+    AboutApp(title = R.string.about_app),
+    TermsOfUse(title = R.string.terms_of_use),
+    PrivacyPolicy(title = R.string.privacy_policy)
 }

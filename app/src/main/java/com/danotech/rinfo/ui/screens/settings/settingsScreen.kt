@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.ContactSupport
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Nightlight
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Card
@@ -37,7 +40,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.components.ProfileImage
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.components.SettingSwitch
 import com.danotech.rinfo.ui.screens.RInfoScreen
@@ -48,7 +50,6 @@ import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 fun SettingsScreen(
     openAndPopUp: (String, String) -> Unit,
     onBackPressed: () -> Unit = {},
-    onFabClicked: () -> Unit = {},
     onTabSelected: (RInfoScreen) -> Unit = {},
     onLogoutClicked: () -> Unit = {},
     onNavClicked: (String) -> Unit = {},
@@ -110,40 +111,8 @@ fun SettingsContent(
         contentPadding = innerPadding,
     ) {
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                ProfileImage(
-                    size = 100.dp,
-                    imageUrI = R.drawable.cafe_javas
-                )
-                Spacer(modifier = Modifier.width(40.dp))
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = uiState.profileName,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = uiState.profile,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(40.dp))
-            Divider()
-            Spacer(modifier = Modifier.height(20.dp))
-        }
-
-        item {
             SettingsClickableComp(
+                leadingIcon = Icons.Filled.Nightlight,
                 name = R.string.dark_mode,
                 icon = Icons.Rounded.FavoriteBorder,
                 iconDesc = R.string.dark_mode,
@@ -155,6 +124,7 @@ fun SettingsContent(
 
         item {
             SettingsClickableComp(
+                leadingIcon = Icons.Filled.Notifications,
                 name = R.string.notifications,
                 icon = Icons.Rounded.FavoriteBorder,
                 iconDesc = R.string.notifications,
@@ -166,43 +136,46 @@ fun SettingsContent(
 
         item {
             SettingsClickableComp(
-                name = R.string.business_account,
+                leadingIcon = Icons.Filled.AccountBox,
+                name = R.string.account,
                 icon = Icons.Rounded.FavoriteBorder,
                 iconDesc = R.string.account,
                 settingType = settingType,
                 onClick = {
-                    onNavClicked(RInfoScreen.BusinessAccount.name)
+                    onNavClicked(RInfoScreen.Account.name)
                 }
             )
         }
 
         item {
             SettingsClickableComp(
-                name = R.string.profile,
-                icon = Icons.Rounded.FavoriteBorder,
-                iconDesc = R.string.account,
-                settingType = settingType,
-                onClick = {
-                    onNavClicked(RInfoScreen.EditAccount.name)
-                }
-            )
-        }
-
-
-        item {
-            SettingsClickableComp(
+                leadingIcon = Icons.Filled.AccountBox,
                 name = R.string.about,
                 icon = Icons.Rounded.FavoriteBorder,
                 iconDesc = R.string.about,
                 settingType = settingType,
-            ) {
-                // here you can do anything - navigate - open other settings, ...
-            }
+                onClick = {
+                    onNavClicked(RInfoScreen.About.name)
+                }
+            )
         }
-
 
         item {
             SettingsClickableComp(
+                leadingIcon = Icons.Filled.ContactSupport,
+                name = R.string.contact_us,
+                icon = Icons.Rounded.FavoriteBorder,
+                iconDesc = R.string.contact_us,
+                settingType = settingType,
+                onClick = {
+                    onNavClicked(RInfoScreen.About.name)
+                }
+            )
+        }
+
+        item {
+            SettingsClickableComp(
+                leadingIcon = Icons.Filled.Logout,
                 name = R.string.logout,
                 icon = Icons.Rounded.FavoriteBorder,
                 iconDesc = R.string.logout,
@@ -213,13 +186,13 @@ fun SettingsContent(
                 }
             )
         }
-
     }
 }
 
 
 @Composable
 fun SettingsClickableComp(
+    leadingIcon: ImageVector,
     icon: ImageVector,
     @StringRes iconDesc: Int,
     @StringRes name: Int,
@@ -229,46 +202,49 @@ fun SettingsClickableComp(
     Surface(
         color = Color.Transparent,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .fillMaxWidth(),
         onClick = onClick,
     ) {
-        Card(
-            elevation = CardDefaults.cardElevation()
+        Column(
+            modifier = Modifier.padding(
+                vertical = 2.dp,
+                horizontal = dimensionResource(id = R.dimen.setting_card_padding)
+            )
         ) {
-            Column(
-                modifier = Modifier.padding(
-                    vertical = 2.dp,
-                    horizontal = dimensionResource(id = R.dimen.setting_card_padding)
-                )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = stringResource(id = name),
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        modifier = Modifier
-                            .padding(16.dp),
-                        textAlign = TextAlign.Start,
-                        overflow = TextOverflow.Ellipsis,
+                Icon(
+                    imageVector = leadingIcon,
+                    contentDescription = null,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = stringResource(id = name),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .weight(3f),
+                    textAlign = TextAlign.Start,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(modifier = Modifier.weight(1.0f))
+                if (settingType == SettingType.SWITCH) {
+                    SettingSwitch(
+                        switchOn = false,
+                        onSwitchChanged = {},
+                        modifier = Modifier.weight(1f)
                     )
-                    Spacer(modifier = Modifier.weight(1.0f))
-                    if (settingType == SettingType.SWITCH) {
-                        SettingSwitch(
-                            switchOn = false,
-                            onSwitchChanged = {},
-                        )
-                    } else {
-                        Icon(
-                            Icons.Rounded.KeyboardArrowRight,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            contentDescription = stringResource(id = R.string.arrow_forward)
-                        )
-                    }
+                } else {
+                    Icon(
+                        Icons.Rounded.KeyboardArrowRight,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        contentDescription = stringResource(id = R.string.arrow_forward),
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
         }

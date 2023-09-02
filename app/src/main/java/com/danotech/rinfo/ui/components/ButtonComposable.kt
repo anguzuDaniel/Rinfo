@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CircularProgressIndicator
@@ -359,13 +358,7 @@ fun ShowOptionButton(
                 )
             }
         } else {
-            {
-                Icon(
-                    imageVector = Icons.Filled.Home,
-                    contentDescription = "Localized description",
-                    modifier = Modifier.size(FilterChipDefaults.IconSize)
-                )
-            }
+            {}
         }
     )
 }

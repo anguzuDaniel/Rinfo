@@ -74,7 +74,7 @@ fun ReviewCard(
         Row(
             modifier = Modifier.padding(10.dp),
             horizontalArrangement = Arrangement
-                .spacedBy(dimensionResource(id = R.dimen.spacer_medium))
+                .spacedBy(10.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -85,8 +85,7 @@ fun ReviewCard(
                     contentDescription = null,
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.small)
-                        .aspectRatio(1f)
-                        .clip(CircleShape),
+                        .aspectRatio(1f),
                     contentScale = ContentScale.Crop,
                 )
             }

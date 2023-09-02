@@ -34,6 +34,10 @@ import com.danotech.rinfo.common.composable.RationaleDialog
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
+import com.danotech.rinfo.ui.screens.about.AboutAppScreen
+import com.danotech.rinfo.ui.screens.about.AboutScreen
+import com.danotech.rinfo.ui.screens.about.PrivacyPolicyScreen
+import com.danotech.rinfo.ui.screens.about.TermsOfUseScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
 import com.danotech.rinfo.ui.screens.business_account.BusinessAccount
 import com.danotech.rinfo.ui.screens.category.CategoryScreen
@@ -48,6 +52,7 @@ import com.danotech.rinfo.ui.screens.review.ReviewsScreen
 import com.danotech.rinfo.ui.screens.map.MapScreen
 import com.danotech.rinfo.ui.screens.search_business.SearchPage
 import com.danotech.rinfo.ui.screens.selected_category.SelectedCategoryScreen
+import com.danotech.rinfo.ui.screens.settings.AccountOptionsScreen
 import com.danotech.rinfo.ui.screens.settings.SettingsScreen
 import com.danotech.rinfo.ui.theme.AppTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -179,7 +184,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
     }
     composable(route = RInfoScreen.Login.name) {
         LoginScreen(onSignUpTextClicked = {
-            appState.navigate(RInfoScreen.Account.name)
+            appState.navigate(RInfoScreen.CreateAccount.name)
         }, onBackHandler = {
             appState.popUp()
         }, openAndPopUp = { route, popUp ->
@@ -187,7 +192,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             appState.logIn()
         })
     }
-    composable(route = RInfoScreen.Account.name) {
+    composable(route = RInfoScreen.CreateAccount.name) {
         CreateAccount(onSignInTextClicked = {
             appState.navigate(RInfoScreen.Login.name)
         }, onBackHandler = {
@@ -195,13 +200,11 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         })
     }
     composable(route = RInfoScreen.BusinessAccount.name) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            BusinessAccount(
-                onBackClicked = {
-                    appState.popUp()
-                }
-            )
-        }
+        BusinessAccount(
+            onBackClicked = {
+                appState.popUp()
+            }
+        )
     }
     composable(route = RInfoScreen.EditAccount.name) {
         ProfileScreen(
@@ -236,11 +239,24 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             onBackPressed = {
                 appState.popUp()
             },
-            onFabClicked = {
-                appState.navigate(RInfoScreen.Search.name)
-            },
             onTabSelected = { screen ->
                 appState.navigate(screen.name)
+            },
+            openAndPopUp = { route, popUp ->
+                appState.navigateAndPopUp(route, popUp)
+            },
+            onLogoutClicked = {
+                appState.logOut()
+            },
+            onNavClicked = { screen ->
+                appState.navigate(screen)
+            }
+        )
+    }
+    composable(route = RInfoScreen.Account.name) {
+        AccountOptionsScreen(
+            onBackPressed = {
+                appState.popUp()
             },
             openAndPopUp = { route, popUp ->
                 appState.navigateAndPopUp(route, popUp)
@@ -277,14 +293,11 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         arguments = listOf(navArgument("businessId") { type = NavType.StringType })
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
-        val userId = FirebaseAuth.getInstance().currentUser?.email
-
 
         if (businessId != null) {
             // Use the businessId to fetch data or perform other operations
             BusinessScreen(
                 businessId = businessId,
-                reviewerUserId = userId ?: "",
                 onBackPressed = {
                     appState.popUp()
                 },
@@ -295,11 +308,10 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 },
                 onShowReviewPageClicked = {
                     appState.navigate("${RInfoScreen.Reviews.name}/$businessId")
-                },
-                onDirectionClicked = { location ->
-                    appState.navigate("${RInfoScreen.Map.name}/$location")
                 }
-            )
+            ) { location ->
+                appState.navigate("${RInfoScreen.Map.name}/$location")
+            }
         } else {
             // Handle the case where businessId is null
         }
@@ -393,5 +405,36 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
         } else {
             // Handle the case where businessId is null
         }
+    }
+    composable(route = RInfoScreen.About.name) {
+        AboutScreen(
+            onBackClick = {
+                appState.popUp()
+            },
+            onNavClick = { screen ->
+                appState.navigate(screen)
+            }
+        )
+    }
+    composable(route = RInfoScreen.AboutApp.name) {
+        AboutAppScreen(
+            onBackClick = {
+                appState.popUp()
+            }
+        )
+    }
+    composable(route = RInfoScreen.TermsOfUse.name) {
+        TermsOfUseScreen(
+            onBackClick = {
+                appState.popUp()
+            }
+        )
+    }
+    composable(route = RInfoScreen.PrivacyPolicy.name) {
+        PrivacyPolicyScreen(
+            onBackClick = {
+                appState.popUp()
+            }
+        )
     }
 }
