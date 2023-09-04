@@ -217,7 +217,7 @@ fun SearchTextField(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.Search,
-                contentDescription = stringResource(R.string.search),
+                contentDescription = stringResource(R.string.Search),
                 modifier = Modifier.size(24.dp)
             )
         },

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.danotech.rinfo.ui.screens.login
 
 import androidx.activity.compose.BackHandler
@@ -9,8 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,18 +39,22 @@ fun LoginScreen(
         onBackHandler()
     }
 
-    Surface {
+    Scaffold {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(dimensionResource(id = R.dimen.body_padding)),
+                .padding(dimensionResource(id = R.dimen.body_padding))
+                .padding(paddingValues = it),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
             // page title
             HeadingText(text = R.string.login)
 
             // page sub title
             SubHeadingText(text = R.string.sign_in)
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             EmailField(
                 value = loginUiState.email,

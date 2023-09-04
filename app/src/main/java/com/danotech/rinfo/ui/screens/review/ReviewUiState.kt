@@ -11,4 +11,5 @@ data class ReviewUiState(
     val reviewUserName: String = "",
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
+    val imageLoading: Boolean = false
 )

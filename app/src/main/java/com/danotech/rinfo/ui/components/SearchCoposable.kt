@@ -50,10 +50,10 @@ import com.danotech.rinfo.ui.screens.category.CategoryViewModel
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchTextField(
+    modifier: Modifier = Modifier,
     icon: ImageVector = Icons.Filled.Search,
     searchInput: String = "",
     onSearchInput: (String) -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -104,7 +104,7 @@ fun CategorySearchBar(
     viewModel: CategoryViewModel,
     placeholder: String = "Search categories",
 ) {
-    BackHandler() {
+    BackHandler {
         onBack()
     }
 

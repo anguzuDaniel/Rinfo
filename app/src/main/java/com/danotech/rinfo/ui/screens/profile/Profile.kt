@@ -54,6 +54,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.Loading
 import com.danotech.rinfo.ui.components.ProfileButton
+import com.danotech.rinfo.ui.components.ProfileImageShimmer
 import com.danotech.rinfo.ui.components.TextInputWithLabel
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.danotech.rinfo.ui.screens.business_account.BottomSheetAddImage
@@ -192,15 +193,21 @@ fun ProfileContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Column {
-                    val borderWidth = 1.dp
-                    Image(
-                        bitmap = bitmap.value.asImageBitmap(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(150.dp)
-                            .clip(CircleShape)
-                    )
+                    val imageSize = 150.dp
+                    ProfileImageShimmer(
+                        size = imageSize,
+                        isLoading = uiState.imageLoading
+                    ) {
+                        val borderWidth = 1.dp
+                        Image(
+                            bitmap = bitmap.value.asImageBitmap(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(imageSize)
+                                .clip(CircleShape)
+                        )
+                    }
                     Box {
                         Image(
                             painter = painterResource(id = R.drawable.baseline_camera_alt_24),

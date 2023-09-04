@@ -48,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -61,6 +62,7 @@ import com.danotech.rinfo.R
 import com.danotech.rinfo.common.ext.basicButton
 import com.danotech.rinfo.ui.components.BusinessAccountButton
 import com.danotech.rinfo.ui.components.Loading
+import com.danotech.rinfo.ui.components.ProfileImageShimmer
 import com.danotech.rinfo.ui.components.TextInputWithLabel
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.google.firebase.auth.FirebaseAuth
@@ -269,16 +271,28 @@ fun BusinessAccountContent(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column {
+                val imageSize = 150.dp
+                ProfileImageShimmer(
+                    size = imageSize,
+                    isLoading = uiState.imageLoading
+                ) {
                     val borderWidth = 1.dp
                     Image(
                         bitmap = uiState.profilePicture.asImageBitmap(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(150.dp)
+                            .size(imageSize)
                             .clip(CircleShape)
                     )
+                }
+                Row(
+                    modifier = Modifier
+                        .background(Color.Transparent)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.Bottom
+                ) {
                     Box {
                         Image(
                             painter = painterResource(id = R.drawable.baseline_camera_alt_24),
@@ -289,7 +303,7 @@ fun BusinessAccountContent(
                             ),
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .size(24.dp)
+                                .size(40.dp)
                                 .background(color = MaterialTheme.colorScheme.primary)
                                 .padding(5.dp)
                                 .clickable {

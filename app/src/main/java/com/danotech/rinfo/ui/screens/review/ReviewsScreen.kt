@@ -25,12 +25,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -61,12 +61,11 @@ import com.danotech.rinfo.data.LocalReviewProvider
 import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.model.local.Category
 import com.danotech.rinfo.ui.components.ProfileImageBitmap
+import com.danotech.rinfo.ui.components.ProfileImageShimmer
 import com.danotech.rinfo.ui.components.RatingStars
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.danotech.rinfo.ui.screens.home.FilterRow
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -122,7 +121,7 @@ fun ReviewsScreen(
                         totalReviews = 50
                     )
                     Spacer(modifier = Modifier.height(20.dp))
-                    Divider()
+                    HorizontalDivider()
                     Spacer(modifier = Modifier.height(20.dp))
                 }
 
@@ -150,7 +149,7 @@ fun ReviewsScreen(
                             onEditClicked = { onEditClicked(review.id) },
                             onDeleteClicked = {
                                 openDialog.value = true
-                            }
+                            },
                         )
 
                         if (openDialog.value) {
@@ -229,7 +228,6 @@ fun ReviewItem(
     onLikeClicked: () -> Unit = {},
     onShareClicked: () -> Unit = {},
 ) {
-    val reviewUiState = viewModel.uiState.collectAsState().value
 
     val context = LocalContext.current
     val logoImage: Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
@@ -238,20 +236,12 @@ fun ReviewItem(
         mutableStateOf(logoImage)
     }
 
-    val storageRef = Firebase.storage.reference
-    val imageRef = storageRef.child("logos/${review.reviewerUserId}.jpg")
-
-    val ONE_MEGABYTE: Long = 1024 * 1024
-    imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
-        val bmp: Bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
-        bitmap.value = bmp
-    }.addOnFailureListener {
-        // Handle any errors
-    }
-
     LaunchedEffect(viewModel) {
         viewModel.getUserNameById(review.reviewerUserId)
+        viewModel.getProfileImage(userId = review.reviewerUserId, bitmap = bitmap)
     }
+
+    val uiState = viewModel.uiState.collectAsState().value
 
     Column {
         Spacer(modifier = Modifier.height(10.dp))
@@ -261,10 +251,16 @@ fun ReviewItem(
                 .padding(bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            ProfileImageBitmap(
-                size = 35.dp,
-                bitmap = bitmap.value
-            )
+            val imageSize = 35.dp
+            ProfileImageShimmer(
+                size = imageSize,
+                isLoading = uiState.imageLoading
+            ) {
+                ProfileImageBitmap(
+                    size = 35.dp,
+                    bitmap = bitmap.value
+                )
+            }
 
             Spacer(modifier = Modifier.width(8.dp))
 
@@ -276,7 +272,7 @@ fun ReviewItem(
                     verticalAlignment = Alignment.Bottom
                 ) {
                     Text(
-                        text = reviewUiState.reviewUserName,
+                        text = uiState.reviewUserName,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                     )
@@ -471,7 +467,7 @@ fun ReviewDropdownActionOptions(
     onLikeClicked: () -> Unit = {},
     onShareClicked: () -> Unit = {},
 ) {
-    val context = LocalContext.current
+    LocalContext.current
     var expanded by remember { mutableStateOf(false) }
 
     Box(
@@ -514,7 +510,7 @@ fun CurrentUserReviewDropdownActionOptions(
     onEditClicked: () -> Unit = {},
     onDeleteClicked: () -> Unit = {}
 ) {
-    val context = LocalContext.current
+    LocalContext.current
     var expanded by remember { mutableStateOf(false) }
 
     Box(

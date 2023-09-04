@@ -8,5 +8,6 @@ data class HomeScreenUiState(
     val businesses: List<Business> = emptyList(),
     val currentFilter: Boolean = false,
     val isLoading: Boolean = false,
+    var imageLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
 )

@@ -2,6 +2,7 @@ package com.danotech.rinfo.ui.screens.home
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.runtime.MutableState
 import com.danotech.rinfo.RinfoViewModel
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
@@ -70,6 +71,35 @@ class HomesScreenViewModel @Inject constructor(
 
         }.invokeOnCompletion {
             _uiState.value = _uiState.value.copy(isLoading = false)
+        }
+    }
+
+    fun getImage(
+        businessId: String,
+        bitmap: MutableState<Bitmap>
+    ) {
+        _uiState.value = _uiState.value.copy(imageLoading = true)
+
+        launchCatching {
+            // Inside your function
+            val storage = FirebaseStorage.getInstance()
+            val storageRef = storage.reference
+
+            val imageName = "${businessId}.jpg"
+            // Replace with the actual image name
+            val imageRef = storageRef.child("logos/${imageName}")
+
+            imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
+                // Successfully retrieved image bytes
+                val image = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                // Use the bitmap as needed (e.g., display in ImageView)
+
+                bitmap.value = image
+            }.addOnFailureListener {
+                // Handle failure
+            }
+        }.invokeOnCompletion {
+            _uiState.value = _uiState.value.copy(imageLoading = false)
         }
     }
 }

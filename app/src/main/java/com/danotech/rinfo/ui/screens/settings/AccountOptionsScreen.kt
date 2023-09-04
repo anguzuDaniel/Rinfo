@@ -3,23 +3,29 @@ package com.danotech.rinfo.ui.screens.settings
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.screens.RInfoScreen
-import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 
 @Composable
@@ -70,6 +76,9 @@ fun AccountOptionsContent(
     viewModel: SettingsViewModel,
 ) {
     val uiState = viewModel.uiState.collectAsState().value
+    var isShowingDialog by remember {
+        mutableStateOf(false)
+    }
 
     Column(
         modifier = Modifier
@@ -97,5 +106,63 @@ fun AccountOptionsContent(
                 onNavClicked(RInfoScreen.BusinessAccount.name)
             }
         )
+
+        SettingsClickableComp(
+            leadingIcon = Icons.Filled.Password,
+            name = R.string.change_password,
+            icon = Icons.Rounded.FavoriteBorder,
+            iconDesc = R.string.change_password,
+            settingType = settingType,
+            onClick = {
+                onNavClicked(RInfoScreen.ChangePassword.name)
+            }
+        )
+
+        SettingsClickableComp(
+            leadingIcon = Icons.Filled.DeleteForever,
+            name = R.string.delete_account,
+            icon = Icons.Rounded.FavoriteBorder,
+            iconDesc = R.string.delete_account,
+            settingType = settingType,
+            onClick = {
+                isShowingDialog = true
+            },
+            opensDialogWhenClicked = true
+        )
+
+        if (isShowingDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    // Dismiss the dialog when the user clicks outside the dialog or on the back
+                    // button. If you want to disable that functionality, simply use an empty
+                    // onDismissRequest.
+                    isShowingDialog = false
+                },
+                title = {
+                    Text(text = stringResource(R.string.delete_account))
+                },
+                text = {
+                    Text(text = stringResource(R.string.delete_account_warning))
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            isShowingDialog = false
+                        }
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            isShowingDialog = false
+                        }
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
     }
 }

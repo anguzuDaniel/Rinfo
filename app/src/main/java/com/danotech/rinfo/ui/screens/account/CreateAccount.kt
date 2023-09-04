@@ -16,6 +16,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -61,13 +62,14 @@ fun CreateAccount(
         onBackHandler()
     }
 
-    Surface {
+    Scaffold {
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
                 .padding(dimensionResource(id = R.dimen.body_padding)),
             horizontalAlignment = Alignment.CenterHorizontally,
-            userScrollEnabled = true
+            userScrollEnabled = true,
+            contentPadding = it
         ) {
             item {
                 // page title

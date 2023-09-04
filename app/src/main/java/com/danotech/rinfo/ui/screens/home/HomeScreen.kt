@@ -1,19 +1,26 @@
+@file:Suppress("KDocUnresolvedReference")
+
 package com.danotech.rinfo.ui.screens.home
 
 import android.annotation.SuppressLint
+import android.os.Build
+import android.view.Window
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,47 +28,55 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Business
-import com.danotech.rinfo.ui.components.CategoryIconButton
-import com.danotech.rinfo.ui.components.LoadingCard
-import com.danotech.rinfo.ui.components.ReviewCard
+import com.danotech.rinfo.ui.components.BusinessCard
+import com.danotech.rinfo.ui.components.BusinessCardShimmer
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
-import com.danotech.rinfo.ui.components.ShowOptionButton
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 
+@RequiresApi(Build.VERSION_CODES.P)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     viewModel: HomesScreenViewModel = hiltViewModel(),
     onTabSelected: (RInfoScreen) -> Unit = {},
     onBackPressed: () -> Unit = {},
-    onFabClicked: () -> Unit = {},
     onReviewCardClicked: (Business) -> Unit = {},
-    onFilterClicked: () -> Unit = {},
     onCategoryClicked: () -> Unit = {},
+    window: Window,
     onNotificationClicked: () -> Unit = {},
 ) {
     BackHandler {
         onBackPressed()
     }
 
-    var searchQuery by remember { mutableStateOf(TextFieldValue()) }
-    var searchResults by remember { mutableStateOf(emptyList<String>()) }
+    val view = LocalView.current
+    val windowInsetsController =
+        WindowCompat.getInsetsController(window, view)
+
+    val useDarkIcons = !isSystemInDarkTheme()
+
+    LaunchedEffect(Unit) {
+        windowInsetsController.isAppearanceLightStatusBars = useDarkIcons
+        window.statusBarColor = Color.Transparent.toArgb()
+        window.navigationBarDividerColor = Color.White.toArgb()
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -81,7 +96,8 @@ fun HomeScreen(
                         )
                     }
                 },
-                modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primary)
             )
         },
         bottomBar = {
@@ -102,9 +118,8 @@ fun HomeScreen(
             viewModel = viewModel,
             innerPadding = innerPadding,
             onReviewCardClicked = onReviewCardClicked,
-            onCategoryClicked = { onCategoryClicked() },
-            onFilterClicked = onFilterClicked,
-        )
+            modifier = Modifier.consumeWindowInsets(innerPadding)
+        ) { onCategoryClicked() }
     }
 }
 
@@ -116,12 +131,12 @@ fun HomeScreen(
  * shows the home page content
  *
  * contains all the main content of the home page
- * at the top is the serach bar
+ * at the top is the search bar
  * then the category options
  * then the show options
  * then the filter row
  * then the reviews
- * @see ReviewCard
+ * @see BusinessCard
  */
 @Composable
 fun HomePageContent(
@@ -129,13 +144,12 @@ fun HomePageContent(
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
     onReviewCardClicked: (Business) -> Unit = {},
-    onBackPressed: () -> Unit = {},
     onCategoryClicked: () -> Unit = {},
-    onFilterClicked: () -> Unit = {},
 ) {
-    val reviews = viewModel.showReviews()
-    val businessState by viewModel.businessFlow.collectAsState(initial = emptyList())
+    viewModel.showReviews()
+    val businesses by viewModel.businessFlow.collectAsState(initial = emptyList())
 
+    val listState = rememberLazyListState()
 
     LazyColumn(
         modifier = modifier
@@ -144,16 +158,16 @@ fun HomePageContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = innerPadding,
+        state = listState
     ) {
         item {
             CategoryOptionRow(
-                onCategoryClicked = { onCategoryClicked() }
+                onCategoryClicked = { onCategoryClicked() },
             )
         }
 
         item {
-            ShowOptionRow(
-                onFilterClicked = onFilterClicked
+            FilterBusinessRow(
             )
         }
 
@@ -161,13 +175,11 @@ fun HomePageContent(
             FilterRow()
         }
 
-        if (viewModel.uiState.value.isLoading) {
-            item {
-                LoadingCard()
-            }
-        } else {
-            items(businessState) { business ->
-                ReviewCard(
+        items(businesses) { business ->
+            BusinessCardShimmer(
+                isLoading = viewModel.uiState.value.isLoading
+            ) {
+                BusinessCard(
                     business = business,
                     onReviewCardClicked = onReviewCardClicked,
                 )
@@ -176,16 +188,16 @@ fun HomePageContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterRow(
-    heading: String = stringResource(R.string.most_popular),
     modifier: Modifier = Modifier,
+    heading: String = stringResource(R.string.most_popular),
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = heading,
@@ -196,125 +208,6 @@ fun FilterRow(
             text = stringResource(R.string.view_all),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface,
-        )
-    }
-}
-
-/**
- * CategoryOptionRow
- * @param modifier Modifier
- * @param horizontalArrangement Arrangement.Horizontal
- * @param content @Composable () -> Unit
- *
- * shows the category options
- */
-@Composable
-fun CategoryOptionRow(
-    onCategoryClicked: () -> Unit = {}
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        CategoryIconButton(
-            description = "Category",
-            icon = R.drawable.baseline_view_module_24,
-            name = R.string.all,
-            modifier = Modifier.weight(1f),
-            onCategoryClicked = { onCategoryClicked() }
-        )
-
-        CategoryIconButton(
-            description = "Category",
-            icon = R.drawable.baseline_dining_24,
-            name = R.string.restaurants,
-            modifier = Modifier.weight(1f),
-            onCategoryClicked = { onCategoryClicked() }
-        )
-
-        CategoryIconButton(
-            description = "Category",
-            icon = R.drawable.baseline_sports_bar_24,
-            name = R.string.bars,
-            modifier = Modifier.weight(1f),
-            onCategoryClicked = { onCategoryClicked() }
-        )
-
-        CategoryIconButton(
-            description = "Category",
-            icon = R.drawable.baseline_local_hotel_24,
-            name = R.string.hotels,
-            modifier = Modifier.weight(1f),
-            onCategoryClicked = { onCategoryClicked() }
-        )
-
-        CategoryIconButton(
-            description = "Category",
-            icon = R.drawable.baseline_more_horiz_24,
-            name = R.string.others,
-            modifier = Modifier.weight(1f),
-            onCategoryClicked = { onCategoryClicked() }
-        )
-    }
-}
-
-@Composable
-fun ShowOptionRow(
-    onFilterClicked: () -> Unit = {}
-) {
-
-    var clicked by remember { mutableStateOf(false) }
-
-    var selected by remember { mutableStateOf(false) }
-
-
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        ShowOptionButton(
-            name = R.string.popular,
-            active = clicked,
-            modifier = Modifier
-                .weight(1f),
-            onFilterClicked = {
-                clicked = !clicked
-                onFilterClicked()
-            }
-        )
-
-        ShowOptionButton(
-            name = R.string.latest,
-            active = clicked,
-            modifier = Modifier
-                .weight(1f),
-            onFilterClicked = {
-                clicked = !clicked
-                onFilterClicked()
-            }
-        )
-
-        ShowOptionButton(
-            name = R.string.trending,
-            active = clicked,
-            modifier = Modifier
-                .weight(1f),
-            onFilterClicked = {
-                clicked = !clicked
-                onFilterClicked()
-            }
-        )
-
-        ShowOptionButton(
-            name = R.string.affordable,
-            active = clicked,
-            modifier = Modifier
-                .weight(1f),
-            onFilterClicked = {
-                clicked = !clicked
-                onFilterClicked()
-            }
         )
     }
 }

@@ -1,26 +1,37 @@
 package com.danotech.rinfo.ui
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.os.Build
+import android.view.Window
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.Surface
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -38,18 +49,19 @@ import com.danotech.rinfo.ui.screens.about.AboutAppScreen
 import com.danotech.rinfo.ui.screens.about.AboutScreen
 import com.danotech.rinfo.ui.screens.about.PrivacyPolicyScreen
 import com.danotech.rinfo.ui.screens.about.TermsOfUseScreen
+import com.danotech.rinfo.ui.screens.account.ChangePasswordScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
+import com.danotech.rinfo.ui.screens.business.BusinessScreen
 import com.danotech.rinfo.ui.screens.business_account.BusinessAccount
 import com.danotech.rinfo.ui.screens.category.CategoryScreen
 import com.danotech.rinfo.ui.screens.favorites.FavoriteScreen
 import com.danotech.rinfo.ui.screens.home.HomeScreen
 import com.danotech.rinfo.ui.screens.login.LoginScreen
+import com.danotech.rinfo.ui.screens.map.MapScreen
 import com.danotech.rinfo.ui.screens.notification.NotificationPage
 import com.danotech.rinfo.ui.screens.profile.ProfileScreen
-import com.danotech.rinfo.ui.screens.business.BusinessScreen
 import com.danotech.rinfo.ui.screens.review.ReviewForm
 import com.danotech.rinfo.ui.screens.review.ReviewsScreen
-import com.danotech.rinfo.ui.screens.map.MapScreen
 import com.danotech.rinfo.ui.screens.search_business.SearchPage
 import com.danotech.rinfo.ui.screens.selected_category.SelectedCategoryScreen
 import com.danotech.rinfo.ui.screens.settings.AccountOptionsScreen
@@ -62,33 +74,72 @@ import com.google.accompanist.permissions.shouldShowRationale
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun RinfoApp() {
+fun RinfoApp(
+    window: Window
+) {
     AppTheme {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             RequestNotificationPermissionDialog()
         }
 
-        Surface(color = MaterialTheme.colors.background) {
+        val view = LocalView.current
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
+            // Apply the insets as padding to the view. Here we're setting all of the
+            // dimensions, but apply as appropriate to your layout. You could also
+            // update the views margin if more appropriate.
+            v.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
+
+            // Return CONSUMED if we don't want the window insets to keep being passed
+            // down to descendant views.
+            WindowInsetsCompat.CONSUMED
+        }
+
+        val windowInsetsController =
+            WindowCompat.getInsetsController(window, view)
+
+        // Hide the system bars.
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+
+        // Show the system bars.
+        windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+
+        window.statusBarColor = Color.Transparent.toArgb()
+        windowInsetsController.isAppearanceLightStatusBars = true
+
+        // Remove the color from the navigation bar (if needed)
+        window.navigationBarColor = Color.Transparent.toArgb()
+
+        val snackbarHostState = remember { SnackbarHostState() }
+
+        Surface(color = MaterialTheme.colorScheme.background) {
             val appState = rememberAppState()
 
             Scaffold(
                 snackbarHost = {
-                    SnackbarHost(hostState = it,
+                    SnackbarHost(
+                        hostState = snackbarHostState,
                         modifier = Modifier.padding(8.dp),
                         snackbar = { snackbarData ->
-                            Snackbar(snackbarData, contentColor = MaterialTheme.colors.onPrimary)
+                            Snackbar(
+                                snackbarData,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
                         })
-                }, scaffoldState = appState.scaffoldState
-            ) { innerPaddingModifier ->
+                },
+            ) {
                 NavHost(
                     navController = appState.navController,
                     startDestination = RInfoScreen.Home.name,
-                    modifier = Modifier.padding(innerPaddingModifier)
                 ) {
-                    makeItSoGraph(appState)
+                    makeItSoGraph(
+                        appState,
+                        window = window
+                    )
                 }
             }
         }
@@ -134,7 +185,10 @@ fun resources(): Resources {
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @ExperimentalMaterialApi
-fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
+fun NavGraphBuilder.makeItSoGraph(
+    appState: RinfoAppUiState,
+    window: Window
+) {
     composable(route = RInfoScreen.Home.name) {
         HomeScreen(
             onTabSelected = { screen ->
@@ -156,14 +210,6 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
 
                 appState.navigate("${RInfoScreen.Business.name}/${business.id}")
             },
-            onFabClicked = {
-                if (!appState.isLoggedIn) {
-                    appState.navigate(RInfoScreen.Login.name)
-                    return@HomeScreen
-                }
-
-                appState.navigate(RInfoScreen.Search.name)
-            },
             onCategoryClicked = {
                 if (!appState.isLoggedIn) {
                     appState.navigate(RInfoScreen.Login.name)
@@ -172,15 +218,15 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
 
                 appState.navigate(RInfoScreen.Categories.name)
             },
-            onNotificationClicked = {
-                if (!appState.isLoggedIn) {
-                    appState.navigate(RInfoScreen.Login.name)
-                    return@HomeScreen
-                }
+            window = window
+        ) {
+            if (!appState.isLoggedIn) {
+                appState.navigate(RInfoScreen.Login.name)
+                return@HomeScreen
+            }
 
-                appState.navigate(RInfoScreen.Notification.name)
-            },
-        )
+            appState.navigate(RInfoScreen.Notification.name)
+        }
     }
     composable(route = RInfoScreen.Login.name) {
         LoginScreen(onSignUpTextClicked = {
@@ -220,7 +266,7 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
             appState.navigate(RInfoScreen.Search.name)
         }, onTabSelected = { screen ->
             appState.navigate(screen.name)
-        }, onReviewCardClicked = { review: Review ->
+        }, onReviewCardClicked = { _: Review ->
             appState.navigate(RInfoScreen.Business.name)
         })
     }
@@ -308,7 +354,8 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
                 },
                 onShowReviewPageClicked = {
                     appState.navigate("${RInfoScreen.Reviews.name}/$businessId")
-                }
+                },
+                window = window
             ) { location ->
                 appState.navigate("${RInfoScreen.Map.name}/$location")
             }
@@ -432,6 +479,13 @@ fun NavGraphBuilder.makeItSoGraph(appState: RinfoAppUiState) {
     }
     composable(route = RInfoScreen.PrivacyPolicy.name) {
         PrivacyPolicyScreen(
+            onBackClick = {
+                appState.popUp()
+            }
+        )
+    }
+    composable(route = RInfoScreen.ChangePassword.name) {
+        ChangePasswordScreen(
             onBackClick = {
                 appState.popUp()
             }

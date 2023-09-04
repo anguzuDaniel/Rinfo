@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,17 +27,22 @@ import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.theme.AppTheme
 
 @Composable
-fun LoadingCard() {
+fun LoadingCard(
+    modifier: Modifier = Modifier
+) {
     Card(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp,
+        ),
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+            .fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier.padding(10.dp),
             horizontalArrangement = Arrangement
-                .spacedBy(dimensionResource(id = R.dimen.spacer_medium))
+                .spacedBy(10.dp)
         ) {
+
             PlaceholderImage(modifier = Modifier.size(100.dp))
 
             Column(
@@ -59,7 +66,7 @@ fun PlaceholderImage(modifier: Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(1f)
-            .clip(CircleShape)
+            .clip(MaterialTheme.shapes.small)
             .background(Color.Gray)
     )
 }

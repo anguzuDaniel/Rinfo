@@ -1,3 +1,5 @@
+@file:Suppress("KDocUnresolvedReference", "DEPRECATION")
+
 package com.danotech.rinfo.ui.screens.business
 
 import android.annotation.SuppressLint
@@ -8,13 +10,11 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.view.Window
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,13 +24,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Directions
@@ -41,7 +47,6 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Whatsapp
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -70,7 +75,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.ColorUtils
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.palette.graphics.Palette
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.model.Business
@@ -79,11 +86,14 @@ import com.danotech.rinfo.ui.components.RinfoButton
 import com.danotech.rinfo.ui.components.RinfoFAB
 import com.danotech.rinfo.ui.components.TruncateText
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -94,6 +104,7 @@ fun BusinessScreen(
     onBackPressed: () -> Unit = {},
     onFabBtnClicked: () -> Unit = {},
     onShowReviewPageClicked: () -> Unit = {},
+    window: Window,
     onDirectionClicked: (String) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -145,8 +156,11 @@ fun BusinessScreen(
             { RinfoFAB(onClick = onFabBtnClicked) }
         },
         floatingActionButtonPosition = FabPosition.End,
-    ) {
-        if (!uiState.isLoading) {
+    ) { innerPadding ->
+
+        BusinessScreenShimmer(
+            isLoading = uiState.isLoading
+        ) {
             BusinessContent(
                 businessId = businessId,
                 business = uiState.currentBusiness,
@@ -154,28 +168,10 @@ fun BusinessScreen(
                 onDirectionClicked = {
                     onDirectionClicked(it)
                 },
-                viewModel = viewModel
+                viewModel = viewModel,
+                modifier = Modifier.consumeWindowInsets(innerPadding),
+                window = window
             )
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .animateContentSize(
-                        animationSpec = (tween(
-                            durationMillis = 300,
-                            easing = LinearOutSlowInEasing
-                        ))
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
         }
     }
 }
@@ -189,8 +185,10 @@ fun BusinessContent(
     business: Business,
     onShowReviewPageClicked: () -> Unit = {},
     onDirectionClicked: (String) -> Unit = {},
+    window: Window
 ) {
     val context = LocalContext.current
+
 
     val defaultProfilePicture: Bitmap = BitmapFactory.decodeResource(
         context.resources,
@@ -241,7 +239,7 @@ fun BusinessContent(
         downloadImages(
             businessId = businessId,
             startIndex = 0,
-            onSuccess = { index, bitmap ->
+            onSuccess = { _, bitmap ->
                 // Convert the downloaded bitmap to a Composable Painter
                 downloadedImages.add(bitmap)
             },
@@ -252,14 +250,20 @@ fun BusinessContent(
         )
     }
 
-
     val clickableText = if (isShowingAllDescriptionText) "less" else "Read more"
+    val scrollState = rememberScrollState()
+    val systemUiController = rememberSystemUiController()
 
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier.windowInsetsPadding(
+            WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)
+        )
+    ) {
         item {
+            val size = 300.dp
             Box(
                 modifier = modifier
-                    .height(250.dp)
+                    .height(size)
                     .fillMaxWidth()
                     .background(Color.White),
                 contentAlignment = Alignment.BottomEnd
@@ -274,18 +278,28 @@ fun BusinessContent(
                     )
                 }
 
-                /**
-                 * if image is loading the the default image is added
-                 *
-                 */
-                if (downloadedImages.isEmpty()) {
-                    ImageListViewImageItem(
-                        imageList = imageList,
-                    )
-                } else {
-                    ImageListViewBitmap(
-                        imageList = downloadedImages
-                    )
+                BusinessImageShimmer(
+                    isLoading = imageList.isEmpty() && downloadedImages.isEmpty()
+                ) {
+                    /**
+                     * if image is loading the the default image is added
+                     *
+                     */
+                    if (downloadedImages.isEmpty()) {
+                        ImageListViewImageItem(
+                            imageList = imageList,
+                            scrollState = scrollState,
+                            size = size
+                        )
+                    } else {
+                        ImageListViewBitmap(
+                            imageList = downloadedImages,
+                            scrollState = scrollState,
+                            size = size,
+                            systemUiController = systemUiController,
+                            window = window
+                        )
+                    }
                 }
             }
         }
@@ -537,7 +551,7 @@ fun ActionDetailsRow(
 
     val dialerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
-    ) { _ ->
+    ) {
         // Handle the result if needed
     }
 
@@ -633,6 +647,30 @@ suspend fun downloadImages(
     // Start downloading images, beginning from the specified startIndex
     downloadImage(startIndex)
 }
+
+suspend fun Bitmap.computeDominantTopSectionColor(): Pair<Color, Boolean> =
+    suspendCancellableCoroutine { continuation ->
+        Palette.from(this)
+            .setRegion(0, 0, this.width, 24.dp.value.toInt())
+            .maximumColorCount(3)
+            .generate { palette ->
+                palette ?: continuation.cancel()
+
+                val statusBarColorRgb = palette!!.dominantSwatch?.rgb
+                statusBarColorRgb ?: continuation.cancel()
+
+                if (statusBarColorRgb != null) {
+                    val hsl = FloatArray(3)
+                    ColorUtils.colorToHSL(statusBarColorRgb, hsl)
+                    val isLight = hsl[2] >= 0.5
+                    continuation.resume(Color(statusBarColorRgb) to isLight)
+                } else {
+                    // Handle the case where statusBarColorRgb is null
+                    // You can provide a default color or take alternative action
+                    continuation.cancel()
+                }
+            }
+    }
 
 
 @Preview

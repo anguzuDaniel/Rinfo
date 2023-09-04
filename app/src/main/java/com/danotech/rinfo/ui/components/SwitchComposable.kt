@@ -1,7 +1,10 @@
 package com.danotech.rinfo.ui.components
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
@@ -15,25 +18,33 @@ import com.danotech.rinfo.ui.theme.AppTheme
 
 @Composable
 fun SettingSwitch(
-    switchOn: Boolean,
-    onSwitchChanged: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier,
+    clicked: Boolean,
+    onSwitchChanged: (Boolean) -> Unit = {},
 ) {
-    var switchOn by remember { mutableStateOf(switchOn) }
+    var switchOn by remember { mutableStateOf(clicked) }
 
     Box(
         modifier = modifier
     ) {
         Switch(
             checked = switchOn,
-            onCheckedChange = { switchOn_ ->
-                switchOn = switchOn_
-                onSwitchChanged(switchOn_)
+            onCheckedChange = {
+                switchOn = it
             },
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                checkedTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-            ),
+            thumbContent = if (switchOn) {
+                {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(SwitchDefaults.IconSize)
+                        ,
+                    )
+                }
+            } else {
+                null
+            },
         )
     }
 }
@@ -43,7 +54,7 @@ fun SettingSwitch(
 fun SettingSwitchPreview() {
     AppTheme {
         SettingSwitch(
-            switchOn = true,
+            clicked = false,
             onSwitchChanged = {},
         )
     }
@@ -56,7 +67,7 @@ fun SettingSwitchDarkPreview() {
         darkTheme = true
     ) {
         SettingSwitch(
-            switchOn = true,
+            clicked = true,
             onSwitchChanged = {},
         )
     }

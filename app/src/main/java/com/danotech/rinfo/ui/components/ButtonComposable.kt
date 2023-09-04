@@ -6,7 +6,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,60 +64,19 @@ fun SignInButton(
     RinfoButton(name = R.string.sign_in, onClicked = action, modifier = modifier)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BusinessAccountButton(
-    isLoading: Boolean = false,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     action: () -> Unit,
 ) {
     ButtonWithLoader(isLoading = isLoading, modifier = modifier, action = action)
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun AddLogoImage(
-    isLoading: Boolean = false,
-    modifier: Modifier = Modifier,
-    action: () -> Unit,
-) {
-    Button(
-        onClick = action,
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-        Row(
-            modifier = modifier
-                .animateContentSize(
-                    animationSpec = (tween(
-                        durationMillis = 300,
-                        easing = LinearOutSlowInEasing
-                    ))
-                )
-                .background(MaterialTheme.colorScheme.primary),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = if (isLoading) "Add Logo" else "Saving Logo..",
-                color = Color.White,
-            )
-            if (isLoading) {
-                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-                CircularProgressIndicator(
-                    modifier = Modifier.size(16.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun ProfileButton(
-    isLoading: Boolean = false,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     action: () -> Unit,
 ) {
     ButtonWithLoader(isLoading = isLoading, modifier = modifier, action = action)
@@ -126,8 +84,8 @@ fun ProfileButton(
 
 @Composable
 private fun ButtonWithLoader(
-    isLoading: Boolean = false,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     action: () -> Unit,
 ) {
     Button(
@@ -163,47 +121,6 @@ private fun ButtonWithLoader(
     }
 }
 
-
-@Composable
-fun AddImageButton(
-    modifier: Modifier = Modifier,
-    action: () -> Unit,
-) {
-    RinfoButton(
-        name = R.string.add_account,
-        onClicked = action,
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .border(1.dp, MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.small)
-            .clip(MaterialTheme.shapes.small)
-            .padding(8.dp)
-    )
-}
-
-@Composable
-fun AddReviewButton(
-    modifier: Modifier = Modifier,
-    action: () -> Unit,
-) {
-    RinfoButton(
-        name = R.string.add_review,
-        onClicked = action,
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .border(1.dp, MaterialTheme.colorScheme.onSurface, MaterialTheme.shapes.small)
-            .clip(MaterialTheme.shapes.small)
-            .padding(8.dp)
-    )
-}
-
-@Composable
-fun SaveProfileButton(
-    modifier: Modifier = Modifier,
-    action: () -> Unit,
-) {
-    RinfoButton(name = R.string.save, onClicked = action, modifier = modifier)
-}
-
 /**
  * reusable button
  * provide a string resource for the button name
@@ -211,9 +128,9 @@ fun SaveProfileButton(
  */
 @Composable
 fun RinfoButton(
+    modifier: Modifier = Modifier,
     @StringRes name: Int,
     onClicked: () -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onClicked,
@@ -230,10 +147,10 @@ fun RinfoButton(
 
 @Composable
 fun BusinessImageButton(
+    modifier: Modifier = Modifier,
     @DrawableRes icon: Int,
     @StringRes name: Int,
     onClicked: () -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onClicked,
@@ -276,7 +193,7 @@ fun RinfoFAB(
     ) {
         Icon(
             imageVector = Icons.Default.Add,
-            contentDescription = stringResource(R.string.search),
+            contentDescription = stringResource(R.string.Search),
         )
     }
 }
@@ -286,11 +203,11 @@ fun RinfoFAB(
  */
 @Composable
 fun CategoryIconButton(
+    modifier: Modifier = Modifier,
     description: String,
     @DrawableRes icon: Int,
     @StringRes name: Int,
     onCategoryClicked: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = Modifier
@@ -334,20 +251,20 @@ fun CategoryIconButton(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowOptionButton(
+fun FilterBusinessButton(
     @StringRes name: Int,
     active: Boolean = false,
-    onFilterClicked: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onFilterClick: () -> Unit = {}
 ) {
-
-    val containerColor =
-        if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+    if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
 
     var selected by remember { mutableStateOf(false) }
     FilterChip(
         selected = selected,
-        onClick = { selected = !selected },
+        onClick = {
+            selected = !selected
+            onFilterClick()
+        },
         label = { Text(stringResource(id = name)) },
         leadingIcon = if (selected) {
             {

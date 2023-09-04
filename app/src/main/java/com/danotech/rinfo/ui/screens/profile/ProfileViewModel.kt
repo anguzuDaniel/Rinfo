@@ -92,15 +92,20 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun getImageFromFireBase(userId: String) {
-        val storageRef = Firebase.storage.reference
-        val imageRef = storageRef.child("logos/${userId}.jpg")
+        launchCatching {
+            _uiState.value = _uiState.value.copy(imageLoading = true)
+            val storageRef = Firebase.storage.reference
+            val imageRef = storageRef.child("logos/${userId}.jpg")
 
-        val ONE_MEGABYTE: Long = 1024 * 1024
-        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
-            val bmp: Bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
-            _uiState.value = _uiState.value.copy(profileImageBitmap = bmp)
-        }.addOnFailureListener {
-            // Handle any errors
+            val ONE_MEGABYTE: Long = 1024 * 1024
+            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+                val bmp: Bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                _uiState.value = _uiState.value.copy(profileImageBitmap = bmp)
+            }.addOnFailureListener {
+                // Handle any errors
+            }
+        }.invokeOnCompletion {
+            _uiState.value = _uiState.value.copy(imageLoading = false)
         }
     }
 

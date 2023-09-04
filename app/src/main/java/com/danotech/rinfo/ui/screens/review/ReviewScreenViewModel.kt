@@ -2,6 +2,7 @@ package com.danotech.rinfo.ui.screens.review
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
@@ -33,7 +34,13 @@ constructor(
 ) :
     RinfoViewModel(logService) {
     private val _uiState =
-        MutableStateFlow(ReviewUiState(isLoading = false, businessId = Business().id))
+        MutableStateFlow(
+            ReviewUiState(
+                isLoading = false,
+                imageLoading = false,
+                businessId = Business().id
+            )
+        )
     val uiState = _uiState.asStateFlow()
 
 
@@ -60,6 +67,29 @@ constructor(
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }
         }
+    }
+
+    fun getProfileImage(
+        userId: String,
+        bitmap: MutableState<Bitmap>
+    ) {
+        launchCatching {
+            _uiState.value = _uiState.value.copy(imageLoading = true)
+
+            val storageRef = Firebase.storage.reference
+            val imageRef = storageRef.child("logos/${userId}.jpg")
+
+            val ONE_MEGABYTE: Long = 1024 * 1024
+            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+                val bmp: Bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                bitmap.value = bmp
+            }.addOnFailureListener {
+                // Handle any errors
+            }
+        }.invokeOnCompletion {
+            _uiState.value = _uiState.value.copy(imageLoading = false)
+        }
+
     }
 
     fun deleteReview(reviewId: String, businessId: String) {

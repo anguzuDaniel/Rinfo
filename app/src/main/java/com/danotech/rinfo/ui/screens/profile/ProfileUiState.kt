@@ -14,5 +14,6 @@ data class ProfileUiState(
     val profileFirstName: String = "",
     val profileLastName: String = "",
     val isLoading: Boolean = false,
+    var imageLoading: Boolean = false,
     var showBottomSheet: Boolean = false,
 )

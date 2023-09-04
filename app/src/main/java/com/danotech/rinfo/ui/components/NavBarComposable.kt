@@ -1,3 +1,5 @@
+@file:Suppress("KDocUnresolvedReference")
+
 package com.danotech.rinfo.ui.components
 
 import androidx.compose.foundation.layout.Box
@@ -11,8 +13,10 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.BottomMenuItem
@@ -57,11 +63,10 @@ import com.danotech.rinfo.ui.screens.RInfoScreen
  */
 @Composable
 fun RinfoBottomNavigation(
+    modifier: Modifier = Modifier,
     currentScreen: RInfoScreen,
     onTabSelected: ((RInfoScreen) -> Unit) = {},
-    modifier: Modifier = Modifier,
 ) {
-
     // items list
     val bottomMenuItemsList = prepareBottomMenu()
 
@@ -78,7 +83,7 @@ fun RinfoBottomNavigation(
                 .clip(shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
         ) {
 
-            bottomMenuItemsList.forEachIndexed { index, navigationItemContent ->
+            bottomMenuItemsList.forEachIndexed { _, navigationItemContent ->
 
                 NavigationBarItem(
                     selected = currentScreen == navigationItemContent.rinfoScreen,
@@ -92,6 +97,13 @@ fun RinfoBottomNavigation(
                         )
                     },
                     enabled = true,
+                    label = {
+                        Text(
+                            text = stringResource(id = navigationItemContent.label),
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 )
             }
         }
@@ -141,7 +153,7 @@ private fun prepareBottomMenu(): List<BottomMenuItem> {
         BottomMenuItem(
             rinfoScreen = RInfoScreen.Search,
             icon = Icons.Filled.Search,
-            label = R.string.search
+            label = R.string.Search
         )
     )
     bottomMenuItemsList.add(
