@@ -34,26 +34,15 @@ fun CategoryScreen(
         onBackPressed()
     }
 
-    LaunchedEffect(viewModel) {
-        viewModel.onAddCategories()
-    }
-
     val uiState = viewModel.uiState.value
 
-    Scaffold {
-        Column(
-            modifier = Modifier,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            CategorySearchBar(
-                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, start = 8.dp, end = 8.dp),
-                onBack = onBackPressed,
-                onClose = viewModel::onClose,
-                navigateToCategoryPage = onCategoryItemClicked,
-                viewModel = viewModel,
-            )
-        }
-    }
+    CategorySearchBar(
+        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, start = 8.dp, end = 8.dp),
+        onBack = onBackPressed,
+        onClose = viewModel::onClose,
+        navigateToCategoryPage = onCategoryItemClicked,
+        viewModel = viewModel,
+    )
 }
 
 
@@ -67,8 +56,7 @@ fun CategoriesList(
     categories: List<Category> = emptyList(),
 ) {
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = contentPadding
+        verticalArrangement = Arrangement.spacedBy(16.dp), contentPadding = contentPadding
     ) {
         if (viewModel.uiState.value.isLoading) {
             item {
@@ -78,8 +66,7 @@ fun CategoriesList(
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                         .animateContentSize(
                             animationSpec = (tween(
-                                durationMillis = 300,
-                                easing = LinearOutSlowInEasing
+                                durationMillis = 300, easing = LinearOutSlowInEasing
                             ))
                         ),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -105,15 +92,13 @@ fun CategoriesList(
 
 @Composable
 fun CategoriesListItem(
-    category: Category,
-    onCategoryItemClicked: () -> Unit = {}
+    category: Category, onCategoryItemClicked: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { onCategoryItemClicked() },
-        verticalAlignment = Alignment.CenterVertically
+            .clickable { onCategoryItemClicked() }, verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = category.name,

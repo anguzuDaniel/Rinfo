@@ -2,21 +2,41 @@ package com.danotech.rinfo.ui.screens.favorites
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Review
+import com.danotech.rinfo.ui.components.NoDataScreen
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.danotech.rinfo.ui.theme.AppTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FavoriteScreen(
@@ -48,13 +68,38 @@ fun FavoriteScreen(
 //        )
 //    )
 
+    val listState = rememberLazyListState()
+    val hasScrolled by remember {
+        derivedStateOf {
+            listState.firstVisibleItemScrollOffset > 0
+        }
+    }
+    val appBarElevation by animateDpAsState(targetValue = if (hasScrolled) 4.dp else 0.dp)
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            RinfoTopAppBar(
-                title = stringResource(id = R.string.favorites),
-                isShowingHomePage = false,
-                onBackButtonClicked = onBackPressed,
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = if (isSystemInDarkTheme()) {
+                        MaterialTheme.colorScheme.surfaceVariant.copy(
+                            alpha = if (hasScrolled) 1f else 0f
+                        )
+                    } else {
+                        MaterialTheme.colorScheme.surface
+                    },
+                ),
+                modifier = Modifier.shadow(appBarElevation),
+                title = { Text(text = "Favorites") },
+                navigationIcon = {
+                    IconButton(onClick = onBackPressed) {
+                        Icon(
+                            Icons.Rounded.ArrowBack,
+                            contentDescription = "Go back"
+                        )
+                    }
+                },
+                actions = { },
             )
         },
         bottomBar = {
@@ -64,35 +109,13 @@ fun FavoriteScreen(
                     onTabSelected = onTabSelected,
                     modifier = Modifier.fillMaxWidth()
                 )
-            }, fab = {
-//                FloatingActionButton(
-//                    onClick = onFabClicked,
-//                    modifier = Modifier.padding(bottom = 10.dp),
-//                    contentColor = MaterialTheme.colorScheme.onPrimary,
-//                    containerColor = MaterialTheme.colorScheme.primary
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.Default.Search,
-//                        contentDescription = stringResource(id = R.string.favorites)
-//                    )
-//                }
-            })
+            }, fab = {})
         },
     ) { innerPadding ->
-//        LazyColumn(
-//            modifier = Modifier
-//                .padding(dimensionResource(id = R.dimen.body_padding))
-//                .fillMaxSize(),
-//            contentPadding = innerPadding
-//        ) {
-//            items(reviews, key = { review -> review.id }) { review ->
-//                ReviewCard(
-//                    business = review,
-//                    onReviewCardClicked = onReviewCardClicked
-//                )
-//                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.body_padding)))
-//            }
-//        }
+        NoDataScreen(
+            text = R.string.no_favorites_added_yet,
+            modifier = Modifier.padding(innerPadding)
+        )
     }
 }
 

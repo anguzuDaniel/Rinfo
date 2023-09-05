@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.components
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,7 +36,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -47,7 +47,6 @@ import com.danotech.rinfo.ui.screens.category.CategoriesListItem
 import com.danotech.rinfo.ui.screens.category.CategoryViewModel
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchTextField(
     modifier: Modifier = Modifier,
@@ -60,7 +59,8 @@ fun SearchTextField(
     Surface(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 5.dp),
     ) {
-        BasicTextField(value = searchInput,
+        BasicTextField(
+            value = searchInput,
             onValueChange = onSearchInput,
             textStyle = MaterialTheme.typography.labelSmall,
             singleLine = true,
@@ -74,8 +74,7 @@ fun SearchTextField(
                             width = 1.dp,
                             color = MaterialTheme.colorScheme.onSurface,
                             shape = MaterialTheme.shapes.small
-                        )
-                        .padding(16.dp, vertical = 12.dp),
+                        ),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -90,10 +89,13 @@ fun SearchTextField(
                         Text(text = "Search", style = MaterialTheme.typography.labelSmall)
                     }
                 }
-            })
+            },
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp)
+        )
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategorySearchBar(
@@ -121,10 +123,9 @@ fun CategorySearchBar(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
         else modifier.background(MaterialTheme.colorScheme.background),
-    ) { innerPadding ->
+    ) {
         SearchBar(modifier = Modifier
             .fillMaxWidth()
-            .padding(paddingValues = innerPadding)
             .background(MaterialTheme.colorScheme.background),
             query = uiState.searchedCategory,
             onQueryChange = viewModel::onSearchInput,

@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.screens.search_business
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.Loading
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BusinessSearchBar(
@@ -52,10 +54,9 @@ fun BusinessSearchBar(
 
     val uiState = viewModel.uiState.collectAsState().value
 
-    Scaffold { innerPadding ->
+    Scaffold {  _ ->
         SearchBar(modifier = modifier
             .fillMaxWidth()
-            .padding(paddingValues = innerPadding)
             .background(MaterialTheme.colorScheme.background),
             query = uiState.query,
             onQueryChange = viewModel::onQueryChanged,

@@ -633,4 +633,8 @@
     <string name="delete_account_warning">Are you sure you want to delete your account?\nThis action cannot be reversed.</string>
     <string name="send_feed_back">Send feedback</string>
     <string name="whats_new">What\'s new</string>
+    <string name="no_favorites_added_yet">No favorites added yet</string>
+    <string name="no_notifications">You don\'t have any notifications</string>
+    <string name="page_under_construction">Page under construction</string>
+    <string name="SplashScreen">Splash Screen</string>
 </resources>

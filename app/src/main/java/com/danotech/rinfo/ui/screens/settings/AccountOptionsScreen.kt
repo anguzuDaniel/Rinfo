@@ -93,7 +93,8 @@ fun AccountOptionsContent(
             settingType = settingType,
             onClick = {
                 onNavClicked(RInfoScreen.EditAccount.name)
-            }
+            },
+            description = "Edit your profile"
         )
 
         SettingsClickableComp(
@@ -104,7 +105,8 @@ fun AccountOptionsContent(
             settingType = settingType,
             onClick = {
                 onNavClicked(RInfoScreen.BusinessAccount.name)
-            }
+            },
+            description = "Edit your Business Account"
         )
 
         SettingsClickableComp(
@@ -115,7 +117,8 @@ fun AccountOptionsContent(
             settingType = settingType,
             onClick = {
                 onNavClicked(RInfoScreen.ChangePassword.name)
-            }
+            },
+            description = "Change your password"
         )
 
         SettingsClickableComp(

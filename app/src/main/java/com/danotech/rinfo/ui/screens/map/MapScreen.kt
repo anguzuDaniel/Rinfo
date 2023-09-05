@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +29,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.Loading
+import com.danotech.rinfo.ui.components.NoDataScreen
+import com.danotech.rinfo.ui.screens.ComingSoonScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -72,14 +75,20 @@ fun MapScreen(
                 }
             )
         }
-    ) { _ ->
+    ) { innerPadding ->
         if (uiState.isLoading) {
             Loading()
         } else {
-            MapDisplay(
-                viewModel = viewModel,
-                country = country,
-                city = city
+//            MapDisplay(
+//                viewModel = viewModel,
+//                country = country,
+//                city = city
+//            )
+
+            // TODO: add map implementation
+            NoDataScreen(
+                text = R.string.page_under_construction,
+                modifier = Modifier.padding(innerPadding)
             )
         }
     }

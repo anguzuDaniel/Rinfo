@@ -3,13 +3,10 @@ package com.danotech.rinfo.ui.screens.business_account
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -35,10 +32,6 @@ fun SelectBusinessCategory(
     onAccountTypeSelected: (Category) -> Unit = {},
     viewModel: BusinessAccountViewModel
 ) {
-    LaunchedEffect(viewModel) {
-        viewModel.onAddCategories()
-    }
-
     val uiState = viewModel.uiState.collectAsState().value
 
     val listItems = viewModel.getAllCategories().collectAsState(initial = emptyList()).value

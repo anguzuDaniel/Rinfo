@@ -12,6 +12,7 @@ import com.danotech.rinfo.R
  */
 enum class RInfoScreen(@StringRes val title: Int) {
     // the start page is the home page
+    SplashScreen(title = R.string.SplashScreen),
     Home(title = R.string.home),
     Favourites(title = R.string.favorites),
     Notification(title = R.string.notifications),

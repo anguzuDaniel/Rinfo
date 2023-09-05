@@ -4,6 +4,8 @@ package com.danotech.rinfo.ui
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.res.Resources
@@ -12,9 +14,7 @@ import android.view.Window
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ScaffoldState
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -66,6 +66,7 @@ import com.danotech.rinfo.ui.screens.search_business.SearchPage
 import com.danotech.rinfo.ui.screens.selected_category.SelectedCategoryScreen
 import com.danotech.rinfo.ui.screens.settings.AccountOptionsScreen
 import com.danotech.rinfo.ui.screens.settings.SettingsScreen
+import com.danotech.rinfo.ui.screens.splash.SplashScreen
 import com.danotech.rinfo.ui.theme.AppTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -134,7 +135,7 @@ fun RinfoApp(
             ) {
                 NavHost(
                     navController = appState.navController,
-                    startDestination = RInfoScreen.Home.name,
+                    startDestination = RInfoScreen.SplashScreen.name
                 ) {
                     makeItSoGraph(
                         appState,
@@ -189,6 +190,14 @@ fun NavGraphBuilder.makeItSoGraph(
     appState: RinfoAppUiState,
     window: Window
 ) {
+    composable(route = RInfoScreen.SplashScreen.name) {
+        SplashScreen(
+            navigateTo = {
+                appState.navigate(RInfoScreen.Home.name)
+            },
+            window = window
+        )
+    }
     composable(route = RInfoScreen.Home.name) {
         HomeScreen(
             onTabSelected = { screen ->
@@ -371,15 +380,13 @@ fun NavGraphBuilder.makeItSoGraph(
         val city = backStackEntry.arguments?.getString("city")
 
         if (country != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                MapScreen(
-                    onBack = {
-                        appState.popUp()
-                    },
-                    city = city ?: "",
-                    country = "Nigeria"
-                )
-            }
+            MapScreen(
+                onBack = {
+                    appState.popUp()
+                },
+                city = city ?: "",
+                country = "Nigeria"
+            )
         } else {
             // Handle the case where businessId is null
         }

@@ -52,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.danotech.rinfo.BuildConfig
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.components.SearchTextField
@@ -100,7 +101,7 @@ fun SettingsScreen(
                 modifier = Modifier.shadow(appBarElevation),
                 title = { Text(text = "Settings") },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = onBackPressed) {
                         Icon(
                             Icons.Rounded.ArrowBack,
                             contentDescription = "Go back"
@@ -165,12 +166,26 @@ fun SettingsContent(
         }
 
         item {
+            SettingSectionHeading(
+                text = R.string.notifications,
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
+            )
+        }
+
+        item {
             SettingsClickableComp(
                 leadingIcon = Icons.Filled.Notifications,
                 name = R.string.notifications,
                 icon = Icons.Rounded.FavoriteBorder,
                 iconDesc = R.string.notifications,
                 onClick = {}
+            )
+        }
+
+        item {
+            SettingSectionHeading(
+                text = R.string.account,
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
             )
         }
 
@@ -183,7 +198,8 @@ fun SettingsContent(
                 settingType = settingType,
                 onClick = {
                     onNavClicked(RInfoScreen.Account.name)
-                }
+                },
+                description = ""
             )
         }
 
@@ -255,9 +271,11 @@ fun SettingsContent(
         }
 
         item {
+            val version = "Version number: ${BuildConfig.VERSION_NAME} Beta"
+
             AppVersion(
-                versionText = "1.0.0",
-                copyrights = "© 2023 DanoTech"
+                versionText = version,
+                copyrights = "© 2023 codevation"
             ) {
 
             }
@@ -281,6 +299,7 @@ fun SettingsContent(
 fun SettingsClickableComp(
     leadingIcon: ImageVector,
     icon: ImageVector,
+    description: String = "",
     @StringRes iconDesc: Int,
     @StringRes name: Int,
     settingType: SettingType = SettingType.SWITCH,
@@ -303,17 +322,33 @@ fun SettingsClickableComp(
                 modifier = Modifier.weight(1f),
                 tint = if (!opensDialogWhenClicked) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
             )
-            Text(
-                text = stringResource(id = name),
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = if (!opensDialogWhenClicked) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
-                ),
+
+            Column(
                 modifier = Modifier.weight(
                     if (!opensDialogWhenClicked) 3f else 4f
                 ),
-                textAlign = TextAlign.Start,
-                overflow = TextOverflow.Ellipsis,
-            )
+                verticalArrangement = if (description != "") Arrangement.spacedBy(5.dp) else Arrangement.spacedBy(
+                    0.dp
+                ),
+            ) {
+                Text(
+                    text = stringResource(id = name),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = if (!opensDialogWhenClicked) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
+                    ),
+                    textAlign = TextAlign.Start,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+                if (description != "") {
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.weight(1.0f))
             if (settingType == SettingType.SWITCH) {
                 SettingSwitch(
@@ -342,17 +377,16 @@ fun AppVersion(
     copyrights: String,
     onClick: () -> Unit
 ) {
-    Surface(onClick = onClick) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+    Surface(
+        onClick = onClick,
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(30.dp)
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = Modifier.size(30.dp),
-            )
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
@@ -367,5 +401,22 @@ fun AppVersion(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun SettingSectionHeading(
+    @StringRes text: Int,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth(),
+    ) {
+        Text(
+            text = stringResource(id = text),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
+        )
     }
 }

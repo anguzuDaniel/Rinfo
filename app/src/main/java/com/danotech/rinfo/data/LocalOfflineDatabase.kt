@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.danotech.rinfo.model.local.Category
 import dagger.hilt.android.qualifiers.ApplicationContext
 
-@Database(entities = [Category::class], version = 1, exportSchema = false)
+@Database(entities = [Category::class], version = 2, exportSchema = true)
 abstract class LocalOfflineDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
 
@@ -19,9 +19,8 @@ abstract class LocalOfflineDatabase : RoomDatabase() {
             return instance ?: synchronized(this) {
                 Room.databaseBuilder(context, LocalOfflineDatabase::class.java, "app_database")
                     .createFromAsset("database/offline.db")
-                    .fallbackToDestructiveMigration() // This line triggers table deletion and recreation
                     .build()
-                    .also { instance = it }
+//                    .also { instance = it }
             }
         }
     }

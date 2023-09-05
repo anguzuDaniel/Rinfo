@@ -22,18 +22,11 @@ fun SearchPage(
         onBackPressed()
     }
 
-    Scaffold {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            BusinessSearchBar(
-                viewModel = viewModel,
-                onBack = onBackPressed,
-            )
-        }
-    }
+
+    BusinessSearchBar(
+        viewModel = viewModel,
+        onBack = onBackPressed,
+    )
 }
 
 
@@ -55,7 +48,7 @@ fun SearchResults(
                     .fillMaxWidth()
                     .padding(20.dp)
             )
-            Divider()
+            HorizontalDivider()
         }
     }
 }

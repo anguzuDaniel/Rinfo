@@ -84,10 +84,6 @@ fun SearchCategoryContent(
             .background(MaterialTheme.colorScheme.surface),
     ) {
         item {
-
-        }
-
-        item {
             val businessList = createBusinessList()
             BusinessInLocation(
                 businessList = businessList
