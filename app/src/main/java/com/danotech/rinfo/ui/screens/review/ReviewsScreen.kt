@@ -30,7 +30,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -113,17 +112,17 @@ fun ReviewsScreen(
                     .padding(16.dp),
                 contentPadding = it
             ) {
-                item {
-                    ReviewStatistics(
-                        count = reviewUiState.reviews.size,
-                        positiveReviews = 45,
-                        negativeReviews = 5,
-                        totalReviews = 50
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+//                item {
+//                    ReviewStatistics(
+//                        count = reviewUiState.reviews.size,
+//                        positiveReviews = 45,
+//                        negativeReviews = 5,
+//                        totalReviews = 50
+//                    )
+//                    Spacer(modifier = Modifier.height(20.dp))
+//                    HorizontalDivider()
+//                    Spacer(modifier = Modifier.height(20.dp))
+//                }
 
                 item {
                     FilterRow(
@@ -272,7 +271,7 @@ fun ReviewItem(
                     verticalAlignment = Alignment.Bottom
                 ) {
                     Text(
-                        text = uiState.reviewUserName,
+                        text = review.reviewerUserId,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                     )

@@ -59,13 +59,16 @@ fun ReviewForm(
             Spacer(modifier = Modifier.height(16.dp))
 
             RatingInputRow(
-                rating = uiState.rating, onRatingChange = viewModel::onRatingChanged
+                rating = uiState.rating,
+                onRatingChange = viewModel::onRatingChanged
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             ReviewInputWithLabel(
-                placeholder = R.string.title, value = uiState.title, onValueChanged = { title ->
+                placeholder = R.string.title,
+                value = uiState.title,
+                onValueChanged = { title ->
                     // title is less than 10 characters
                     // return
                     if (title.length <= 10) {
@@ -108,6 +111,7 @@ fun ReviewForm(
                         // adds the review to the database
                         viewModel.addReview()
                     } else {
+                        // updated the review from the database
                         viewModel.updateReview(reviewId)
                     }
 
