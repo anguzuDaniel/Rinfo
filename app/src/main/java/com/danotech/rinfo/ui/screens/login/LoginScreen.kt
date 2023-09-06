@@ -1,14 +1,18 @@
 package com.danotech.rinfo.ui.screens.login
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -33,7 +37,7 @@ fun LoginScreen(
     onSignUpTextClicked: () -> Unit = { },
     onBackHandler: () -> Unit = { }
 ) {
-    val loginUiState = viewModel.uiState.value
+    val uiState = viewModel.uiState.collectAsState().value
 
     BackHandler {
         onBackHandler()
@@ -53,16 +57,24 @@ fun LoginScreen(
 
             // page sub title
             SubHeadingText(text = R.string.sign_in)
-
             Spacer(modifier = Modifier.height(10.dp))
 
+            AnimatedVisibility(visible = uiState.hasMessage) {
+                Text(
+                    text = uiState.message,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(0.44f),
+                    modifier = Modifier.padding(bottom = 10.dp)
+                )
+            }
+            
             EmailField(
-                value = loginUiState.email,
+                value = uiState.email,
                 onValueChanged = viewModel::onEmailChange,
             )
 
             PasswordField(
-                value = loginUiState.password,
+                value = uiState.password,
                 onValueChanged = viewModel::onPasswordChange,
             )
 

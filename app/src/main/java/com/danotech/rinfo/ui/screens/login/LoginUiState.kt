@@ -9,5 +9,7 @@ package com.danotech.rinfo.ui.screens.login
 data class LoginUiState(
     val email: String = "",
     val password: String = "",
+    var message: String = "",
     val isSignInSuccess: Boolean = false,
+    val hasMessage: Boolean = false
 )

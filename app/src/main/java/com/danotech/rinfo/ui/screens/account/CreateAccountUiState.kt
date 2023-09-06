@@ -29,6 +29,8 @@ data class CreateAccountUiState(
     val isCreateAccountInProgress: Boolean = false,
     val isCreateAccountSuccess: Boolean = false,
     val isCreateAccountError: Boolean = false,
+    var errorMessage: String = "",
+    var isLoading: Boolean = false
 )
 
 /**

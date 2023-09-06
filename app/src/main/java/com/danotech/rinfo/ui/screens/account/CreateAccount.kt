@@ -1,42 +1,24 @@
 package com.danotech.rinfo.ui.screens.account
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Box
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
-import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
-import com.danotech.rinfo.data.LocalReviewProvider
-import com.danotech.rinfo.model.local.Category
 import com.danotech.rinfo.ui.components.ClickableTextRow
 import com.danotech.rinfo.ui.components.EmailField
 import com.danotech.rinfo.ui.components.GoogleButton
@@ -56,7 +38,7 @@ fun CreateAccount(
     onSignInTextClicked: () -> Unit = { },
     onBackHandler: () -> Unit = {}
 ) {
-    val createAccountUiState by viewModel.uiState
+    val uiState = viewModel.uiState.collectAsState().value
 
     BackHandler {
         onBackHandler()
@@ -87,51 +69,51 @@ fun CreateAccount(
                         .height(20.dp),
                     onSignUpTextClicked = onSignInTextClicked
                 )
+                Spacer(modifier = Modifier.height(10.dp))
             }
 
-//            item {
-//                /**
-//                 * First name text input
-//                 */
-//                TextInput(
-//                    value = createAccountUiState.name,
-//                    onValueChanged = viewModel::onNameChanged,
-//                    labelText = stringResource(R.string.name),
-//                    leadingIcon = Icons.Default.Person,
-//                )
-//            }
+            item {
+                AnimatedVisibility(visible = uiState.isCreateAccountError) {
+                    Text(
+                        text = uiState.errorMessage,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+            }
 
             item {
                 EmailField(
-                    value = createAccountUiState.email,
+                    value = uiState.email,
                     onValueChanged = viewModel::onEmailChanged,
                 )
             }
 
             item {
                 PasswordField(
-                    value = createAccountUiState.password,
+                    value = uiState.password,
                     onValueChanged = viewModel::onPasswordChanged,
                 )
             }
 
             item {
                 RepeatPasswordField(
-                    value = createAccountUiState.confirmPassword,
+                    value = uiState.confirmPassword,
                     onValueChanged = viewModel::onConfirmPasswordChanged,
                 )
             }
 
-//            item {
-//                SelectAccountType(
-//                    modifier = Modifier,
-//                    onAccountTypeSelected = viewModel::onAccountTypeSelected
-//                )
-//            }
 
             item {
                 Spacer(modifier = Modifier.height(10.dp))
-                SignUpButton(modifier = Modifier.fillMaxWidth(), onClick = viewModel::onSignUpClick)
+                SignUpButton(
+                    isLoading = uiState.isLoading,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = viewModel::onSignUpClick
+                ) {
+
+                }
             }
 
             item {

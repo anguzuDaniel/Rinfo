@@ -50,10 +50,12 @@ import com.danotech.rinfo.ui.theme.AppTheme
 
 @Composable
 fun SignUpButton(
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    action: () -> Unit
 ) {
-    RinfoButton(name = R.string.sign_up, onClicked = onClick, modifier = modifier)
+    ButtonWithLoader(isLoading = isLoading, modifier = modifier, action = onClick)
 }
 
 @Composable

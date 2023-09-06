@@ -38,7 +38,6 @@ fun ReviewForm(
     onSubmit: () -> Unit = {},
     onBackPressed: () -> Unit
 ) {
-
     if (reviewId.isNotEmpty()) {
         LaunchedEffect(viewModel) {
             viewModel.getReview(reviewId)
@@ -49,8 +48,7 @@ fun ReviewForm(
 
     Scaffold {
         Column(
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = stringResource(R.string.add_a_review),
@@ -61,25 +59,20 @@ fun ReviewForm(
             Spacer(modifier = Modifier.height(16.dp))
 
             RatingInputRow(
-                rating = uiState.rating,
-                onRatingChange = viewModel::onRatingChanged
+                rating = uiState.rating, onRatingChange = viewModel::onRatingChanged
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             ReviewInputWithLabel(
-                placeholder = R.string.title,
-                value = uiState.title,
-                onValueChanged = { title ->
+                placeholder = R.string.title, value = uiState.title, onValueChanged = { title ->
                     // title is less than 10 characters
                     // return
                     if (title.length <= 10) {
                         viewModel.onTitleInput(title)
                     }
 
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
+                }, modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -88,8 +81,7 @@ fun ReviewForm(
                 placeholder = R.string.review,
                 value = uiState.review,
                 onValueChanged = viewModel::onReviewInput,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -113,10 +105,10 @@ fun ReviewForm(
                     // if the review id is not empty
                     // update the review
                     if (reviewId == "") {
-                        viewModel.updateReview(reviewId)
-                    } else {
                         // adds the review to the database
                         viewModel.addReview()
+                    } else {
+                        viewModel.updateReview(reviewId)
                     }
 
                     onCancel()
