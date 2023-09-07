@@ -1,7 +1,5 @@
 package com.danotech.rinfo.model
 
-import android.graphics.Bitmap
-import com.danotech.rinfo.R
 import com.danotech.rinfo.model.local.Category
 import com.google.firebase.firestore.DocumentId
 
@@ -25,7 +23,7 @@ data class Business(
     @DocumentId val id: String = "",
     val userId: String = "",
     val logo: String = "",
-    val profilePicture: Bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888),
+    val profilePicture: String = "",
     val name: String = "",
     val description: String = "",
     val address: String = "",

@@ -8,13 +8,10 @@ import com.danotech.rinfo.model.service.trace
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.dataObjects
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.tasks.await
-import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 class BusinessAccountServiceImpl
@@ -55,14 +52,30 @@ class BusinessAccountServiceImpl
     }
 
     override suspend fun create(business: Business): String = trace(SAVE_BUSINESS_TRACE) {
-        val businessWithUserId =
-            business.copy(id = FirebaseAuth.getInstance().currentUser!!.email.toString())
-        fireStore.collection(BUSINESS_COLLECTION).document(businessWithUserId.id)
-            .set(businessWithUserId).await().toString()
+        try {
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser != null) {
+                val businessWithUserId = business.copy(id = currentUser.email.toString())
+                val documentReference =
+                    fireStore.collection(BUSINESS_COLLECTION).document(businessWithUserId.id)
+                documentReference.set(businessWithUserId).await()
+                return documentReference.id // Return the document ID if needed
+            } else {
+                // Handle the case where there is no signed-in user
+                return ""
+            }
+        } catch (e: Exception) {
+            // Handle any exceptions that may occur during Firestore write
+            // You can log the error or provide feedback to the user
+            return ""
+        }
     }
 
     override suspend fun update(business: Business): Unit = trace(UPDATE_BUSINESS_TRACE) {
-        val businessId = business.id
+        // get id of the current business before use
+        val businessId = business.userId
+
+        // add it to the database
         fireStore.collection(BUSINESS_COLLECTION).document(businessId).set(business).await()
     }
 
@@ -78,7 +91,8 @@ class BusinessAccountServiceImpl
     override suspend fun upLoadImage(businessId: String, image: Bitmap?) {
 
 
-        fireStore.collection(BUSINESS_COLLECTION).document(businessId).update("image", image.toString())
+        fireStore.collection(BUSINESS_COLLECTION).document(businessId)
+            .update("image", image.toString())
             .await()
     }
 

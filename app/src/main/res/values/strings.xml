@@ -84,6 +84,7 @@
     <string name="placeholder_business_phone">000-000-000-000</string>
     <string name="placeholder_business_email">cakebusiness@gmail.com</string>
     <string name="add_logo">Add logo</string>
+    <string name="next_page">Next page</string>
     <string name="name_is_required">Name is required</string>
     <string name="description_is_required">Business Description is required</string>
     <string name="address_is_required">Business Address is required</string>

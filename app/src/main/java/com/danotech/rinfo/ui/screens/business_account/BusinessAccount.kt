@@ -11,6 +11,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +29,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -49,8 +52,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -58,13 +59,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.imageLoader
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.ext.basicButton
 import com.danotech.rinfo.ui.components.BusinessAccountButton
 import com.danotech.rinfo.ui.components.Loading
 import com.danotech.rinfo.ui.components.ProfileImageShimmer
+import com.danotech.rinfo.ui.components.RinfoButton
 import com.danotech.rinfo.ui.components.TextInputWithLabel
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
+import com.danotech.rinfo.ui.screens.dropdown.DropdownViewModel
+import com.danotech.rinfo.ui.screens.dropdown.SelectBusinessCategory
 import com.google.firebase.auth.FirebaseAuth
 import com.togitech.ccp.component.TogiCountryCodePicker
 import com.togitech.ccp.data.utils.checkPhoneNumber
@@ -81,6 +87,10 @@ fun BusinessAccount(
     viewModel: BusinessAccountViewModel = hiltViewModel(),
     onBackClicked: () -> Unit = {},
 ) {
+    val openAlertDialog = remember {
+        mutableStateOf(false)
+    }
+
     BackHandler {
         onBackClicked()
     }
@@ -88,26 +98,25 @@ fun BusinessAccount(
     val context = LocalContext.current
 
     val defaultProfilePicture: Bitmap = BitmapFactory.decodeResource(
-        context.resources,
-        R.drawable.no_image
+        context.resources, R.drawable.no_image
     )
 
     LaunchedEffect(viewModel) {
-        viewModel.setDefaultImage(defaultProfilePicture)
         viewModel.getBusinessAccount(FirebaseAuth.getInstance().currentUser?.email!!)
     }
 
     val uiState = viewModel.uiState.collectAsState().value
 
+    var showCategorySelection by remember { mutableStateOf(false) }
+
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-    var showBottomSheet by remember { mutableStateOf(false) }
+    rememberCoroutineScope()
 
 
-//    val logoImage: Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
+    val logoImage: Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
 
     val bitmap = remember {
-        mutableStateOf(uiState.profilePicture)
+        mutableStateOf(logoImage)
     }
 
     val launcher = rememberLauncherForActivityResult(
@@ -148,27 +157,54 @@ fun BusinessAccount(
         },
     ) { innerPadding ->
         if (!uiState.isLoading) {
-            BusinessAccountContent(
-                innerPadding = innerPadding,
-                viewModel = viewModel,
-                bitmap = bitmap
+
+            // if showCategorySelection false show Main page
+            // Otherwise show BusinessActionSectionPage
+            if (!showCategorySelection) {
+                BusinessAccountContent(uiState = uiState,
+                    innerPadding = innerPadding,
+                    viewModel = viewModel,
+                    bitmap = bitmap,
+                    onNextButtonClick = {
+                        showCategorySelection = true
+                    })
+            } else {
+                BusinessActionSectionPage(
+                    uiState = uiState,
+                    bitmap = bitmap,
+                    viewModel = viewModel,
+                    onBackClicked = {
+                        showCategorySelection = false
+                    },
+                    onSave = {
+                        openAlertDialog.value = true
+                    },
+                    onFailure = {
+                        uiState.message = it.toString()
+                    },
+                    innerPadding = innerPadding
+                )
+            }
+
+            if (openAlertDialog.value) AccountDialog(
+                onDismissRequest = { openAlertDialog.value = false },
+                dialogTitle = "Information added successfully",
+                dialogText = uiState.name,
+                icon = Icons.Default.ThumbUp
             )
+
 
             if (uiState.showBottomSheet) {
                 ModalBottomSheet(
                     onDismissRequest = {
                         viewModel.openBottomSheet(false)
-                    },
-                    sheetState = sheetState
+                    }, sheetState = sheetState
                 ) {
-                    BottomSheetAddImage(
-                        onAddImageClick = {
-                            launchImage.launch("image/*")
-                        },
-                        onCameraImageAddClick = {
-                            launcher.launch()
-                        }
-                    )
+                    BottomSheetAddImage(onAddImageClick = {
+                        launchImage.launch("image/*")
+                    }, onCameraImageAddClick = {
+                        launcher.launch()
+                    })
                 }
             }
         } else {
@@ -179,8 +215,7 @@ fun BusinessAccount(
 
 @Composable
 fun BottomSheetAddImage(
-    onAddImageClick: () -> Unit,
-    onCameraImageAddClick: () -> Unit
+    onAddImageClick: () -> Unit, onCameraImageAddClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -195,8 +230,7 @@ fun BottomSheetAddImage(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.Bottom
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.baseline_camera_alt_24),
+            Image(painter = painterResource(id = R.drawable.baseline_camera_alt_24),
                 contentDescription = "upload image",
                 alignment = Alignment.BottomEnd,
                 colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
@@ -207,8 +241,7 @@ fun BottomSheetAddImage(
                     .padding(5.dp)
                     .clickable {
                         onCameraImageAddClick()
-                    }
-            )
+                    })
 
             Text(
                 text = "Camera",
@@ -225,8 +258,7 @@ fun BottomSheetAddImage(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.Bottom
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.baseline_image_24),
+            Image(painter = painterResource(id = R.drawable.baseline_image_24),
                 contentDescription = "upload image",
                 alignment = Alignment.BottomEnd,
                 colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
@@ -237,12 +269,10 @@ fun BottomSheetAddImage(
                     .padding(5.dp)
                     .clickable {
                         onAddImageClick()
-                    }
-            )
+                    })
 
             Text(
-                text = "Gallery",
-                style = MaterialTheme.typography.titleMedium
+                text = "Gallery", style = MaterialTheme.typography.titleMedium
             )
         }
     }
@@ -251,18 +281,18 @@ fun BottomSheetAddImage(
 @RequiresApi(Build.VERSION_CODES.R)
 @Composable
 fun BusinessAccountContent(
+    uiState: BusinessAccountUiState,
     bitmap: MutableState<Bitmap>,
     viewModel: BusinessAccountViewModel,
     modifier: Modifier = Modifier,
     innerPadding: PaddingValues = PaddingValues(0.dp),
+    dropdownViewModel: DropdownViewModel = hiltViewModel(),
+    onNextButtonClick: () -> Unit = {}
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
     var showDialog by remember { mutableStateOf(false) }
 
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.body_padding)),
+        modifier = modifier.padding(dimensionResource(id = R.dimen.body_padding)),
         contentPadding = innerPadding
     ) {
         item {
@@ -273,19 +303,21 @@ fun BusinessAccountContent(
             ) {
                 val imageSize = 150.dp
                 ProfileImageShimmer(
-                    size = imageSize,
-                    isLoading = uiState.imageLoading
+                    size = imageSize, isLoading = uiState.imageLoading
                 ) {
                     val borderWidth = 1.dp
-                    Image(
-                        bitmap = uiState.profilePicture.asImageBitmap(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
+                    // Load the image using AsyncImage and the custom ImageLoader
+                    AsyncImage(
+                        model = uiState.logo,
+                        contentDescription = "logo of ${uiState.name}", // Provide a content description
+                        imageLoader = LocalContext.current.imageLoader,
                         modifier = Modifier
+                            .fillMaxSize()
                             .size(imageSize)
                             .clip(CircleShape)
                     )
                 }
+
                 Row(
                     modifier = Modifier
                         .background(Color.Transparent)
@@ -294,8 +326,7 @@ fun BusinessAccountContent(
                     verticalAlignment = Alignment.Bottom
                 ) {
                     Box {
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_camera_alt_24),
+                        Image(painter = painterResource(id = R.drawable.baseline_camera_alt_24),
                             contentDescription = "upload image",
                             alignment = Alignment.BottomEnd,
                             colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
@@ -303,18 +334,28 @@ fun BusinessAccountContent(
                             ),
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .size(40.dp)
+                                .size(20.dp)
                                 .background(color = MaterialTheme.colorScheme.primary)
                                 .padding(5.dp)
                                 .clickable {
                                     showDialog = true
                                     viewModel.openBottomSheet(true)
-                                }
-                        )
+                                })
                     }
                 }
             }
             Spacer(modifier = Modifier.height(40.dp))
+        }
+
+        item {
+            AnimatedVisibility(visible = uiState.hasMessage) {
+                Text(
+                    text = uiState.message,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
         }
 
         item {
@@ -372,28 +413,65 @@ fun BusinessAccountContent(
         }
 
         item {
-            SelectBusinessCategory(
-                modifier = Modifier,
-                onAccountTypeSelected = {
-                    viewModel.onCategoryChange(it)
-                },
-                viewModel = viewModel
+            RinfoButton(
+                name = R.string.next_page,
+                modifier = Modifier.fillMaxWidth(),
+                onClicked = onNextButtonClick
+            )
+        }
+    }
+}
+
+/**
+ * This page just shows the Business Account page
+ * Let's the user select a category
+ * This might change in the future to add more information
+ */
+@Composable
+fun BusinessActionSectionPage(
+    uiState: BusinessAccountUiState,
+    bitmap: MutableState<Bitmap>,
+    viewModel: BusinessAccountViewModel,
+    modifier: Modifier = Modifier,
+    innerPadding: PaddingValues = PaddingValues(0.dp),
+    dropdownViewModel: DropdownViewModel = hiltViewModel(),
+    onBackClicked: () -> Unit = {},
+    onSave: () -> Unit,
+    onFailure: (String) -> Unit
+) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(innerPadding)
+            .padding(dimensionResource(id = R.dimen.body_padding)),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        AnimatedVisibility(visible = uiState.hasMessage) {
+            Text(
+                text = uiState.message,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
             )
         }
 
-        item {
-            BusinessAccountButton(
-                isLoading = uiState.isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .basicButton()
-            ) {
-                val currentUser = FirebaseAuth.getInstance().currentUser
-                if (currentUser != null) {
-                    viewModel.upLoadImageToFireBase(bitmap.value, currentUser.email!!)
-                }
-                viewModel.onBusinessAccountCreated()
+        SelectBusinessCategory(
+            selected = uiState.businessCategory, onCategorySelected = viewModel::onCategoryChange
+        )
+
+        BusinessAccountButton(
+            isLoading = uiState.isLoading, modifier = Modifier
+                .fillMaxWidth()
+                .basicButton()
+        ) {
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser != null) {
+                viewModel.upLoadImageToFireBase(bitmap.value, currentUser.email!!)
             }
+            viewModel.onBusinessAccountCreated(onSuccess = onSave, onFailure = {
+                onFailure(it)
+            })
+            onSave()
         }
     }
 }

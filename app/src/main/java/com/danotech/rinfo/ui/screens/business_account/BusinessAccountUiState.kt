@@ -1,11 +1,9 @@
 package com.danotech.rinfo.ui.screens.business_account
 
-import android.graphics.Bitmap
 import com.danotech.rinfo.model.local.Category
 
 data class BusinessAccountUiState(
-    val logo: String = "",
-    val profilePicture: Bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888),
+    var logo: String = "",
     val name: String = "",
     val description: String = "",
     val address: String = "",
@@ -19,4 +17,8 @@ data class BusinessAccountUiState(
     val imageLoading: Boolean = false,
     var showBottomSheet: Boolean = false,
     val isLoggedIn: Boolean = false,
+    var message: String = "",
+    var hasMessage: Boolean = false,
+    var isShowingCategoryItems: Boolean = false,
+    var dialogOpened: Boolean = false
 )
