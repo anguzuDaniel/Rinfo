@@ -41,10 +41,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.screens.category.CategoriesListItem
 import com.danotech.rinfo.ui.screens.category.CategoryViewModel
+import com.danotech.rinfo.ui.theme.AppTheme
 
 
 @Composable
@@ -57,7 +59,7 @@ fun SearchTextField(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Surface(
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 5.dp),
+        modifier = modifier
     ) {
         BasicTextField(
             value = searchInput,
@@ -74,7 +76,8 @@ fun SearchTextField(
                             width = 1.dp,
                             color = MaterialTheme.colorScheme.onSurface,
                             shape = MaterialTheme.shapes.small
-                        ),
+                        )
+                        .padding(horizontal = 8.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -90,7 +93,6 @@ fun SearchTextField(
                     }
                 }
             },
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp)
         )
     }
 }
@@ -171,5 +173,14 @@ fun CategorySearchBar(
                 }
             }
         }
+    }
+}
+
+
+@Preview
+@Composable
+fun SearchPreview() {
+    AppTheme {
+        SearchTextField()
     }
 }

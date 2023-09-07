@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Message
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
@@ -86,14 +87,29 @@ fun HomeScreen(
                 onBackButtonClicked = {},
                 isSearchPage = true,
                 actions = {
-                    IconButton(
-                        onClick = onNotificationClicked,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.Notifications,
-                            contentDescription = "notifications",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
+                        IconButton(
+                            onClick = onNotificationClicked,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Notifications,
+                                contentDescription = "notifications",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+
+                        IconButton(
+                            onClick = onNotificationClicked,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Message,
+                                contentDescription = "Messages",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
                     }
                 },
                 modifier = Modifier
@@ -158,7 +174,8 @@ fun HomePageContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = innerPadding,
-        state = listState
+        state = listState,
+        userScrollEnabled = false
     ) {
         item {
             CategoryOptionRow(

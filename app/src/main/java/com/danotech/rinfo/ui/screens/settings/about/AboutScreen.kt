@@ -1,15 +1,19 @@
-package com.danotech.rinfo.ui.screens.about
+package com.danotech.rinfo.ui.screens.settings.about
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -23,26 +27,48 @@ fun AboutScreen(
     onBackClick: () -> Unit = {},
     onNavClick: (String) -> Unit = {},
 ) {
-    BackHandler() {
+    BackHandler {
         onBackClick()
     }
 
+    val listState = rememberLazyListState()
+    val hasScrolled by remember {
+        derivedStateOf {
+            listState.firstVisibleItemScrollOffset > 0
+        }
+    }
+    val appBarElevation by animateDpAsState(targetValue = if (hasScrolled) 4.dp else 0.dp)
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("About") },
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = if (isSystemInDarkTheme()) {
+                        MaterialTheme.colorScheme.surfaceVariant.copy(
+                            alpha = if (hasScrolled) 1f else 0f
+                        )
+                    } else {
+                        MaterialTheme.colorScheme.surface
+                    },
+                ),
+                modifier = Modifier.shadow(appBarElevation),
+                title = { Text(text = "Contact Us") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = null)
+                        Icon(
+                            Icons.Rounded.ArrowBack,
+                            contentDescription = "Go back"
+                        )
                     }
-                }
+                },
+                actions = { },
             )
         },
-        content = { innerPadding ->
+    content =  { innerPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp)
                     .padding(paddingValues = innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

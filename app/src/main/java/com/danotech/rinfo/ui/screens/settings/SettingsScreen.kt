@@ -4,16 +4,14 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.ContactSupport
@@ -24,7 +22,6 @@ import androidx.compose.material.icons.filled.Nightlight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,25 +33,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.BuildConfig
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.components.SearchTextField
-import com.danotech.rinfo.ui.components.SettingSwitch
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 
@@ -141,15 +133,23 @@ fun SettingsContent(
     onNavClicked: (String) -> Unit = {},
     viewModel: SettingsViewModel,
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
+    // Create a state to control the scroll behavior
+    var shouldScroll by remember { mutableStateOf(true) }
+
+    val scrollState = rememberLazyListState()
+//    val uiState = viewModel.uiState.collectAsState().value
     val paragraphSpace = 16.dp
 
     LazyColumn(
         modifier = modifier,
         contentPadding = innerPadding,
+        state = scrollState,
+        userScrollEnabled = false
     ) {
         item {
-            SearchTextField()
+            SearchTextField(
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
+            )
             Spacer(modifier = Modifier.height(paragraphSpace))
         }
 
@@ -222,7 +222,7 @@ fun SettingsContent(
                 iconDesc = R.string.send_feed_back,
                 settingType = settingType,
                 onClick = {
-                    onNavClicked(RInfoScreen.About.name)
+                    onNavClicked(RInfoScreen.FeedBack.name)
                 }
             )
         }
@@ -235,7 +235,7 @@ fun SettingsContent(
                 iconDesc = R.string.whats_new,
                 settingType = settingType,
                 onClick = {
-                    onNavClicked(RInfoScreen.About.name)
+                    onNavClicked(RInfoScreen.WhatsNew.name)
                 }
             )
         }
@@ -248,7 +248,7 @@ fun SettingsContent(
                 iconDesc = R.string.contact_us,
                 settingType = settingType,
                 onClick = {
-                    onNavClicked(RInfoScreen.About.name)
+                    onNavClicked(RInfoScreen.ContactUs.name)
                 }
             )
         }
@@ -276,127 +276,6 @@ fun SettingsContent(
                 copyrights = "© 2023 codevation"
             ) {
 
-            }
-        }
-    }
-}
-
-/**
- * Clickable setting subsection redirector and action
- * used to redirect to particular page
- * or used for particular page
- * @param leadingIcon leading icon shown before the text/name
- * @param icon
- * @param iconDesc the icon description
- * @param name text shown for the setting
- * @param settingType
- * @param onClick call back function, called when clicked
- * @param opensDialogWhenClicked if true the end icon is not shown
- */
-@Composable
-fun SettingsClickableComp(
-    leadingIcon: ImageVector,
-    icon: ImageVector,
-    description: String = "",
-    @StringRes iconDesc: Int,
-    @StringRes name: Int,
-    settingType: SettingType = SettingType.SWITCH,
-    onClick: () -> Unit,
-    opensDialogWhenClicked: Boolean = false
-) {
-    Surface(
-        color = Color.Transparent,
-        modifier = Modifier
-            .fillMaxWidth(),
-        onClick = onClick,
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Icon(
-                imageVector = leadingIcon,
-                contentDescription = null,
-                modifier = Modifier.weight(1f),
-                tint = if (!opensDialogWhenClicked) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
-            )
-
-            Column(
-                modifier = Modifier.weight(
-                    if (!opensDialogWhenClicked) 3f else 4f
-                ),
-                verticalArrangement = if (description != "") Arrangement.spacedBy(5.dp) else Arrangement.spacedBy(
-                    0.dp
-                ),
-            ) {
-                Text(
-                    text = stringResource(id = name),
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = if (!opensDialogWhenClicked) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
-                    ),
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis,
-                )
-
-                if (description != "") {
-                    Text(
-                        text = description,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1.0f))
-            if (settingType == SettingType.SWITCH) {
-                SettingSwitch(
-                    clicked = false,
-                    onSwitchChanged = {},
-                    modifier = Modifier.weight(1f)
-                )
-            } else {
-                if (!opensDialogWhenClicked) {
-                    Icon(
-                        Icons.Rounded.KeyboardArrowRight,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = stringResource(id = R.string.arrow_forward),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-
-        }
-    }
-}
-
-@Composable
-fun AppVersion(
-    versionText: String,
-    copyrights: String,
-    onClick: () -> Unit
-) {
-    Surface(
-        onClick = onClick,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    versionText,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
-                )
-                Text(
-                    copyrights,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
-                )
             }
         }
     }

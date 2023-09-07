@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.about
+package com.danotech.rinfo.ui.screens.settings.about
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column

@@ -35,5 +35,8 @@ enum class RInfoScreen(@StringRes val title: Int) {
     About(title = R.string.about),
     AboutApp(title = R.string.about_app),
     TermsOfUse(title = R.string.terms_of_use),
-    PrivacyPolicy(title = R.string.privacy_policy)
+    PrivacyPolicy(title = R.string.privacy_policy),
+    ContactUs(title = R.string.contact_us),
+    WhatsNew(title = R.string.whats_new),
+    FeedBack(title = R.string.send_feed_back)
 }

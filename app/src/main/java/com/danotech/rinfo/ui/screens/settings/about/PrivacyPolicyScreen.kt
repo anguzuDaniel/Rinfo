@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.about
+package com.danotech.rinfo.ui.screens.settings.about
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

@@ -47,10 +47,10 @@ import com.danotech.rinfo.common.composable.RationaleDialog
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
-import com.danotech.rinfo.ui.screens.about.AboutAppScreen
-import com.danotech.rinfo.ui.screens.about.AboutScreen
-import com.danotech.rinfo.ui.screens.about.PrivacyPolicyScreen
-import com.danotech.rinfo.ui.screens.about.TermsOfUseScreen
+import com.danotech.rinfo.ui.screens.settings.about.AboutAppScreen
+import com.danotech.rinfo.ui.screens.settings.about.AboutScreen
+import com.danotech.rinfo.ui.screens.settings.about.PrivacyPolicyScreen
+import com.danotech.rinfo.ui.screens.settings.about.TermsOfUseScreen
 import com.danotech.rinfo.ui.screens.account.ChangePasswordScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
 import com.danotech.rinfo.ui.screens.business.BusinessScreen
@@ -68,6 +68,9 @@ import com.danotech.rinfo.ui.screens.search_business.SearchPage
 import com.danotech.rinfo.ui.screens.selected_category.SelectedCategoryScreen
 import com.danotech.rinfo.ui.screens.settings.AccountOptionsScreen
 import com.danotech.rinfo.ui.screens.settings.SettingsScreen
+import com.danotech.rinfo.ui.screens.settings.contact_us.ContactUsScreen
+import com.danotech.rinfo.ui.screens.settings.feedback.FeedbackScreen
+import com.danotech.rinfo.ui.screens.settings.whats_new.WhatsNewPage
 import com.danotech.rinfo.ui.screens.splash.SplashScreen
 import com.danotech.rinfo.ui.theme.AppTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -312,7 +315,7 @@ fun NavGraphBuilder.makeItSoGraph(
     }
     composable(route = RInfoScreen.Account.name) {
         AccountOptionsScreen(
-            onBackPressed = {
+            onBackClick = {
                 appState.popUp()
             },
             openAndPopUp = { route, popUp ->
@@ -496,6 +499,27 @@ fun NavGraphBuilder.makeItSoGraph(
     }
     composable(route = RInfoScreen.ChangePassword.name) {
         ChangePasswordScreen(
+            onBackClick = {
+                appState.popUp()
+            }
+        )
+    }
+    composable(route = RInfoScreen.FeedBack.name) {
+        FeedbackScreen(
+            onBackClick = {
+                appState.popUp()
+            }
+        )
+    }
+    composable(route = RInfoScreen.ContactUs.name) {
+        ContactUsScreen(
+            onBackClick = {
+                appState.popUp()
+            }
+        )
+    }
+    composable(route = RInfoScreen.WhatsNew.name) {
+        WhatsNewPage(
             onBackClick = {
                 appState.popUp()
             }

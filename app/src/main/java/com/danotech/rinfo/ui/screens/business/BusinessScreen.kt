@@ -52,6 +52,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -73,6 +75,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
@@ -304,7 +307,6 @@ fun BusinessContent(
             }
         }
 
-
         /**
          * If userId is equal to the current logged in in user then
          * show add image buttons
@@ -425,6 +427,31 @@ fun BusinessContent(
                 )
             }
         }
+
+
+        item {
+            var state by remember { mutableStateOf(0) }
+            val titles = listOf("About", "Gallery", "Reviews")
+            Column {
+                TabRow(selectedTabIndex = state) {
+                    titles.forEachIndexed { index, title ->
+                        Tab(
+                            selected = state == index,
+                            onClick = { state = index },
+                            text = {
+                                Text(
+                                    text = title,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = if (state == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
 
         item {
             Column(
