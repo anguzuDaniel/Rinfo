@@ -10,6 +10,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : AccountService {
 
@@ -50,6 +52,28 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : A
             val credential = EmailAuthProvider.getCredential(email, password)
             auth.currentUser!!.linkWithCredential(credential).await()
         }
+
+    // Function to check if a user account exists by email
+    override suspend fun checkUserExistsByEmail(email: String): Boolean {
+        return suspendCoroutine { continuation ->
+            val auth = FirebaseAuth.getInstance()
+
+            // Check if a user with the given email exists
+            auth.fetchSignInMethodsForEmail(email)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // If task.isSuccessful, a user with the email exists
+                        val signInMethods = task.result?.signInMethods
+                        val userExists = !signInMethods.isNullOrEmpty()
+                        continuation.resume(userExists)
+                    } else {
+                        // An error occurred
+                        continuation.resume(false)
+                    }
+                }
+        }
+    }
+
 
     override suspend fun deleteAccount() {
         auth.currentUser!!.delete().await()

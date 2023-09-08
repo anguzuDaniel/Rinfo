@@ -106,7 +106,7 @@ fun SettingsClickableComp(
                         .animateContentSize(
                             animationSpec = spring(
                                 dampingRatio = Spring.DampingRatioHighBouncy,
-                                stiffness = Spring.StiffnessMediumLow
+                                stiffness = Spring.DampingRatioLowBouncy
                             )
                         )
                 )

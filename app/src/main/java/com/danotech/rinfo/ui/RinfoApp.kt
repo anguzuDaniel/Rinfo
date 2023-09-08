@@ -62,6 +62,7 @@ import com.danotech.rinfo.ui.screens.login.LoginScreen
 import com.danotech.rinfo.ui.screens.map.MapScreen
 import com.danotech.rinfo.ui.screens.notification.NotificationPage
 import com.danotech.rinfo.ui.screens.profile.ProfileScreen
+import com.danotech.rinfo.ui.screens.reset_password.ResetPassword
 import com.danotech.rinfo.ui.screens.review.ReviewForm
 import com.danotech.rinfo.ui.screens.review.ReviewsScreen
 import com.danotech.rinfo.ui.screens.search_business.SearchPage
@@ -250,7 +251,17 @@ fun NavGraphBuilder.makeItSoGraph(
         }, openAndPopUp = { route, popUp ->
             appState.navigateAndPopUp(route, popUp)
             appState.logIn()
-        })
+        },
+            onResetPassword = {
+                appState.navigate(RInfoScreen.ResetPassword.name)
+            })
+    }
+    composable(route = RInfoScreen.ResetPassword.name) {
+        ResetPassword(
+            onBackClick = {
+                appState.popUp()
+            }
+        )
     }
     composable(route = RInfoScreen.CreateAccount.name) {
         CreateAccount(onSignInTextClicked = {

@@ -25,14 +25,15 @@ import kotlinx.coroutines.flow.Flow
  * @see AccountServiceImpl for implementation details
  */
 interface AccountService {
-  val currentUserId: String
-  val hasUser: Boolean
-  val currentUser: Flow<User>
-  suspend fun authenticate(email: String, password: String)
-  suspend fun sendRecoveryEmail(email: String)
-  suspend fun createAnonymousAccount()
-  suspend fun createAccountWithEmailAndPassword(email: String, password: String)
-  suspend fun linkAccount(email: String, password: String)
-  suspend fun deleteAccount()
-  suspend fun signOut()
+    val currentUserId: String
+    val hasUser: Boolean
+    val currentUser: Flow<User>
+    suspend fun authenticate(email: String, password: String)
+    suspend fun sendRecoveryEmail(email: String)
+    suspend fun createAnonymousAccount()
+    suspend fun createAccountWithEmailAndPassword(email: String, password: String)
+    suspend fun checkUserExistsByEmail(email: String): Boolean
+    suspend fun linkAccount(email: String, password: String)
+    suspend fun deleteAccount()
+    suspend fun signOut()
 }

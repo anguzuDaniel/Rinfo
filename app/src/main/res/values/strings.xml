@@ -639,4 +639,7 @@
     <string name="page_under_construction">Page under construction</string>
     <string name="SplashScreen">Splash Screen</string>
     <string name="review_statistics">Review Statistics</string>
+    <string name="appearance">Appearance</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="reset_password">Reset passowrd</string>
 </resources>

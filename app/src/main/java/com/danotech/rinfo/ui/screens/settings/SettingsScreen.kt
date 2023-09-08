@@ -154,6 +154,13 @@ fun SettingsContent(
         }
 
         item {
+            SettingSectionHeading(
+                text = R.string.appearance,
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
+            )
+        }
+
+        item {
             SettingsClickableComp(
                 leadingIcon = if (themeState.isDarkMode) Icons.Filled.LightMode else Icons.Filled.ModeNight,
                 name = R.string.dark_mode,

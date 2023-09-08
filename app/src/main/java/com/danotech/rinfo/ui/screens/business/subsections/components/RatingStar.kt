@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +40,8 @@ fun RatingRow(rating: Int, currentRating: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.Bottom
     ) {
         Text(text = "$rating star${if (rating > 1) "s" else ""}: ", fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.width(if (rating > 1) 8.dp else 9.dp))

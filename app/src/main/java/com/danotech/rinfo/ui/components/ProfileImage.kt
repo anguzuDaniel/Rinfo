@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -105,7 +106,7 @@ fun OrFormDiver() {
             .fillMaxWidth()
             .padding(vertical = 16.dp)
     ) {
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .weight(1f)
                 .padding(vertical = 10.dp)
@@ -113,7 +114,7 @@ fun OrFormDiver() {
         Text(
             text = "OR", modifier = Modifier.padding(10.dp)
         )
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .weight(1f)
                 .padding(vertical = 10.dp)

@@ -38,7 +38,7 @@ fun SettingSwitch(
         Switch(
             checked = clicked,
             onCheckedChange = {
-                clicked = true
+                clicked = it
                 onSwitchChanged(it)
             },
             interactionSource = interactionSource,

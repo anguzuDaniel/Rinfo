@@ -421,7 +421,9 @@ fun BusinessContent(
              * when clicked they switch to the tab that matches the index
              */
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
             ) {
                 TabRow(selectedTabIndex = tabState) {
                     titles.forEachIndexed { index, title ->

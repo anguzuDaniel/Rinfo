@@ -36,7 +36,6 @@ constructor(
                 _themeState.value = it
             }
         }
-
     }
 
     fun toggleTheme() {

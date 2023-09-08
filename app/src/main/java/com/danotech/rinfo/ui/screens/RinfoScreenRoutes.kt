@@ -5,10 +5,6 @@ import com.danotech.rinfo.R
 
 /**
  * Has all the possible screens in the app.
- * @param title the title of the screen
- * @param route the route of the screen
- * @param icon the icon of the screen
- * @param isBottomBarVisible whether the bottom bar should be visible or not
  */
 enum class RInfoScreen(@StringRes val title: Int) {
     // the start page is the home page
@@ -38,5 +34,6 @@ enum class RInfoScreen(@StringRes val title: Int) {
     PrivacyPolicy(title = R.string.privacy_policy),
     ContactUs(title = R.string.contact_us),
     WhatsNew(title = R.string.whats_new),
-    FeedBack(title = R.string.send_feed_back)
+    FeedBack(title = R.string.send_feed_back),
+    ResetPassword(title = R.string.reset_password)
 }
