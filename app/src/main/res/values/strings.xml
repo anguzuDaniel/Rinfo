@@ -638,4 +638,5 @@
     <string name="no_notifications">You don\'t have any notifications</string>
     <string name="page_under_construction">Page under construction</string>
     <string name="SplashScreen">Splash Screen</string>
+    <string name="review_statistics">Review Statistics</string>
 </resources>

@@ -3,11 +3,9 @@
 package com.danotech.rinfo.ui.screens.business
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
-import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.view.Window
@@ -15,7 +13,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +20,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -35,22 +31,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Directions
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -71,10 +59,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -82,13 +67,14 @@ import androidx.core.graphics.ColorUtils
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.palette.graphics.Palette
 import com.danotech.rinfo.R
-import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.components.BusinessImageButton
-import com.danotech.rinfo.ui.components.RinfoButton
 import com.danotech.rinfo.ui.components.RinfoFAB
-import com.danotech.rinfo.ui.components.TruncateText
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
+import com.danotech.rinfo.ui.screens.business.subsections.BusinessAboutSection
+import com.danotech.rinfo.ui.screens.business.subsections.BusinessGallerySection
+import com.danotech.rinfo.ui.screens.business.subsections.BusinessReviewSection
+import com.danotech.rinfo.ui.screens.review.ReviewScreenViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
@@ -104,6 +90,7 @@ import kotlin.coroutines.resume
 fun BusinessScreen(
     businessId: String,
     viewModel: BusinessViewModel = hiltViewModel(),
+    reviewScreenViewModel: ReviewScreenViewModel = hiltViewModel(),
     onBackPressed: () -> Unit = {},
     onFabBtnClicked: () -> Unit = {},
     onShowReviewPageClicked: () -> Unit = {},
@@ -171,6 +158,7 @@ fun BusinessScreen(
                 onDirectionClicked = {
                     onDirectionClicked(it)
                 },
+                reviewScreenViewModel = reviewScreenViewModel,
                 viewModel = viewModel,
                 modifier = Modifier.consumeWindowInsets(innerPadding),
                 window = window
@@ -179,11 +167,12 @@ fun BusinessScreen(
     }
 }
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BusinessContent(
     businessId: String,
     viewModel: BusinessViewModel,
+    reviewScreenViewModel: ReviewScreenViewModel,
     modifier: Modifier = Modifier,
     business: Business,
     onShowReviewPageClicked: () -> Unit = {},
@@ -192,6 +181,8 @@ fun BusinessContent(
 ) {
     val context = LocalContext.current
 
+    var tabState by remember { mutableStateOf(0) }
+    val titles = listOf("About", "Gallery", "Reviews")
 
     val defaultProfilePicture: Bitmap = BitmapFactory.decodeResource(
         context.resources,
@@ -232,10 +223,6 @@ fun BusinessContent(
         }
     }
 
-    var isShowingAllDescriptionText by remember {
-        mutableStateOf(false)
-    }
-
     val downloadedImages = remember { mutableStateListOf<Bitmap>() }
 
     LaunchedEffect(key1 = Unit) {
@@ -253,7 +240,6 @@ fun BusinessContent(
         )
     }
 
-    val clickableText = if (isShowingAllDescriptionText) "less" else "Read more"
     val scrollState = rememberScrollState()
     val systemUiController = rememberSystemUiController()
 
@@ -430,20 +416,24 @@ fun BusinessContent(
 
 
         item {
-            var state by remember { mutableStateOf(0) }
-            val titles = listOf("About", "Gallery", "Reviews")
-            Column {
-                TabRow(selectedTabIndex = state) {
+            /**
+             * Subsection tags
+             * when clicked they switch to the tab that matches the index
+             */
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                TabRow(selectedTabIndex = tabState) {
                     titles.forEachIndexed { index, title ->
                         Tab(
-                            selected = state == index,
-                            onClick = { state = index },
+                            selected = tabState == index,
+                            onClick = { tabState = index },
                             text = {
                                 Text(
                                     text = title,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = if (state == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+                                    color = if (tabState == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         )
@@ -452,188 +442,26 @@ fun BusinessContent(
             }
         }
 
-
         item {
-            Column(
-                modifier = Modifier
-                    .padding(dimensionResource(id = R.dimen.body_padding))
-                    .fillMaxWidth(),
-            ) {
-                Text(
-                    text = stringResource(id = R.string.description),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.ExtraBold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+            Column {
+                when (tabState) {
+                    0 -> BusinessAboutSection(business = business)
 
-                if (!isShowingAllDescriptionText) {
-                    TruncateText(
-                        text = business.description,
-                        maxWords = 20,  // Set the desired maximum number of words
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                    1 -> BusinessGallerySection(
+                        viewModel = viewModel,
+                        business = business,
+                        imageList = imageList
                     )
-                } else {
-                    Text(
-                        text = business.description,
-                        style = TextStyle(
-                            fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
-                        ),
-                        textAlign = TextAlign.Justify,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
 
-                ClickableText(
-                    text = AnnotatedString(clickableText),
-                    style = MaterialTheme.typography.bodyMedium
-                        .copy(color = MaterialTheme.colorScheme.primary),
-                    onClick = { isShowingAllDescriptionText = !isShowingAllDescriptionText }
-                )
-            }
-        }
+                    2 -> BusinessReviewSection(
+                        business = business,
+                        reviewScreenViewModel = reviewScreenViewModel,
+                        onAllReview = onShowReviewPageClicked
+                    )
 
-        item {
-            Column(
-                modifier = Modifier
-                    .padding(
-                        vertical = 8.dp,
-                        horizontal = dimensionResource(id = R.dimen.body_padding)
-                    )
-                    .fillMaxWidth(),
-            ) {
-                OutlinedButton(
-                    onClick = onShowReviewPageClicked,
-                    modifier = Modifier.fillMaxWidth(),
-                    border = BorderStroke(
-                        1.dp,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.see_reviews),
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-
-                if (business.userId == FirebaseAuth.getInstance().currentUser?.email) {
-                    RinfoButton(
-                        name = R.string.save_change,
-                        onClicked = {
-                            if (imageList.isNotEmpty()) {
-                                val imageBitmapList = imageList.map { imageItem ->
-                                    imageItem.bitmap
-                                }
-
-                                viewModel.addBusinessImages(
-                                    businessId = FirebaseAuth.getInstance().currentUser?.email!!,
-                                    imageList = imageBitmapList,
-                                    onComplete = {
-                                        // Handle successful completion
-                                        SnackbarManager.showMessage(R.string.images_uploaded_successfully)
-                                    },
-                                    onError = {
-                                        // Handle error
-                                        SnackbarManager.showMessage(R.string.something_went_wrong)
-                                    }
-                                )
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    else -> BusinessAboutSection(business = business)
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ActionDetailsRow(
-    businessName: String,
-    email: String = "",
-    whatsapp: String = "",
-    phone: String = "",
-    onDirectionClicked: () -> Unit = {}
-) {
-    val context = LocalContext.current
-    val sendEmailLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) {
-        // Handle the result if needed
-    }
-
-    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-        data = Uri.parse("mailto:")  // This ensures only email apps are selected
-        putExtra(Intent.EXTRA_EMAIL, arrayOf(email)) // Email address
-        putExtra(Intent.EXTRA_SUBJECT, "Subject") // Email subject
-        putExtra(Intent.EXTRA_TEXT, "Hello,") // Email body
-    }
-
-    val message = "Hello ${businessName}!" // Message content
-
-    val whatsappIntent = Intent(Intent.ACTION_VIEW).apply {
-        data = Uri.parse("https://api.whatsapp.com/send?phone=$whatsapp&text=$message")
-    }
-
-    val dialerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) {
-        // Handle the result if needed
-    }
-
-    val callIntent = Intent(Intent.ACTION_DIAL).apply {
-        data = Uri.parse("tel:$phone")
-    }
-
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        item {
-            CallToActionButton(
-                icon = Icons.Filled.Phone,
-                name = R.string.call,
-                onClicked = {
-                    dialerLauncher.launch(callIntent)
-                },
-            )
-        }
-
-        item {
-            CallToActionButton(
-                icon = Icons.Filled.Whatsapp,
-                name = R.string.whatsapp,
-                onClicked = {
-                    context.startActivity(whatsappIntent)
-                },
-            )
-        }
-
-        item {
-            CallToActionButton(
-                icon = Icons.Filled.Email,
-                name = R.string.email,
-                onClicked = {
-                    sendEmailLauncher.launch(emailIntent)
-                },
-            )
-        }
-
-        item {
-            CallToActionButton(
-                icon = Icons.Filled.Directions,
-                name = R.string.directions,
-                onClicked = onDirectionClicked,
-            )
-        }
-
-        item {
-            CallToActionButton(
-                icon = Icons.Filled.Share,
-                name = R.string.share,
-                onClicked = { /*TODO*/ },
-            )
         }
     }
 }

@@ -11,14 +11,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.ContactSupport
 import androidx.compose.material.icons.filled.Feedback
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.ModeNight
 import androidx.compose.material.icons.filled.NewLabel
-import androidx.compose.material.icons.filled.Nightlight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.FavoriteBorder
@@ -33,11 +33,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
@@ -45,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.BuildConfig
 import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.ThemeViewModel
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.components.SearchTextField
 import com.danotech.rinfo.ui.screens.RInfoScreen
@@ -75,6 +75,7 @@ fun SettingsScreen(
         }
     }
     val appBarElevation by animateDpAsState(targetValue = if (hasScrolled) 4.dp else 0.dp)
+
 
     Scaffold(
         topBar = {
@@ -126,15 +127,14 @@ fun SettingsScreen(
 fun SettingsContent(
     modifier: Modifier = Modifier,
     openAndPopUp: (String, String) -> Unit,
-    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    viewModel: SettingsViewModel,
     innerPadding: PaddingValues,
     settingType: SettingType,
     onLogoutClicked: () -> Unit,
     onNavClicked: (String) -> Unit = {},
-    viewModel: SettingsViewModel,
+    themeViewModel: ThemeViewModel = hiltViewModel()
 ) {
-    // Create a state to control the scroll behavior
-    var shouldScroll by remember { mutableStateOf(true) }
+    val themeState by themeViewModel.themeState.collectAsState()
 
     val scrollState = rememberLazyListState()
 //    val uiState = viewModel.uiState.collectAsState().value
@@ -155,11 +155,17 @@ fun SettingsContent(
 
         item {
             SettingsClickableComp(
-                leadingIcon = Icons.Filled.Nightlight,
+                leadingIcon = if (themeState.isDarkMode) Icons.Filled.LightMode else Icons.Filled.ModeNight,
                 name = R.string.dark_mode,
                 icon = Icons.Rounded.FavoriteBorder,
                 iconDesc = R.string.dark_mode,
-                onClick = {}
+                onSwitchClick = {
+                    themeState.isDarkMode = it
+                    themeViewModel.toggleTheme()
+                },
+                settingType = SettingType.SWITCH,
+                isSwitchedOn = themeState.isDarkMode,
+                description = if (themeState.isDarkMode) "ON" else "OFF"
             )
         }
 
@@ -176,7 +182,7 @@ fun SettingsContent(
                 name = R.string.notifications,
                 icon = Icons.Rounded.FavoriteBorder,
                 iconDesc = R.string.notifications,
-                onClick = {}
+                onClick = {},
             )
         }
 
@@ -261,7 +267,7 @@ fun SettingsContent(
                 iconDesc = R.string.logout,
                 settingType = SettingType.BUTTON,
                 onClick = {
-                    settingsViewModel.onLogoutClick(openAndPopUp)
+                    viewModel.onLogoutClick(openAndPopUp)
                     onLogoutClicked()
                 },
                 opensDialogWhenClicked = true

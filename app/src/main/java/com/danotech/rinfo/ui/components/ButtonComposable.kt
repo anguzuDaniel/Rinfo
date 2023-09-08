@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -135,6 +136,25 @@ fun RinfoButton(
     onClicked: () -> Unit = {},
 ) {
     Button(
+        onClick = onClicked,
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+    ) {
+        Text(
+            text = stringResource(id = name),
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.White
+        )
+    }
+}
+
+@Composable
+fun RinfoOutlineButton(
+    modifier: Modifier = Modifier,
+    @StringRes name: Int,
+    onClicked: () -> Unit = {},
+) {
+    OutlinedButton(
         onClick = onClicked,
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),

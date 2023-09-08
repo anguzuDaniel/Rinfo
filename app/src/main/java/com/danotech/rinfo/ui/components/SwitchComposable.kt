@@ -1,5 +1,8 @@
 package com.danotech.rinfo.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -14,33 +17,41 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.ui.theme.AppTheme
 
 @Composable
 fun SettingSwitch(
     modifier: Modifier = Modifier,
-    clicked: Boolean,
+    checked: Boolean,
     onSwitchChanged: (Boolean) -> Unit = {},
 ) {
-    var switchOn by remember { mutableStateOf(clicked) }
+    var clicked by remember { mutableStateOf(checked) }
+    // this is to disable the ripple effect
+    val interactionSource = remember {
+        MutableInteractionSource()
+    }
 
     Box(
         modifier = modifier
     ) {
         Switch(
-            checked = switchOn,
+            checked = clicked,
             onCheckedChange = {
-                switchOn = it
+                clicked = true
+                onSwitchChanged(it)
             },
-            thumbContent = if (switchOn) {
+            interactionSource = interactionSource,
+            thumbContent = if (clicked) {
                 {
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(SwitchDefaults.IconSize)
-                        ,
-                    )
+                    AnimatedVisibility(visible = clicked) {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(SwitchDefaults.IconSize),
+                        )
+                    }
                 }
             } else {
                 null
@@ -54,7 +65,7 @@ fun SettingSwitch(
 fun SettingSwitchPreview() {
     AppTheme {
         SettingSwitch(
-            clicked = false,
+            checked = false,
             onSwitchChanged = {},
         )
     }
@@ -67,7 +78,7 @@ fun SettingSwitchDarkPreview() {
         darkTheme = true
     ) {
         SettingSwitch(
-            clicked = true,
+            checked = true,
             onSwitchChanged = {},
         )
     }

@@ -1,6 +1,9 @@
 package com.danotech.rinfo.ui.screens.settings
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,8 +48,10 @@ fun SettingsClickableComp(
     @StringRes iconDesc: Int,
     @StringRes name: Int,
     settingType: SettingType = SettingType.SWITCH,
-    onClick: () -> Unit,
-    opensDialogWhenClicked: Boolean = false
+    onClick: () -> Unit = {},
+    opensDialogWhenClicked: Boolean = false,
+    isSwitchedOn: Boolean = false,
+    onSwitchClick: (Boolean) -> Unit = {}
 ) {
     Surface(
         color = Color.Transparent,
@@ -94,9 +99,16 @@ fun SettingsClickableComp(
             Spacer(modifier = Modifier.weight(1.0f))
             if (settingType == SettingType.SWITCH) {
                 SettingSwitch(
-                    clicked = false,
-                    onSwitchChanged = {},
-                    modifier = Modifier.weight(1f)
+                    checked = isSwitchedOn,
+                    onSwitchChanged = onSwitchClick,
+                    modifier = Modifier
+                        .weight(1f)
+                        .animateContentSize(
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioHighBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        )
                 )
             } else {
                 if (!opensDialogWhenClicked) {

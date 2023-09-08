@@ -161,7 +161,8 @@ fun BusinessAccount(
             // if showCategorySelection false show Main page
             // Otherwise show BusinessActionSectionPage
             if (!showCategorySelection) {
-                BusinessAccountContent(uiState = uiState,
+                BusinessAccountContent(
+                    uiState = uiState,
                     innerPadding = innerPadding,
                     viewModel = viewModel,
                     bitmap = bitmap,

@@ -8,7 +8,6 @@ import android.view.Window
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -43,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.ThemeViewModel
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.components.BusinessCard
 import com.danotech.rinfo.ui.components.BusinessCardShimmer
@@ -61,7 +61,8 @@ fun HomeScreen(
     onReviewCardClicked: (Business) -> Unit = {},
     onCategoryClicked: () -> Unit = {},
     window: Window,
-    onNotificationClicked: () -> Unit = {},
+    themeViewModel: ThemeViewModel = hiltViewModel(),
+    onNotificationClicked: () -> Unit = {} // NOTE: this should always be the last
 ) {
     BackHandler {
         onBackPressed()
@@ -71,10 +72,12 @@ fun HomeScreen(
     val windowInsetsController =
         WindowCompat.getInsetsController(window, view)
 
-    val useDarkIcons = !isSystemInDarkTheme()
+//    val useDarkIcons = !isSystemInDarkTheme()
+
+    val themeState by themeViewModel.themeState.collectAsState()
 
     LaunchedEffect(Unit) {
-        windowInsetsController.isAppearanceLightStatusBars = useDarkIcons
+        windowInsetsController.isAppearanceLightStatusBars = themeState.isDarkMode
         window.statusBarColor = Color.Transparent.toArgb()
         window.navigationBarDividerColor = Color.White.toArgb()
     }

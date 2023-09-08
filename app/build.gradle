@@ -19,7 +19,7 @@ android {
         minSdk 25
         targetSdk 34
         versionCode 1
-        versionName "0.0.6"
+        versionName "0.0.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "TEST", "false"
@@ -97,6 +97,7 @@ dependencies {
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
 
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     // compose
     implementation("androidx.compose.compiler:compiler:1.5.3")
@@ -173,3 +174,6 @@ dependencies {
 kapt {
     correctErrorTypes true
 }
+
+// Apply google-services plugin at the bottom
+apply plugin: 'com.google.gms.google-services'

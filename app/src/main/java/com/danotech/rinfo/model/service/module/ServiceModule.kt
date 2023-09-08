@@ -42,4 +42,5 @@ abstract class ServiceModule {
 
     @Binds
     abstract fun provideReviewService(impl: ReviewServiceImpl): ReviewService
+
 }

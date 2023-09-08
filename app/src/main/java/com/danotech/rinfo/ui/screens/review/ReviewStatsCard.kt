@@ -1,96 +1,62 @@
 package com.danotech.rinfo.ui.screens.review
 
-import androidx.compose.foundation.layout.Arrangement
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.danotech.rinfo.ui.screens.business.subsections.components.RatingRow
+import com.danotech.rinfo.ui.screens.business.subsections.components.StarRating
 
-/**
- * Review statics card
- * @param count total number of reviews
- * @param totalReviews total number of reviews
- * @param positiveReviews total number of positive reviews
- * @param negativeReviews total number of negative reviews
- */
 @Composable
-fun ReviewStatistics(
-    count: Int,
-    totalReviews: Int,
-    positiveReviews: Int,
-    negativeReviews: Int,
-    modifier: Modifier = Modifier
+fun ReviewStatisticsScreen(
+    count: Int = 0
 ) {
+    val rating by remember { mutableStateOf(count) }
+    val spaceLarge = 16.dp
+    val spaceSmall = 8.dp
+
     Column(
         modifier = Modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.SpaceBetween
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
-        Text(
-            text = "Review Statistics",
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Bold
-        )
+        Text(text = "Review Statistics", fontSize = 20.sp)
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(spaceLarge))
 
-        Text(
-            text = "$totalReviews.0",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            text = "Positive Reviews: $positiveReviews (${(positiveReviews.toFloat() / totalReviews.toFloat() * 100).toInt()}%)",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        LinearProgressIndicator(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(8.dp)
-                .clip(RoundedCornerShape(4.dp)),
-            progress = positiveReviews.toFloat() / totalReviews.toFloat(),
-            color = MaterialTheme.colorScheme.primary,
-            trackColor = MaterialTheme.colorScheme.onSurface
-        )
+                .padding(bottom = spaceSmall),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Average Rating: ", fontWeight = FontWeight.Bold)
+            StarRating(rating)
+        }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(spaceLarge))
 
-        Text(
-            text = "Negative Reviews: $negativeReviews (${(negativeReviews.toFloat() / totalReviews.toFloat() * 100).toInt()}%)",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        Text(text = "Distribution of Ratings:", fontWeight = FontWeight.Bold)
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(spaceSmall))
 
-        LinearProgressIndicator(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-                .clip(RoundedCornerShape(4.dp)),
-            progress = negativeReviews.toFloat() / totalReviews.toFloat(),
-            color = MaterialTheme.colorScheme.primary,
-            trackColor = MaterialTheme.colorScheme.onSurface
-        )
+        for (i in 5 downTo 1) {
+            RatingRow(i, rating)
+        }
     }
 }
