@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.screens.login
 
+import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.common.ext.isValidEmail
@@ -8,9 +9,13 @@ import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.RinfoViewModel
+import com.google.firebase.auth.AuthCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -68,5 +73,69 @@ class LoginViewModel @Inject constructor(
                 message = "Login successfully! kindly wait as we redirect you."
             )
         }
+    }
+
+    fun signUpWithOneTap(email: String, password: String?, openAndPopUp: (String, String) -> Unit) {
+        viewModelScope.launch {
+            withContext(Dispatchers.Default) {
+                accountService.linkAccount(email, password!!)
+                _uiState.value = _uiState.value.copy(
+                    isSignInSuccess = true,
+                    hasMessage = true,
+                    message = "Login successfully! kindly wait as we redirect you."
+                )
+                openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Login.name)
+            }
+        }.invokeOnCompletion {
+            _uiState.value = _uiState.value.copy(
+                hasMessage = true,
+                message = "Login successfully! kindly wait as we redirect you."
+            )
+        }
+    }
+
+    fun signInWithCredentials(credential: AuthCredential, openAndPopUp: (String, String) -> Unit) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isSignInLoading = true)
+
+
+            viewModelScope.launch {
+                _uiState.value = _uiState.value.copy(isSignInLoading = true)
+
+                try {
+                    val signedIn = withContext(Dispatchers.IO) {
+                        accountService.signInWithCredential(credential)
+                    }
+
+                    if (signedIn) {
+                        _uiState.value = _uiState.value.copy(
+                            isSignInSuccess = true,
+                            hasMessage = true,
+                            message = "Sign-in with Google Successful."
+                        )
+
+                        openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Login.name)
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            isSignInSuccess = false,
+                            hasMessage = true,
+                            message = "We were not able to sign you in."
+                        )
+                    }
+                } catch (e: Exception) {
+                    // Handle exceptions here
+                    _uiState.value = _uiState.value.copy(
+                        isSignInSuccess = false,
+                        hasMessage = true,
+                        message = "Sign-in failed: ${e.message}"
+                    )
+                } finally {
+                    _uiState.value = _uiState.value.copy(
+                        isSignInLoading = false
+                    )
+                }
+            }
+        }
+
     }
 }

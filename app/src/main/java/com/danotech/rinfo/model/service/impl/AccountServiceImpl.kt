@@ -3,8 +3,11 @@ package com.danotech.rinfo.model.service.impl
 import com.danotech.rinfo.model.User
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.trace
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthCredential
 import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -52,6 +55,36 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : A
             val credential = EmailAuthProvider.getCredential(email, password)
             auth.currentUser!!.linkWithCredential(credential).await()
         }
+
+
+    override suspend fun signInWithCredential(credential: AuthCredential): Boolean {
+        return try {
+            val authResult = FirebaseAuth.getInstance().signInWithCredential(credential).await()
+            authResult.user != null
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun changePassword(oobCode: String, newPassword: String): Boolean {
+        return suspendCoroutine { continuation ->
+            auth.confirmPasswordReset(oobCode, newPassword)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Password reset was successful.
+                        // You can provide feedback to the user.
+                        // For example, navigate to the login screen.
+                        continuation.resume(task.isSuccessful)
+                    } else {
+                        // Password reset failed.
+                        val exception = task.exception
+                        // Handle the error and provide feedback to the user.
+                        continuation.resume(false)
+                    }
+                }
+        }
+
+    }
 
     // Function to check if a user account exists by email
     override suspend fun checkUserExistsByEmail(email: String): Boolean {

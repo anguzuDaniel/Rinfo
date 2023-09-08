@@ -11,5 +11,6 @@ data class LoginUiState(
     val password: String = "",
     var message: String = "",
     val isSignInSuccess: Boolean = false,
-    val hasMessage: Boolean = false
+    val hasMessage: Boolean = false,
+    val isSignInLoading: Boolean = false
 )

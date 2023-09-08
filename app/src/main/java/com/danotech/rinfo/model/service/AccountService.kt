@@ -16,7 +16,10 @@ limitations under the License.
 
 package com.danotech.rinfo.model.service
 
+import android.credentials.Credential
 import com.danotech.rinfo.model.User
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.GoogleAuthCredential
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -34,6 +37,8 @@ interface AccountService {
     suspend fun createAccountWithEmailAndPassword(email: String, password: String)
     suspend fun checkUserExistsByEmail(email: String): Boolean
     suspend fun linkAccount(email: String, password: String)
+    suspend fun changePassword(oobCode: String, newPassword: String): Boolean
     suspend fun deleteAccount()
+    suspend fun signInWithCredential(credential: AuthCredential): Boolean
     suspend fun signOut()
 }

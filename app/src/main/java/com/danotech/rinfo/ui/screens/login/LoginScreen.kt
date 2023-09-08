@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.screens.login
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -31,7 +33,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
-import com.danotech.rinfo.common.ext.basicButton
 import com.danotech.rinfo.ui.components.ClickableTextRow
 import com.danotech.rinfo.ui.components.EmailField
 import com.danotech.rinfo.ui.components.GoogleButton
@@ -40,6 +41,9 @@ import com.danotech.rinfo.ui.components.OrFormDiver
 import com.danotech.rinfo.ui.components.PasswordField
 import com.danotech.rinfo.ui.components.SignInButton
 import com.danotech.rinfo.ui.components.SubHeadingText
+import com.google.firebase.auth.GoogleAuthProvider
+import com.stevdzasan.onetap.OneTapSignInWithGoogle
+import com.stevdzasan.onetap.rememberOneTapSignInState
 
 @Composable
 fun LoginScreen(
@@ -98,7 +102,6 @@ fun LoginScreen(
             SignInButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .basicButton()
             ) {
                 viewModel.signInClick(openAndPopUp)
             }
@@ -143,8 +146,34 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(spaceLarge))
 
+            val state = rememberOneTapSignInState()
+
+            OneTapSignInWithGoogle(
+                state = state,
+                clientId = stringResource(id = R.string.your_web_client_id),
+                onTokenIdReceived = { tokenId ->
+                    try {
+                        val credentials = GoogleAuthProvider.getCredential(tokenId, null)
+
+                        viewModel.signInWithCredentials(credentials, openAndPopUp)
+                        Log.d("LOG", tokenId)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Log.d("LOG", e.message.toString())
+                    }
+
+                },
+                onDialogDismissed = { message ->
+                    Log.d("LOG", message)
+                }
+            )
+
             GoogleButton(
-                modifier = Modifier.fillMaxWidth()
+                onClick = {
+                    state.open()
+                },
+                text = "SignIn with google",
+                modifier = modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(spaceLarge))

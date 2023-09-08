@@ -139,6 +139,7 @@ fun RinfoButton(
         onClick = onClicked,
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        shape = MaterialTheme.shapes.small
     ) {
         Text(
             text = stringResource(id = name),

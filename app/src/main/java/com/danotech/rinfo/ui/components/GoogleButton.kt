@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -30,22 +29,25 @@ import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.theme.AppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoogleButton(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     text: String = "Sign Up With Google",
     loadingText: String = "Signing Up...",
     icon: Painter = painterResource(id = R.drawable.ic_google_logo),
-    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     var clicked by remember { mutableStateOf(false) }
 
     Surface(
         onClick = {
             clicked = !clicked
+            onClick()
         },
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.small,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
+        contentColor = Color.Black
     ) {
         Row(
             modifier = modifier
@@ -65,8 +67,8 @@ fun GoogleButton(
                 tint = Color.Unspecified
             )
             Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-            Text(text = if (clicked) loadingText else text)
-            if (clicked) {
+            Text(text = if (isLoading) loadingText else text)
+            if (isLoading) {
                 Spacer(modifier = Modifier.padding(horizontal = 8.dp))
                 CircularProgressIndicator(
                     modifier = Modifier.size(16.dp),
@@ -75,23 +77,5 @@ fun GoogleButton(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GoogleButtonPreview() {
-    AppTheme {
-        GoogleButton()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GoogleButtonDarkPreview() {
-    AppTheme(
-        darkTheme = true
-    ) {
-        GoogleButton()
     }
 }

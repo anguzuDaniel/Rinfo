@@ -106,7 +106,6 @@ fun AccountOptionsScreen(
 @Composable
 fun AccountOptionsContent(
     openAndPopUp: (String, String) -> Unit,
-    settingsViewModel: SettingsViewModel = hiltViewModel(),
     innerPadding: PaddingValues,
     settingType: SettingType,
     onLogoutClicked: () -> Unit,
@@ -114,6 +113,7 @@ fun AccountOptionsContent(
     viewModel: SettingsViewModel,
 ) {
     val uiState = viewModel.uiState.collectAsState().value
+
     var isShowingDialog by remember {
         mutableStateOf(false)
     }
