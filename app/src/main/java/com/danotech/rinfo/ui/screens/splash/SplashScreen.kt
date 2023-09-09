@@ -7,13 +7,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,13 +23,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.danotech.rinfo.ui.components.BasicButton
-import com.danotech.rinfo.R.string as AppText
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.screens.RInfoScreen
+import com.danotech.rinfo.ui.ThemeViewModel
 import kotlinx.coroutines.delay
 
 private const val SPLASH_TIMEOUT = 1000L
@@ -42,8 +34,7 @@ private const val SPLASH_TIMEOUT = 1000L
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun SplashScreen(
-    modifier: Modifier = Modifier,
-    viewModel: SplashViewModel = hiltViewModel(),
+    themeViewModel: ThemeViewModel = hiltViewModel(),
     navigateTo: () -> Unit,
     window: Window
 ) {
@@ -61,7 +52,8 @@ fun SplashScreen(
     val windowInsetsController =
         WindowCompat.getInsetsController(window, view)
 
-    val useDarkIcons = !isSystemInDarkTheme()
+    val themeUiState = themeViewModel.themeState.value
+    val useDarkIcons = themeUiState.isDarkMode
 
     LaunchedEffect(Unit) {
         windowInsetsController.isAppearanceLightStatusBars = useDarkIcons
@@ -76,12 +68,12 @@ fun SplashScreen(
 
     Box(
         modifier = Modifier
-            .background(if (isSystemInDarkTheme()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background)
+            .background(if (themeUiState.isDarkMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background)
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = if (isSystemInDarkTheme()) painterResource(id = R.drawable.logo) else painterResource(
+            painter = if (themeUiState.isDarkMode) painterResource(id = R.drawable.logo) else painterResource(
                 id = R.drawable.logo_transparent
             ),
             contentDescription = stringResource(id = R.string.SplashScreen),

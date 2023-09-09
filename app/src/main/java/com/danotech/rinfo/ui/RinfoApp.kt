@@ -6,23 +6,34 @@ package com.danotech.rinfo.ui
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.os.Build
 import android.view.Window
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ScaffoldState
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -34,6 +45,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -47,10 +59,7 @@ import com.danotech.rinfo.common.composable.RationaleDialog
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
-import com.danotech.rinfo.ui.screens.settings.about.AboutAppScreen
-import com.danotech.rinfo.ui.screens.settings.about.AboutScreen
-import com.danotech.rinfo.ui.screens.settings.about.PrivacyPolicyScreen
-import com.danotech.rinfo.ui.screens.settings.about.TermsOfUseScreen
+import com.danotech.rinfo.ui.screens.UserViewModel
 import com.danotech.rinfo.ui.screens.account.ChangePasswordScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
 import com.danotech.rinfo.ui.screens.business.BusinessScreen
@@ -69,6 +78,10 @@ import com.danotech.rinfo.ui.screens.search_business.SearchPage
 import com.danotech.rinfo.ui.screens.selected_category.SelectedCategoryScreen
 import com.danotech.rinfo.ui.screens.settings.AccountOptionsScreen
 import com.danotech.rinfo.ui.screens.settings.SettingsScreen
+import com.danotech.rinfo.ui.screens.settings.about.AboutAppScreen
+import com.danotech.rinfo.ui.screens.settings.about.AboutScreen
+import com.danotech.rinfo.ui.screens.settings.about.PrivacyPolicyScreen
+import com.danotech.rinfo.ui.screens.settings.about.TermsOfUseScreen
 import com.danotech.rinfo.ui.screens.settings.contact_us.ContactUsScreen
 import com.danotech.rinfo.ui.screens.settings.feedback.FeedbackScreen
 import com.danotech.rinfo.ui.screens.settings.whats_new.WhatsNewPage
@@ -86,7 +99,7 @@ import kotlinx.coroutines.CoroutineScope
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RinfoApp(
-    window: Window
+    window: Window, themeViewModel: UserViewModel = hiltViewModel()
 ) {
     AppTheme {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -123,6 +136,9 @@ fun RinfoApp(
 
         val snackbarHostState = remember { SnackbarHostState() }
 
+        // Define a remember variable to track whether to show the SplashScreen
+        var showSplashScreen by remember { mutableStateOf(true) }
+
         Surface(color = MaterialTheme.colorScheme.background) {
             val appState = rememberAppState()
 
@@ -144,8 +160,9 @@ fun RinfoApp(
                     startDestination = RInfoScreen.SplashScreen.name
                 ) {
                     makeItSoGraph(
-                        appState,
-                        window = window
+                        appState = appState,
+                        themeViewModel = themeViewModel,
+                        window = window,
                     )
                 }
             }
@@ -193,10 +210,33 @@ fun resources(): Resources {
 @RequiresApi(Build.VERSION_CODES.Q)
 @ExperimentalMaterialApi
 fun NavGraphBuilder.makeItSoGraph(
+    themeViewModel: UserViewModel,
     appState: RinfoAppUiState,
-    window: Window
+    window: Window,
 ) {
-    composable(route = RInfoScreen.SplashScreen.name) {
+//    appState.isLoggedIn = themeViewModel.isUserLoggedIn.value
+
+    composable(
+        route = RInfoScreen.SplashScreen.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) {
         SplashScreen(
             navigateTo = {
                 appState.navigate(RInfoScreen.Home.name)
@@ -204,7 +244,45 @@ fun NavGraphBuilder.makeItSoGraph(
             window = window
         )
     }
-    composable(route = RInfoScreen.Home.name) {
+    composable(
+        route = RInfoScreen.Home.name,
+        enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { -300 },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeIn(animationSpec = tween(durationMillis = 300))
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { 300 },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeOut(animationSpec = tween(durationMillis = 300))
+        },
+        popEnterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { -300 },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeIn(animationSpec = tween(durationMillis = 300))
+        },
+        popExitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { 300 },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeOut(animationSpec = tween(durationMillis = 300))
+        }
+    ) {
         HomeScreen(
             onTabSelected = { screen ->
                 if (!appState.isLoggedIn) {
@@ -243,48 +321,175 @@ fun NavGraphBuilder.makeItSoGraph(
             appState.navigate(RInfoScreen.Notification.name)
         }
     }
-    composable(route = RInfoScreen.Login.name) {
-        LoginScreen(onSignUpTextClicked = {
-            appState.navigate(RInfoScreen.CreateAccount.name)
-        }, onBackHandler = {
-            appState.popUp()
-        }, openAndPopUp = { route, popUp ->
-            appState.navigateAndPopUp(route, popUp)
-            appState.logIn()
+    composable(
+        route = RInfoScreen.Login.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
         },
-            onResetPassword = {
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) {
+        LoginScreen(
+            openAndPopUp = { route, popUp ->
+                appState.navigateAndPopUp(route, popUp)
+                appState.logIn()
+            }, onSignUpTextClicked = {
+                appState.navigate(RInfoScreen.CreateAccount.name)
+            }, onBackHandler = {
+                appState.popUp()
+            }, onResetPassword = {
                 appState.navigate(RInfoScreen.ResetPassword.name)
-            })
+            }, window = window
+        )
     }
-    composable(route = RInfoScreen.ResetPassword.name) {
+    composable(
+        route = RInfoScreen.ResetPassword.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) {
         ResetPassword(
             onBackClick = {
                 appState.popUp()
             }
         )
     }
-    composable(route = RInfoScreen.CreateAccount.name) {
+    composable(
+        route = RInfoScreen.CreateAccount.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) {
         CreateAccount(onSignInTextClicked = {
             appState.navigate(RInfoScreen.Login.name)
         }, onBackHandler = {
             appState.popUp()
         })
     }
-    composable(route = RInfoScreen.BusinessAccount.name) {
+    composable(
+        route = RInfoScreen.BusinessAccount.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) {
         BusinessAccount(
             onBackClicked = {
                 appState.popUp()
             }
         )
     }
-    composable(route = RInfoScreen.EditAccount.name) {
+    composable(
+        route = RInfoScreen.EditAccount.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) {
         ProfileScreen(
             onBackClicked = {
                 appState.popUp()
             }
         )
     }
-    composable(route = RInfoScreen.Favourites.name) {
+    composable(
+        route = RInfoScreen.Favourites.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) {
         FavoriteScreen(onBackPressed = {
             appState.popUp()
         }, onFabClicked = {
@@ -295,7 +500,27 @@ fun NavGraphBuilder.makeItSoGraph(
             appState.navigate(RInfoScreen.Business.name)
         })
     }
-    composable(route = RInfoScreen.Notification.name) {
+    composable(
+        route = RInfoScreen.Notification.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Down,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) {
         NotificationPage(
             onBackPressed = {
                 appState.popUp()
@@ -305,7 +530,27 @@ fun NavGraphBuilder.makeItSoGraph(
             },
         )
     }
-    composable(route = RInfoScreen.Settings.name) {
+    composable(
+        route = RInfoScreen.Settings.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Down,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) {
         SettingsScreen(
             onBackPressed = {
                 appState.popUp()
@@ -321,47 +566,168 @@ fun NavGraphBuilder.makeItSoGraph(
             },
             onNavClicked = { screen ->
                 appState.navigate(screen)
-            }
+            },
+            window = window
         )
     }
-    composable(route = RInfoScreen.Account.name) {
+    composable(
+        route = RInfoScreen.Account.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) {
         AccountOptionsScreen(
-            onBackClick = {
-                appState.popUp()
-            },
             openAndPopUp = { route, popUp ->
                 appState.navigateAndPopUp(route, popUp)
             },
-            onLogoutClicked = {
-                appState.logOut()
+            onBackClick = {
+                appState.popUp()
             },
             onNavClicked = { screen ->
                 appState.navigate(screen)
-            }
+            },
+            window = window
         )
     }
-    composable(route = RInfoScreen.Search.name) {
+    composable(
+        route = RInfoScreen.Search.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) {
         SearchPage(
             onBackPressed = {
                 appState.popUp()
             },
         )
     }
-    composable(route = RInfoScreen.Categories.name) {
+    composable(
+        route = RInfoScreen.Categories.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) {
         CategoryScreen(onBackPressed = {
             appState.popUp()
         }, onCategoryItemClicked = {
             appState.navigate(RInfoScreen.SelectedCategory.name)
         })
     }
-    composable(route = RInfoScreen.SelectedCategory.name) {
+    composable(
+        route = RInfoScreen.SelectedCategory.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) {
         SelectedCategoryScreen(onBackPressed = {
             appState.popUp()
         })
     }
     composable(
         route = "${RInfoScreen.Business.name}/{businessId}",
-        arguments = listOf(navArgument("businessId") { type = NavType.StringType })
+        arguments = listOf(navArgument("businessId") { type = NavType.StringType }),
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
 
@@ -390,7 +756,25 @@ fun NavGraphBuilder.makeItSoGraph(
     }
     composable(
         route = "${RInfoScreen.Map.name}/{city}/{country}",
-        arguments = listOf(navArgument("city") { type = NavType.StringType })
+        arguments = listOf(navArgument("city") { type = NavType.StringType }),
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
     ) { backStackEntry ->
         val country = backStackEntry.arguments?.getString("country")
         val city = backStackEntry.arguments?.getString("city")
@@ -410,7 +794,25 @@ fun NavGraphBuilder.makeItSoGraph(
 
     composable(
         route = "${RInfoScreen.ReviewForm.name}/{businessId}",
-        arguments = listOf(navArgument("businessId") { type = NavType.StringType })
+        arguments = listOf(navArgument("businessId") { type = NavType.StringType }),
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
         val userId = FirebaseAuth.getInstance().currentUser?.email
@@ -433,7 +835,25 @@ fun NavGraphBuilder.makeItSoGraph(
     }
     composable(
         route = "${RInfoScreen.EditReviewForm.name}/{businessId}/{reviewId}",
-        arguments = listOf(navArgument("businessId") { type = NavType.StringType })
+        arguments = listOf(navArgument("businessId") { type = NavType.StringType }),
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
         val reviewId = backStackEntry.arguments?.getString("reviewId")
@@ -457,7 +877,25 @@ fun NavGraphBuilder.makeItSoGraph(
     }
     composable(
         route = "${RInfoScreen.Reviews.name}/{businessId}",
-        arguments = listOf(navArgument("businessId") { type = NavType.StringType })
+        arguments = listOf(navArgument("businessId") { type = NavType.StringType }),
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
         val userId = FirebaseAuth.getInstance().currentUser?.email
@@ -477,7 +915,33 @@ fun NavGraphBuilder.makeItSoGraph(
             // Handle the case where businessId is null
         }
     }
-    composable(route = RInfoScreen.About.name) {
+    composable(
+        route = RInfoScreen.About.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) {
         AboutScreen(
             onBackClick = {
                 appState.popUp()
@@ -487,49 +951,225 @@ fun NavGraphBuilder.makeItSoGraph(
             }
         )
     }
-    composable(route = RInfoScreen.AboutApp.name) {
+    composable(
+        route = RInfoScreen.AboutApp.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 700,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) {
         AboutAppScreen(
             onBackClick = {
                 appState.popUp()
             }
         )
     }
-    composable(route = RInfoScreen.TermsOfUse.name) {
+    composable(
+        route = RInfoScreen.TermsOfUse.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) {
         TermsOfUseScreen(
             onBackClick = {
                 appState.popUp()
             }
         )
     }
-    composable(route = RInfoScreen.PrivacyPolicy.name) {
+    composable(
+        route = RInfoScreen.PrivacyPolicy.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) {
         PrivacyPolicyScreen(
             onBackClick = {
                 appState.popUp()
             }
         )
     }
-    composable(route = RInfoScreen.ChangePassword.name) {
+    composable(
+        route = RInfoScreen.ChangePassword.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) {
         ChangePasswordScreen(
             onBackClick = {
                 appState.popUp()
             }
         )
     }
-    composable(route = RInfoScreen.FeedBack.name) {
+    composable(
+        route = RInfoScreen.FeedBack.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) {
         FeedbackScreen(
             onBackClick = {
                 appState.popUp()
             }
         )
     }
-    composable(route = RInfoScreen.ContactUs.name) {
+    composable(
+        route = RInfoScreen.ContactUs.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) {
         ContactUsScreen(
             onBackClick = {
                 appState.popUp()
             }
         )
     }
-    composable(route = RInfoScreen.WhatsNew.name) {
+    composable(
+        route = RInfoScreen.WhatsNew.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) {
         WhatsNewPage(
             onBackClick = {
                 appState.popUp()

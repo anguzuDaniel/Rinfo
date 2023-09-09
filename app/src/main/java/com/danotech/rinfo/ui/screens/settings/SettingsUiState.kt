@@ -7,4 +7,6 @@ data class SettingsUiState(
     val isLoading: Boolean = false,
     val isDarkTheme: Boolean = false,
     val isLogoutSuccess: Boolean = false,
+    val hasMessage: Boolean = false,
+    val message: String = ""
 )

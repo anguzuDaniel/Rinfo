@@ -1,6 +1,9 @@
 package com.danotech.rinfo.ui.screens.settings
 
+import android.os.Build
+import android.view.Window
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -39,8 +42,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.BuildConfig
 import com.danotech.rinfo.R
@@ -50,6 +57,7 @@ import com.danotech.rinfo.ui.components.SearchTextField
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 
+@RequiresApi(Build.VERSION_CODES.P)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -59,6 +67,8 @@ fun SettingsScreen(
     onLogoutClicked: () -> Unit = {},
     onNavClicked: (String) -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
+    themeViewModel: ThemeViewModel = hiltViewModel(),
+    window: Window,
 ) {
     BackHandler {
         onBackPressed()
@@ -76,6 +86,17 @@ fun SettingsScreen(
     }
     val appBarElevation by animateDpAsState(targetValue = if (hasScrolled) 4.dp else 0.dp)
 
+    val view = LocalView.current
+    val windowInsetsController =
+        WindowCompat.getInsetsController(window, view)
+
+    val useDarkIcons = themeViewModel.themeState.value.isDarkMode
+
+    LaunchedEffect(useDarkIcons) {
+        windowInsetsController.isAppearanceLightStatusBars = !useDarkIcons
+        window.statusBarColor = Color.Transparent.toArgb()
+        window.navigationBarDividerColor = Color.White.toArgb()
+    }
 
     Scaffold(
         topBar = {
@@ -162,7 +183,7 @@ fun SettingsContent(
 
         item {
             SettingsClickableComp(
-                leadingIcon = if (themeState.isDarkMode) Icons.Filled.LightMode else Icons.Filled.ModeNight,
+                leadingIcon = if (themeState.isDarkMode) Icons.Filled.ModeNight else Icons.Filled.LightMode,
                 name = R.string.dark_mode,
                 icon = Icons.Rounded.FavoriteBorder,
                 iconDesc = R.string.dark_mode,

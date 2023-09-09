@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.screens.account
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
@@ -27,6 +29,9 @@ import com.danotech.rinfo.ui.components.OrFormDiver
 import com.danotech.rinfo.ui.components.PasswordField
 import com.danotech.rinfo.ui.components.RepeatPasswordField
 import com.danotech.rinfo.ui.components.SignUpButton
+import com.google.firebase.auth.GoogleAuthProvider
+import com.stevdzasan.onetap.OneTapSignInWithGoogle
+import com.stevdzasan.onetap.rememberOneTapSignInState
 
 /**
  * Create Account page
@@ -104,7 +109,6 @@ fun CreateAccount(
                 )
             }
 
-
             item {
                 Spacer(modifier = Modifier.height(10.dp))
                 SignUpButton(
@@ -121,8 +125,33 @@ fun CreateAccount(
             }
 
             item {
+                val state = rememberOneTapSignInState()
+
+                OneTapSignInWithGoogle(
+                    state = state,
+                    clientId = stringResource(id = R.string.web_client_id),
+                    onTokenIdReceived = { tokenId ->
+                        try {
+                            val credentials = GoogleAuthProvider.getCredential(tokenId, null)
+
+//                            viewModel.signInWithCredentials(credentials, openAndPopUp)
+                            Log.d("LOG", tokenId)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            Log.d("LOG", e.message.toString())
+                        }
+                    },
+                    onDialogDismissed = { message ->
+                        Log.d("LOG", message)
+                    }
+                )
+
                 GoogleButton(
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = {
+                        state.open()
+                    },
+                    text = "SignUp with Google",
+                    modifier = modifier.fillMaxWidth()
                 )
             }
         }

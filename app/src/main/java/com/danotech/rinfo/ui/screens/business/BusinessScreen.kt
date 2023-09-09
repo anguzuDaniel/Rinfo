@@ -75,7 +75,6 @@ import com.danotech.rinfo.ui.screens.business.subsections.BusinessAboutSection
 import com.danotech.rinfo.ui.screens.business.subsections.BusinessGallerySection
 import com.danotech.rinfo.ui.screens.business.subsections.BusinessReviewSection
 import com.danotech.rinfo.ui.screens.review.ReviewScreenViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
@@ -193,7 +192,6 @@ fun BusinessContent(
         mutableStateOf(false)
     }
 
-
     val imageList = remember {
         mutableStateListOf<ImageItem>()
     }
@@ -241,7 +239,6 @@ fun BusinessContent(
     }
 
     val scrollState = rememberScrollState()
-    val systemUiController = rememberSystemUiController()
 
     LazyColumn(
         modifier = modifier.windowInsetsPadding(
@@ -285,7 +282,6 @@ fun BusinessContent(
                             imageList = downloadedImages,
                             scrollState = scrollState,
                             size = size,
-                            systemUiController = systemUiController,
                             window = window
                         )
                     }
@@ -524,7 +520,7 @@ suspend fun Bitmap.computeDominantTopSectionColor(): Pair<Color, Boolean> =
                 } else {
                     // Handle the case where statusBarColorRgb is null
                     // You can provide a default color or take alternative action
-                    continuation.cancel()
+                    continuation.resume(Color.Gray to false)
                 }
             }
     }

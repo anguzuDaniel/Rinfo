@@ -4,13 +4,17 @@ import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.RinfoViewModel
 import com.danotech.rinfo.data.preferences.ThemeState
+import com.danotech.rinfo.data.preferences.UserState
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.data.preferences.utils.DataStoreUtil
 import com.danotech.rinfo.data.preferences.utils.DataStoreUtil.Companion.IS_DARK_MODE_KEY
+import com.danotech.rinfo.data.preferences.utils.DataStoreUtil.Companion.USER_EMAIL_KEY
+import com.danotech.rinfo.data.preferences.utils.DataStoreUtil.Companion.USER_ID_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +26,6 @@ constructor(
     dataStoreUtil: DataStoreUtil,
     logService: LogService
 ) : RinfoViewModel(logService) {
-
     private val _themeState = MutableStateFlow(ThemeState(false))
     val themeState: StateFlow<ThemeState> = _themeState
 
@@ -43,6 +46,44 @@ constructor(
             dataStore.edit { preferences ->
                 preferences[IS_DARK_MODE_KEY] = !(preferences[IS_DARK_MODE_KEY] ?: false)
             }
+        }
+    }
+
+    private val _userState = MutableStateFlow<UserState?>(null)
+    val userState: StateFlow<UserState?> = _userState
+
+    fun setUserLoggedIn(email: String, userId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStore.edit { preferences ->
+                preferences[USER_EMAIL_KEY] = email
+                preferences[USER_ID_KEY] = userId
+                // Store more user data as needed
+            }
+            _userState.value = UserState(email, userId) // Replace with your UserState data class
+        }
+    }
+
+    fun checkUserLoggedIn() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val preferences = dataStore.data.first()
+            val userEmail = preferences[USER_EMAIL_KEY]
+            val userId = preferences[USER_ID_KEY]
+            // Retrieve more user data as needed
+
+            if (userEmail != null && userId != null) {
+                _userState.value = UserState(userEmail, userId)
+            }
+        }
+    }
+
+    fun logUserOut() {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStore.edit { preferences ->
+                preferences.remove(USER_EMAIL_KEY)
+                preferences.remove(USER_ID_KEY)
+                // Remove more user data as needed
+            }
+            _userState.value = null
         }
     }
 }

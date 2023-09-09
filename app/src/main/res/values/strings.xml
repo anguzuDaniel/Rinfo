@@ -9,7 +9,7 @@
     <string name="Search">Search</string>
     <string name="all">All</string>
     <string name="bars">Bars</string>
-    <string name="your_web_client_id">246402478244-2ho7760sli6fffhiopkq1bv7rnmjkkef.apps.googleusercontent.com</string>
+    <string name="web_client_id">246402478244-2ho7760sli6fffhiopkq1bv7rnmjkkef.apps.googleusercontent.com</string>
     <plurals name="number_of_stars">
         <item quantity="one">%d star</item>
         <item quantity="other">%d stars</item>

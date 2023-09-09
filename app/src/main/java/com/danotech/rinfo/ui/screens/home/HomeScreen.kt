@@ -42,8 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.ThemeViewModel
 import com.danotech.rinfo.model.Business
+import com.danotech.rinfo.ui.ThemeViewModel
 import com.danotech.rinfo.ui.components.BusinessCard
 import com.danotech.rinfo.ui.components.BusinessCardShimmer
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
@@ -72,12 +72,11 @@ fun HomeScreen(
     val windowInsetsController =
         WindowCompat.getInsetsController(window, view)
 
-//    val useDarkIcons = !isSystemInDarkTheme()
 
-    val themeState by themeViewModel.themeState.collectAsState()
+    val useDarkIcons = themeViewModel.themeState.value.isDarkMode
 
-    LaunchedEffect(Unit) {
-        windowInsetsController.isAppearanceLightStatusBars = themeState.isDarkMode
+    LaunchedEffect(useDarkIcons) {
+        windowInsetsController.isAppearanceLightStatusBars = !useDarkIcons
         window.statusBarColor = Color.Transparent.toArgb()
         window.navigationBarDividerColor = Color.White.toArgb()
     }

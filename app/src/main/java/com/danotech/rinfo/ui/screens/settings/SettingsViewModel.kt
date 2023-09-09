@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.screens.settings
 
+import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.model.service.ProfileService
@@ -7,8 +8,11 @@ import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.RinfoViewModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,6 +52,24 @@ class SettingsViewModel @Inject constructor(
             }
         }.invokeOnCompletion {
             _uiState.value = _uiState.value.copy(isLoading = false)
+        }
+    }
+
+    fun deleteAccount(openAndPopUp: (String, String) -> Unit) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
+            try {
+                accountService.deleteAccount()
+                openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Settings.name)
+            } catch (e: Exception) {
+                // Handle exceptions here
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    hasMessage = true,
+                    message = "Account deletion failed: ${e.message}"
+                )
+            }
         }
     }
 }

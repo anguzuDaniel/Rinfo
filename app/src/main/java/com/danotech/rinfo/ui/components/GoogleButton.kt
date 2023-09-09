@@ -24,10 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.theme.AppTheme
 
 @Composable
 fun GoogleButton(
@@ -47,24 +45,24 @@ fun GoogleButton(
         },
         shape = MaterialTheme.shapes.small,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
-        contentColor = Color.Black
     ) {
         Row(
             modifier = modifier
-                .padding(horizontal = 16.dp, vertical = 12.dp)
                 .animateContentSize(
                     animationSpec = (tween(
                         durationMillis = 300,
                         easing = LinearOutSlowInEasing
                     ))
-                ),
+                )
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             Icon(
                 painter = icon,
                 contentDescription = "Google Button",
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
+                modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.padding(horizontal = 8.dp))
             Text(text = if (isLoading) loadingText else text)

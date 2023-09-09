@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.screens.settings
 
+import android.view.Window
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -34,11 +35,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.ThemeViewModel
 import com.danotech.rinfo.ui.screens.RInfoScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,9 +52,10 @@ import com.danotech.rinfo.ui.screens.RInfoScreen
 fun AccountOptionsScreen(
     openAndPopUp: (String, String) -> Unit,
     onBackClick: () -> Unit = {},
-    onLogoutClicked: () -> Unit = {},
     onNavClicked: (String) -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
+    themeViewModel: ThemeViewModel = hiltViewModel(),
+    window: Window
 ) {
     BackHandler {
         onBackClick()
@@ -65,6 +72,18 @@ fun AccountOptionsScreen(
         }
     }
     val appBarElevation by animateDpAsState(targetValue = if (hasScrolled) 4.dp else 0.dp)
+
+    val view = LocalView.current
+    val windowInsetsController =
+        WindowCompat.getInsetsController(window, view)
+
+    val useDarkIcons = themeViewModel.themeState.value.isDarkMode
+
+    LaunchedEffect(useDarkIcons) {
+        windowInsetsController.isAppearanceLightStatusBars = !useDarkIcons
+        window.statusBarColor = Color.Transparent.toArgb()
+        window.navigationBarDividerColor = Color.White.toArgb()
+    }
 
     Scaffold(
         topBar = {
@@ -96,7 +115,6 @@ fun AccountOptionsScreen(
             openAndPopUp = openAndPopUp,
             innerPadding = innerPadding,
             settingType = SettingType.TEXT,
-            onLogoutClicked = onLogoutClicked,
             onNavClicked = onNavClicked,
             viewModel = viewModel
         )
@@ -108,11 +126,10 @@ fun AccountOptionsContent(
     openAndPopUp: (String, String) -> Unit,
     innerPadding: PaddingValues,
     settingType: SettingType,
-    onLogoutClicked: () -> Unit,
     onNavClicked: (String) -> Unit = {},
     viewModel: SettingsViewModel,
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
+    viewModel.uiState.collectAsState().value
 
     var isShowingDialog by remember {
         mutableStateOf(false)
@@ -190,6 +207,7 @@ fun AccountOptionsContent(
                     TextButton(
                         onClick = {
                             isShowingDialog = false
+                            viewModel.deleteAccount(openAndPopUp)
                         }
                     ) {
                         Text("Delete")

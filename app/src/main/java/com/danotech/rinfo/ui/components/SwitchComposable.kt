@@ -1,7 +1,8 @@
 package com.danotech.rinfo.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -11,14 +12,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.danotech.rinfo.ui.theme.AppTheme
 
 @Composable
 fun SettingSwitch(
@@ -30,6 +29,15 @@ fun SettingSwitch(
     // this is to disable the ripple effect
     val interactionSource = remember {
         MutableInteractionSource()
+    }
+
+    val thumbOffsetX = remember { androidx.compose.animation.core.Animatable(0f) }
+
+    LaunchedEffect(checked) {
+        thumbOffsetX.animateTo(
+            if (clicked) 1f else 0f,
+            animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+        )
     }
 
     Box(
@@ -56,30 +64,6 @@ fun SettingSwitch(
             } else {
                 null
             },
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SettingSwitchPreview() {
-    AppTheme {
-        SettingSwitch(
-            checked = false,
-            onSwitchChanged = {},
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SettingSwitchDarkPreview() {
-    AppTheme(
-        darkTheme = true
-    ) {
-        SettingSwitch(
-            checked = true,
-            onSwitchChanged = {},
         )
     }
 }

@@ -5,6 +5,7 @@ import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.common.ext.isValidEmail
 import com.danotech.rinfo.common.ext.isValidPassword
+import com.danotech.rinfo.data.preferences.utils.DataStoreUtil
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RInfoScreen
@@ -14,17 +15,34 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    private val dataStoreUtil: DataStoreUtil,
     private val accountService: AccountService,
     logService: LogService
 ) : RinfoViewModel(logService) {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStoreUtil.dataStore.data
+                .map { preferences ->
+                    LoginUiState(
+                        password = preferences[DataStoreUtil.USER_ID_KEY] ?: "",
+                        email = preferences[DataStoreUtil.USER_EMAIL_KEY] ?: ""
+                    )
+                }
+                .collect {
+                    _uiState.value = it
+                }
+        }
+    }
 
     private val email: String
         get() = _uiState.value.email
@@ -67,6 +85,41 @@ class LoginViewModel @Inject constructor(
                 message = "Login successfully! kindly wait as we redirect you."
             )
             openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Login.name)
+        }.invokeOnCompletion {
+            _uiState.value = _uiState.value.copy(
+                hasMessage = true,
+                message = "Login successfully! kindly wait as we redirect you."
+            )
+        }
+    }
+
+    fun rememberUser(openAndPopUp: (String, String) -> Unit) {
+        if (!email.isValidEmail()) {
+            SnackbarManager.showMessage(R.string.email_error)
+            _uiState.value = _uiState.value.copy(
+                hasMessage = true,
+                message = "Please insert a valid email."
+            )
+            return
+        }
+
+        if (!password.isValidPassword()) {
+            SnackbarManager.showMessage(R.string.password_error)
+            _uiState.value = _uiState.value.copy(
+                hasMessage = true,
+                message = "Incorrect password!"
+            )
+            return
+        }
+
+        launchCatching {
+            accountService.authenticate(email, password)
+            _uiState.value = _uiState.value.copy(
+                isSignInSuccess = true,
+                hasMessage = true,
+                message = "Login successfully! kindly wait as we redirect you."
+            )
+            openAndPopUp(RInfoScreen.Login.name, RInfoScreen.Home.name)
         }.invokeOnCompletion {
             _uiState.value = _uiState.value.copy(
                 hasMessage = true,

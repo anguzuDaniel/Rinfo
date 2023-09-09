@@ -143,9 +143,9 @@ fun TextInputWithLabel(
 
 @Composable
 fun ReviewInputWithLabel(
+    modifier: Modifier = Modifier,
     @StringRes placeholder: Int = R.string.empty,
     value: String,
-    modifier: Modifier = Modifier,
     onValueChanged: (String) -> Unit = {},
     onSearchInputClicked: () -> Unit = {},
 ) {

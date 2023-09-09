@@ -27,6 +27,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,8 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.danotech.rinfo.ui.ThemeViewModel
 import com.google.accompanist.systemuicontroller.SystemUiController
 import kotlinx.coroutines.launch
 import kotlin.math.min
@@ -115,7 +118,7 @@ fun ImageListViewBitmap(
     imageList: List<Bitmap>,
     scrollState: ScrollState,
     size: Dp,
-    systemUiController: SystemUiController,
+    themeViewModel: ThemeViewModel = hiltViewModel(),
     window: Window
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -125,6 +128,7 @@ fun ImageListViewBitmap(
     val view = LocalView.current
     val windowInsetsController =
         WindowCompat.getInsetsController(window, view)
+
 
     // Swipe functionality of the image
     HorizontalPager(
@@ -144,7 +148,7 @@ fun ImageListViewBitmap(
                     val (color, isLight) = bitmap.asAndroidBitmap().computeDominantTopSectionColor()
                     parallaxColor = color
                     windowInsetsController.isAppearanceLightStatusBars = isLight
-                    window.statusBarColor = color.toArgb()
+                    window.statusBarColor = color.toArgb() ?: Color.DarkGray.toArgb()
                 }
             }
 
@@ -181,10 +185,10 @@ fun ImageListViewBitmap(
             DisposableEffect(Unit) {
                 onDispose {
                     // Reset the status bar color when this composable is disposed
-                    systemUiController.setStatusBarColor(
-                        color = Color.Transparent,
-                        darkIcons = false
-                    )
+                    val useDarkIcons = themeViewModel.themeState.value.isDarkMode
+
+                    windowInsetsController.isAppearanceLightStatusBars = !useDarkIcons
+                    window.statusBarColor = Color.Transparent.toArgb()
                 }
             }
         }
