@@ -17,7 +17,6 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : AccountService {
-
     override val currentUserId: String
         get() = auth.currentUser?.uid.orEmpty()
 

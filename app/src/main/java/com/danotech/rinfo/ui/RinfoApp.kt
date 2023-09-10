@@ -327,7 +327,7 @@ fun NavGraphBuilder.makeItSoGraph(
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 100,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -336,7 +336,7 @@ fun NavGraphBuilder.makeItSoGraph(
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -738,7 +738,7 @@ fun NavGraphBuilder.makeItSoGraph(
                 onBackPressed = {
                     appState.popUp()
                 },
-                onFabBtnClicked = {
+                onAddReviewClick = {
                     // send user to review form
                     // width businessId and userId
                     appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId")
@@ -898,12 +898,10 @@ fun NavGraphBuilder.makeItSoGraph(
         },
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
-        val userId = FirebaseAuth.getInstance().currentUser?.email
 
         if (businessId != null) {
             ReviewsScreen(
                 businessId = businessId,
-                userId = userId ?: "",
                 onBackButtonClick = {
                     appState.popUp()
                 },

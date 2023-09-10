@@ -61,15 +61,14 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.palette.graphics.Palette
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Business
+import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.ui.components.BusinessImageButton
-import com.danotech.rinfo.ui.components.RinfoFAB
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.danotech.rinfo.ui.screens.business.subsections.BusinessAboutSection
 import com.danotech.rinfo.ui.screens.business.subsections.BusinessGallerySection
@@ -91,20 +90,23 @@ fun BusinessScreen(
     viewModel: BusinessViewModel = hiltViewModel(),
     reviewScreenViewModel: ReviewScreenViewModel = hiltViewModel(),
     onBackPressed: () -> Unit = {},
-    onFabBtnClicked: () -> Unit = {},
+    onAddReviewClick: () -> Unit = {},
     onShowReviewPageClicked: () -> Unit = {},
     window: Window,
     onDirectionClicked: (String) -> Unit = {},
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-
     BackHandler {
         onBackPressed()
     }
 
     LaunchedEffect(viewModel) {
         viewModel.getBusinessById(businessId)
+        reviewScreenViewModel.getReviewByBusinessId(businessId = businessId)
     }
+
+    val uiState by viewModel.uiState.collectAsState()
+    val reviewUiState by reviewScreenViewModel.uiState.collectAsState()
+    val reviews = reviewUiState.reviews
 
     Scaffold(
         modifier = Modifier
@@ -139,11 +141,6 @@ fun BusinessScreen(
                 )
             }
         },
-        floatingActionButton = if (uiState.isLoading) {
-            {}
-        } else {
-            { RinfoFAB(onClick = onFabBtnClicked) }
-        },
         floatingActionButtonPosition = FabPosition.End,
     ) { innerPadding ->
 
@@ -160,7 +157,9 @@ fun BusinessScreen(
                 reviewScreenViewModel = reviewScreenViewModel,
                 viewModel = viewModel,
                 modifier = Modifier.consumeWindowInsets(innerPadding),
-                window = window
+                window = window,
+                onAddReviewButtonClick = onAddReviewClick,
+                reviews = reviews
             )
         }
     }
@@ -176,7 +175,9 @@ fun BusinessContent(
     business: Business,
     onShowReviewPageClicked: () -> Unit = {},
     onDirectionClicked: (String) -> Unit = {},
-    window: Window
+    window: Window,
+    onAddReviewButtonClick: () -> Unit = {},
+    reviews: List<Review>
 ) {
     val context = LocalContext.current
 
@@ -454,7 +455,9 @@ fun BusinessContent(
                     2 -> BusinessReviewSection(
                         business = business,
                         reviewScreenViewModel = reviewScreenViewModel,
-                        onAllReview = onShowReviewPageClicked
+                        onAllButtonReviewClick = onShowReviewPageClicked,
+                        onAddReviewButtonClick = onAddReviewButtonClick,
+                        reviews = reviews
                     )
 
                     else -> BusinessAboutSection(business = business)
@@ -525,11 +528,3 @@ suspend fun Bitmap.computeDominantTopSectionColor(): Pair<Color, Boolean> =
             }
     }
 
-
-@Preview
-@Composable
-fun ActionPreview() {
-    ActionDetailsRow(
-        businessName = ""
-    )
-}

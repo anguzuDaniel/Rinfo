@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,14 +17,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.danotech.rinfo.R
@@ -42,7 +47,6 @@ fun ReviewItem(
     viewModel: ReviewScreenViewModel,
     review: Review,
     modifier: Modifier = Modifier,
-    onReviewItemClicked: (String) -> Unit = {},
     onEditClicked: () -> Unit = {},
     onDeleteClicked: () -> Unit = {},
     onReportClicked: () -> Unit = {},
@@ -50,7 +54,6 @@ fun ReviewItem(
     onLikeClicked: () -> Unit = {},
     onShareClicked: () -> Unit = {},
 ) {
-
     val context = LocalContext.current
     val logoImage: Bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
 
@@ -203,10 +206,46 @@ fun ReviewItem(
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        ExpandableReviewText(review.review)
+    }
+
+    Spacer(modifier = Modifier.height(15.dp))
+}
+
+@Composable
+fun ExpandableReviewText(review: String) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    val maxWords = 200
+    val wordsToShow = if (isExpanded) {
+        review.split(" ").joinToString(" ") // Show the entire review when expanded
+    } else {
+        review.split(" ").take(maxWords).joinToString(" ") // Show the first 200 words
+    }
+
+    Text(
+        text = AnnotatedString(wordsToShow),
+        style = MaterialTheme.typography.bodySmall,
+        modifier = Modifier.clickable { isExpanded = !isExpanded }
+    )
+
+    if (!isExpanded && review.split(" ").size > maxWords) {
         Text(
-            text = review.review,
-            style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.Light
+            text = AnnotatedString("... Read More"),
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline
+            ),
+            modifier = Modifier.clickable { isExpanded = true }
+        )
+    } else if (isExpanded) {
+        Text(
+            text = AnnotatedString(" Read Less"),
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline
+            ),
+            modifier = Modifier.clickable { isExpanded = false }
         )
     }
 }

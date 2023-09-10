@@ -22,11 +22,12 @@ import kotlinx.coroutines.flow.Flow
  *  @see Review
  */
 interface ReviewService {
-    suspend fun getAllReviews(): Flow<List<Review>>
-    fun startListeningToReviewsByBusinessId(businessId: String)
+    suspend fun getAllReviews(businessId: String): Flow<List<Review>>
+    suspend fun startListeningToReviewsByBusinessId(businessId: String): Flow<List<Review>>
     suspend fun getReviewById(reviewId: String): Review
     suspend fun getReviewsByUserId(userId: String): Flow<List<Review>>
     suspend fun create(review: Review): String
     suspend fun update(review: Review)
     suspend fun delete(reviewId: String)
+    suspend fun getReviewsFlow(): Flow<List<Review>>
 }

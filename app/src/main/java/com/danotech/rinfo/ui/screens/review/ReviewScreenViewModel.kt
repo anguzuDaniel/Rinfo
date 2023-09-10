@@ -3,6 +3,7 @@ package com.danotech.rinfo.ui.screens.review
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.runtime.MutableState
+import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.model.service.ProfileService
@@ -11,9 +12,12 @@ import com.danotech.rinfo.ui.screens.RinfoViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -78,7 +82,7 @@ constructor(
                 reviewService.delete(reviewId)
 
                 reviewService.startListeningToReviewsByBusinessId(businessId)
-                val reviewList = reviewService.getAllReviews().first()
+                val reviewList = reviewService.getAllReviews(businessId).first()
                 _uiState.value = _uiState.value.copy(reviews = reviewList)
             } catch (e: Exception) {
                 // Handle error
@@ -90,22 +94,24 @@ constructor(
     }
 
     fun getReviewByBusinessId(businessId: String) {
-        launchCatching {
+        viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             try {
-                reviewService.startListeningToReviewsByBusinessId(businessId)
-
-                val reviewsList = reviewService.getAllReviews().first()
+                val reviewsList = withContext(Dispatchers.IO) {
+                    reviewService.startListeningToReviewsByBusinessId(businessId).first()
+                }
                 _uiState.value = _uiState.value.copy(reviews = reviewsList)
             } catch (e: Exception) {
-                // Handle error
-                _uiState.value = _uiState.value.copy(isLoading = true)
+                // Handle error, e.g., set an error message in the UI state
+                _uiState.value =
+                    _uiState.value.copy(
+                        hasMessage = true,
+                        errorMessage = "Error fetching reviews: ${e.message}"
+                    )
             } finally {
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }
-        }.invokeOnCompletion {
-            _uiState.value = _uiState.value.copy(isLoading = false)
         }
     }
 }
