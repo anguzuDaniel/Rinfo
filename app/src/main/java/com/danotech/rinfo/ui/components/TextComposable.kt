@@ -53,11 +53,12 @@ fun ClickableTextRow(
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = stringResource(id = noneClickableText),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -65,7 +66,7 @@ fun ClickableTextRow(
         ClickableText(
             text = AnnotatedString(text = stringResource(id = clickableText)),
             onClick = { onSignUpTextClicked() },
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.primary),
         )
     }
 }

@@ -18,8 +18,8 @@ android {
         applicationId "com.danotech.rinfo"
         minSdk 25
         targetSdk 34
-        versionCode 1
-        versionName "0.3.0"
+        versionCode 2
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "TEST", "false"

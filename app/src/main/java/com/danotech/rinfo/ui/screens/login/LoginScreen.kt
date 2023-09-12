@@ -11,6 +11,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,9 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -235,20 +234,23 @@ fun LoginForm(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(3.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = isRememberMeChecked,
-                    onCheckedChange = {
-                        isRememberMeChecked = true
-                    },
-                    modifier = Modifier.size(10.dp)
-                )
+            Box() {
 
-                Text(text = stringResource(id = R.string.remember_me))
             }
+//            Row(
+//                horizontalArrangement = Arrangement.spacedBy(3.dp),
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Checkbox(
+//                    checked = isRememberMeChecked,
+//                    onCheckedChange = {
+//                        isRememberMeChecked = true
+//                    },
+//                    modifier = Modifier.size(10.dp)
+//                )
+//
+//                Text(text = stringResource(id = R.string.remember_me))
+//            }
 
             ClickableText(
                 text = AnnotatedString(text = stringResource(id = R.string.reset_password)),
@@ -300,6 +302,7 @@ fun LoginForm(
         ClickableTextRow(
             clickableText = R.string.sign_up,
             noneClickableText = R.string.dont_have_an_account,
+
             modifier = Modifier
                 .fillMaxWidth()
                 .height(20.dp),
