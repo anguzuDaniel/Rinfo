@@ -4,26 +4,25 @@ package com.danotech.rinfo.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Bookmark
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.BottomMenuItem
@@ -66,11 +65,6 @@ fun RinfoBottomNavigation(
     // items list
     val bottomMenuItemsList = prepareBottomMenu()
 
-    val contextForToast = LocalContext.current.applicationContext
-
-    var selectedItem by remember {
-        mutableStateOf("Home")
-    }
 
     Box(modifier = modifier.fillMaxSize()) {
         NavigationBar(
@@ -88,7 +82,11 @@ fun RinfoBottomNavigation(
                     },
                     icon = {
                         Icon(
-                            imageVector = navigationItemContent.icon,
+                            imageVector =
+                            if (currentScreen == navigationItemContent.rinfoScreen)
+                                navigationItemContent.selectedIcon
+                            else
+                                navigationItemContent.unSelectedIcon,
                             contentDescription = null
                         )
                     },
@@ -97,26 +95,6 @@ fun RinfoBottomNavigation(
                     alwaysShowLabel = false
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun BusinessBottomAppBar(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(modifier = modifier.fillMaxSize()) {
-        NavigationBar(
-            modifier = Modifier.align(alignment = Alignment.BottomCenter)
-        ) {
-            RinfoButton(
-                name = R.string.add_review,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                onClicked = onClick
-            )
         }
     }
 }
@@ -137,13 +115,15 @@ private fun prepareBottomMenu(): List<BottomMenuItem> {
         BottomMenuItem(
             rinfoScreen = RInfoScreen.Home,
             label = R.string.home,
-            icon = Icons.Filled.Home
+            selectedIcon = Icons.Filled.Home,
+            unSelectedIcon = Icons.Outlined.Home
         )
     )
     bottomMenuItemsList.add(
         BottomMenuItem(
             rinfoScreen = RInfoScreen.Search,
-            icon = Icons.Filled.Search,
+            selectedIcon = Icons.Filled.Search,
+            unSelectedIcon = Icons.Outlined.Search,
             label = R.string.Search
         )
     )
@@ -151,13 +131,15 @@ private fun prepareBottomMenu(): List<BottomMenuItem> {
         BottomMenuItem(
             rinfoScreen = RInfoScreen.Favourites,
             label = R.string.favorites,
-            icon = Icons.Filled.Favorite
+            selectedIcon = Icons.Filled.Bookmark,
+            unSelectedIcon = Icons.Outlined.Bookmark
         )
     )
     bottomMenuItemsList.add(
         BottomMenuItem(
             rinfoScreen = RInfoScreen.Settings,
-            icon = Icons.Filled.Settings,
+            selectedIcon = Icons.Filled.Settings,
+            unSelectedIcon = Icons.Outlined.Settings,
             label = R.string.settings
         )
     )

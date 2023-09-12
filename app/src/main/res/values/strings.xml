@@ -643,4 +643,7 @@
     <string name="appearance">Appearance</string>
     <string name="remember_me">Remember Me</string>
     <string name="reset_password">Reset passowrd</string>
+    <string name="failed_to_load_images">Failed to load images</string>
+    <string name="retry">Retry</string>
+    <string name="business_photos">Business photos</string>
 </resources>

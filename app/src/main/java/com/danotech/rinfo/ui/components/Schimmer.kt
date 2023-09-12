@@ -5,6 +5,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -158,5 +159,52 @@ fun Modifier.shimmerEffect(): Modifier = composed {
         )
     ).onGloballyPositioned {
         size = it.size
+    }
+}
+
+@Composable
+fun BusinessGalleryRowShimmer(
+    isLoading: Boolean,
+    modifier: Modifier = Modifier,
+    contentAfterLoading: @Composable () -> Unit,
+) {
+    val imageSize = 150.dp
+    val h = 20.dp
+    val w = 200.dp
+
+    if (isLoading) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 16.dp)
+                .clickable {},
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+        ) {
+            Box(
+                modifier = modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .size(imageSize)
+                    .shimmerEffect()
+            )
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Box(
+                    modifier = modifier
+                        .clip(MaterialTheme.shapes.medium)
+                        .size(width = w, height = h)
+                        .shimmerEffect()
+                )
+                Box(
+                    modifier = modifier
+                        .clip(MaterialTheme.shapes.medium)
+                        .size(width = w, height = h)
+                        .shimmerEffect()
+                )
+            }
+        }
+    } else {
+        contentAfterLoading()
     }
 }

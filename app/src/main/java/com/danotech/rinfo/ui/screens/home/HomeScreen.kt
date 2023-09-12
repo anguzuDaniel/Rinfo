@@ -82,7 +82,7 @@ fun HomeScreen(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxWidth(),
         topBar = {
             RinfoTopAppBar(
                 isShowingHomePage = true,
@@ -171,7 +171,7 @@ fun HomePageContent(
 
     LazyColumn(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.body_padding)),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

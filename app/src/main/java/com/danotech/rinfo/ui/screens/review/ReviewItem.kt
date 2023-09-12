@@ -37,6 +37,7 @@ import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.ui.components.ProfileImageBitmap
 import com.danotech.rinfo.ui.components.ProfileImageShimmer
 import com.danotech.rinfo.ui.components.RatingStars
+import com.danotech.rinfo.ui.screens.business.subsections.components.StarRating
 import com.google.firebase.auth.FirebaseAuth
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -171,7 +172,7 @@ fun ReviewItem(
                         verticalAlignment = Alignment.Bottom,
                         modifier = Modifier.weight(2f)
                     ) {
-                        RatingStars(rating = review.rating)
+                        StarRating(rating = review.rating)
 
                         Spacer(modifier = Modifier.width(4.dp))
 
@@ -216,11 +217,11 @@ fun ReviewItem(
 fun ExpandableReviewText(review: String) {
     var isExpanded by remember { mutableStateOf(false) }
 
-    val maxWords = 200
+    val maxWords = 50
     val wordsToShow = if (isExpanded) {
         review.split(" ").joinToString(" ") // Show the entire review when expanded
     } else {
-        review.split(" ").take(maxWords).joinToString(" ") // Show the first 200 words
+        review.split(" ").take(maxWords).joinToString(" ") // Show the first 50 words
     }
 
     Text(

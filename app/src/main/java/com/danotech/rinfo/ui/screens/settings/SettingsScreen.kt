@@ -162,18 +162,11 @@ fun SettingsContent(
     val paragraphSpace = 16.dp
 
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.padding(bottom = 100.dp),
         contentPadding = innerPadding,
         state = scrollState,
         userScrollEnabled = false
     ) {
-        item {
-            SearchTextField(
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(paragraphSpace))
-        }
-
         item {
             SettingSectionHeading(
                 text = R.string.appearance,

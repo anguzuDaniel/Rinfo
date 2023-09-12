@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.screens.business.subsections
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,12 +14,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Business
-import com.danotech.rinfo.ui.components.SubHeadingText
 import com.danotech.rinfo.ui.components.TruncateText
 
 @Composable
@@ -35,8 +37,12 @@ fun BusinessAboutSection(
         modifier = Modifier
             .padding(dimensionResource(id = R.dimen.body_padding))
             .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        SubHeadingText(text = R.string.description)
+        Text(
+            text = stringResource(id = R.string.description),
+            style = MaterialTheme.typography.titleMedium
+        )
 
         if (!isShowingAllDescriptionText) {
             TruncateText(
@@ -51,7 +57,6 @@ fun BusinessAboutSection(
                 style = TextStyle(
                     fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
                 ),
-                textAlign = TextAlign.Justify,
                 color = MaterialTheme.colorScheme.onSurface
             )
         }

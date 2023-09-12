@@ -27,6 +27,5 @@ fun TruncateText(
         text = truncatedText,
         style = style,
         color = color,
-        textAlign = TextAlign.Justify
     )
 }

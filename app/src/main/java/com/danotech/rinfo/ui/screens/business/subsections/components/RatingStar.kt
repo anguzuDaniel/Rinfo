@@ -13,6 +13,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -43,14 +44,21 @@ fun RatingRow(rating: Int, currentRating: Int) {
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.Bottom
     ) {
-        Text(text = "$rating star${if (rating > 1) "s" else ""}: ", fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.width(if (rating > 1) 8.dp else 9.dp))
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = "$rating", fontWeight = FontWeight.Bold)
+        Icon(
+            imageVector = Icons.Default.Star,
+            contentDescription = null,
+            tint = Color(0xFFFFD700), // Gold color for filled stars
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
         LinearProgressBar(
             progress = currentRating.toFloat() / 5,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(10.dp)
-                .background(color = Color.Gray)
+                .background(color = MaterialTheme.colorScheme.onSurfaceVariant)
         )
     }
 }

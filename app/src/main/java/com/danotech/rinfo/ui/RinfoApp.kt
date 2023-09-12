@@ -15,6 +15,7 @@ import android.os.Build
 import android.view.Window
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -24,7 +25,9 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ScaffoldState
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -62,6 +65,7 @@ import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.UserViewModel
 import com.danotech.rinfo.ui.screens.account.ChangePasswordScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
+import com.danotech.rinfo.ui.screens.business.PhotosScreen
 import com.danotech.rinfo.ui.screens.business.BusinessScreen
 import com.danotech.rinfo.ui.screens.business_account.BusinessAccount
 import com.danotech.rinfo.ui.screens.category.CategoryScreen
@@ -260,7 +264,7 @@ fun NavGraphBuilder.makeItSoGraph(
                 targetOffsetX = { 300 },
                 animationSpec = tween(
                     durationMillis = 300,
-                    easing = FastOutSlowInEasing
+                    easing = FastOutLinearInEasing
                 )
             ) + fadeOut(animationSpec = tween(durationMillis = 300))
         },
@@ -269,7 +273,7 @@ fun NavGraphBuilder.makeItSoGraph(
                 initialOffsetX = { -300 },
                 animationSpec = tween(
                     durationMillis = 300,
-                    easing = FastOutSlowInEasing
+                    easing = FastOutLinearInEasing
                 )
             ) + fadeIn(animationSpec = tween(durationMillis = 300))
         },
@@ -415,6 +419,7 @@ fun NavGraphBuilder.makeItSoGraph(
             appState.popUp()
         })
     }
+
     composable(
         route = RInfoScreen.BusinessAccount.name,
         enterTransition = {
@@ -442,6 +447,7 @@ fun NavGraphBuilder.makeItSoGraph(
             }
         )
     }
+
     composable(
         route = RInfoScreen.EditAccount.name,
         enterTransition = {
@@ -469,26 +475,9 @@ fun NavGraphBuilder.makeItSoGraph(
             }
         )
     }
+
     composable(
         route = RInfoScreen.Favourites.name,
-        enterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
-                animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-        },
     ) {
         FavoriteScreen(onBackPressed = {
             appState.popUp()
@@ -500,6 +489,7 @@ fun NavGraphBuilder.makeItSoGraph(
             appState.navigate(RInfoScreen.Business.name)
         })
     }
+
     composable(
         route = RInfoScreen.Notification.name,
         enterTransition = {
@@ -530,26 +520,14 @@ fun NavGraphBuilder.makeItSoGraph(
             },
         )
     }
+
+    /**
+     * Settings screen
+     * Show all the settings option a user has
+     *
+     */
     composable(
         route = RInfoScreen.Settings.name,
-        enterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
-                animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Down,
-                animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-        },
     ) {
         SettingsScreen(
             onBackPressed = {
@@ -570,32 +548,25 @@ fun NavGraphBuilder.makeItSoGraph(
             window = window
         )
     }
+
+    /**
+     * Account options
+     * show a list of account options the user can click from
+     */
     composable(
         route = RInfoScreen.Account.name,
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(500)
             )
         },
         exitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(500)
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        }
     ) {
         AccountOptionsScreen(
             openAndPopUp = { route, popUp ->
@@ -610,6 +581,11 @@ fun NavGraphBuilder.makeItSoGraph(
             window = window
         )
     }
+
+    /**
+     * Search screen
+     * User can search businesses
+     */
     composable(
         route = RInfoScreen.Search.name,
         enterTransition = {
@@ -637,6 +613,12 @@ fun NavGraphBuilder.makeItSoGraph(
             },
         )
     }
+
+    /**
+     * Categories screen
+     * Shows all the categories
+     * user is able to search for categories in this page
+     */
     composable(
         route = RInfoScreen.Categories.name,
         enterTransition = {
@@ -670,64 +652,42 @@ fun NavGraphBuilder.makeItSoGraph(
             appState.navigate(RInfoScreen.SelectedCategory.name)
         })
     }
+
     composable(
         route = RInfoScreen.SelectedCategory.name,
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(500)
             )
         },
         exitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(500)
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        }
     ) {
         SelectedCategoryScreen(onBackPressed = {
             appState.popUp()
         })
     }
+
     composable(
         route = "${RInfoScreen.Business.name}/{businessId}",
         arguments = listOf(navArgument("businessId") { type = NavType.StringType }),
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(500)
             )
         },
         exitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(500)
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        }
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
 
@@ -740,11 +700,14 @@ fun NavGraphBuilder.makeItSoGraph(
                 },
                 onAddReviewClick = {
                     // send user to review form
-                    // width businessId and userId
+                    // with businessId and userId
                     appState.navigate("${RInfoScreen.ReviewForm.name}/$businessId")
                 },
                 onShowReviewPageClicked = {
                     appState.navigate("${RInfoScreen.Reviews.name}/$businessId")
+                },
+                onShowBusinessPhotos = {
+                    appState.navigate("${RInfoScreen.BusinessPhotos.name}/$businessId")
                 },
                 window = window
             ) { location ->
@@ -754,6 +717,7 @@ fun NavGraphBuilder.makeItSoGraph(
             // Handle the case where businessId is null
         }
     }
+
     composable(
         route = "${RInfoScreen.Map.name}/{city}/{country}",
         arguments = listOf(navArgument("city") { type = NavType.StringType }),
@@ -761,7 +725,7 @@ fun NavGraphBuilder.makeItSoGraph(
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 500,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -770,7 +734,7 @@ fun NavGraphBuilder.makeItSoGraph(
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 500,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -832,6 +796,7 @@ fun NavGraphBuilder.makeItSoGraph(
         } else {
             // Handle the case where businessId is null
         }
+
     }
     composable(
         route = "${RInfoScreen.EditReviewForm.name}/{businessId}/{reviewId}",
@@ -875,6 +840,7 @@ fun NavGraphBuilder.makeItSoGraph(
             // Handle the case where businessId is null
         }
     }
+
     composable(
         route = "${RInfoScreen.Reviews.name}/{businessId}",
         arguments = listOf(navArgument("businessId") { type = NavType.StringType }),
@@ -913,6 +879,7 @@ fun NavGraphBuilder.makeItSoGraph(
             // Handle the case where businessId is null
         }
     }
+
     composable(
         route = RInfoScreen.About.name,
         enterTransition = {
@@ -949,6 +916,7 @@ fun NavGraphBuilder.makeItSoGraph(
             }
         )
     }
+
     composable(
         route = RInfoScreen.AboutApp.name,
         enterTransition = {
@@ -976,6 +944,7 @@ fun NavGraphBuilder.makeItSoGraph(
             }
         )
     }
+
     composable(
         route = RInfoScreen.TermsOfUse.name,
         enterTransition = {
@@ -1009,6 +978,7 @@ fun NavGraphBuilder.makeItSoGraph(
             }
         )
     }
+
     composable(
         route = RInfoScreen.PrivacyPolicy.name,
         enterTransition = {
@@ -1042,6 +1012,7 @@ fun NavGraphBuilder.makeItSoGraph(
             }
         )
     }
+
     composable(
         route = RInfoScreen.ChangePassword.name,
         enterTransition = {
@@ -1075,6 +1046,7 @@ fun NavGraphBuilder.makeItSoGraph(
             }
         )
     }
+
     composable(
         route = RInfoScreen.FeedBack.name,
         enterTransition = {
@@ -1108,6 +1080,7 @@ fun NavGraphBuilder.makeItSoGraph(
             }
         )
     }
+
     composable(
         route = RInfoScreen.ContactUs.name,
         enterTransition = {
@@ -1173,5 +1146,45 @@ fun NavGraphBuilder.makeItSoGraph(
                 appState.popUp()
             }
         )
+    }
+    composable(
+        route = "${RInfoScreen.BusinessPhotos.name}/{businessId}",
+        arguments = listOf(navArgument("businessId") { type = NavType.StringType }),
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(700)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(700)
+            )
+        }
+    ) { backStackEntry ->
+        val businessId = backStackEntry.arguments?.getString("businessId")
+
+        if (businessId != null) {
+            PhotosScreen(
+                businessId = businessId,
+                window = window,
+                onBackClick = {
+                    appState.popUp()
+                },
+            )
+        }
     }
 }

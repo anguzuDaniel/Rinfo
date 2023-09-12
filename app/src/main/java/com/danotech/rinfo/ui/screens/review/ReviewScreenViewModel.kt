@@ -77,16 +77,22 @@ constructor(
     }
 
     fun deleteReview(reviewId: String, businessId: String) {
-        launchCatching {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
             try {
+                // Delete the review
                 reviewService.delete(reviewId)
 
-                reviewService.startListeningToReviewsByBusinessId(businessId)
-                val reviewList = reviewService.getAllReviews(businessId).first()
-                _uiState.value = _uiState.value.copy(reviews = reviewList)
+                // The review is deleted successfully, but we don't update the UI immediately
+                // Instead, we let the UI update through the snapshot listener
             } catch (e: Exception) {
-                // Handle error
-                _uiState.value = _uiState.value.copy(isLoading = true)
+                // Handle error, e.g., set an error message in the UI state
+                _uiState.value =
+                    _uiState.value.copy(
+                        hasMessage = true,
+                        errorMessage = "Error deleting review: ${e.message}"
+                    )
             } finally {
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }

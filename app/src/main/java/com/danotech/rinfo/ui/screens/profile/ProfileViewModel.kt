@@ -2,7 +2,6 @@ package com.danotech.rinfo.ui.screens.profile
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.compose.runtime.mutableStateOf
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.model.Profile
@@ -38,10 +37,6 @@ class ProfileViewModel @Inject constructor(
 
     fun profileLastNameChanged(name: String) {
         _uiState.value = _uiState.value.copy(profileLastName = name)
-    }
-
-    fun profileImage(url: String) {
-        _uiState.value = _uiState.value.copy(profileImage = url)
     }
 
     fun openBottomSheet(open: Boolean) {

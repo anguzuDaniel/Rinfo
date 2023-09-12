@@ -19,6 +19,7 @@ enum class RInfoScreen(@StringRes val title: Int) {
     ChangePassword(title = R.string.change_password),
     EditAccount(title = R.string.edit_account),
     Business(title = R.string.review),
+    BusinessPhotos(title = R.string.business_photos),
     Reviews(title = R.string.reviews),
     Search(title = R.string.Search),
     Login(title = R.string.login),

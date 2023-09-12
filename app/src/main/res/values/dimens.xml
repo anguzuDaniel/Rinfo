@@ -7,4 +7,5 @@
     <dimen name="spacer_medium">20dp</dimen>
     <dimen name="category_item_padding">5dp</dimen>
     <dimen name="setting_card_padding">10dp</dimen>
+    <dimen name="profile_image_size_large">100.dp</dimen>
 </resources>

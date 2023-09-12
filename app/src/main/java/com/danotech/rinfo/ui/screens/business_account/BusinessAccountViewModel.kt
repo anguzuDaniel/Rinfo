@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.screens.business_account
 
+import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -10,7 +11,6 @@ import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.data.LocalOfflineDatabase
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.local.Category
-import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
@@ -29,7 +29,6 @@ import javax.inject.Inject
 @Suppress("REPLACED_WITH_EXPRESSION")
 @HiltViewModel
 class BusinessAccountViewModel @Inject constructor(
-    private val accountService: AccountService,
     private val businessAccountService: BusinessAccountService,
     private val localOfflineDatabase: LocalOfflineDatabase,
     logService: LogService
@@ -53,6 +52,7 @@ class BusinessAccountViewModel @Inject constructor(
                         email = account.email,
                         phone = account.phone,
                         address = account.address,
+                        logo = account.logo,
                         description = account.description,
                         businessCategory = getCategory(account.businessCategory)
                     )
@@ -165,7 +165,7 @@ class BusinessAccountViewModel @Inject constructor(
 
             val uploadTask = logoRef.putBytes(logoByteArray)
 
-// Assuming you are inside a coroutine scope or function
+            // Assuming you are inside a coroutine scope or function
             val downloadUri: Uri? = try {
                 val downloadUri = uploadTask.continueWithTask { task ->
                     if (!task.isSuccessful) {
@@ -263,7 +263,7 @@ class BusinessAccountViewModel @Inject constructor(
 
                 imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
                     // Successfully retrieved image bytes
-                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                     // Use the bitmap as needed (e.g., display in ImageView)
                     _uiState.value = _uiState.value.copy(
                         imageLoading = false
@@ -282,6 +282,8 @@ class BusinessAccountViewModel @Inject constructor(
                     businessCategory = getCategory(business.businessCategory),
                     logo = business.logo
                 )
+
+                Log.d(TAG, "getBusinessAccount: $business")
             }
         }.invokeOnCompletion {
             _uiState.value = _uiState.value.copy(isLoading = false)
