@@ -6,17 +6,17 @@ import com.danotech.rinfo.model.service.trace
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthCredential
-import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : AccountService {
+class AccountServiceImpl
+@Inject
+constructor(private val auth: FirebaseAuth) : AccountService {
     override val currentUserId: String
         get() = auth.currentUser?.uid.orEmpty()
 
@@ -105,7 +105,6 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : A
                 }
         }
     }
-
 
     override suspend fun deleteAccount() {
         auth.currentUser!!.delete().await()

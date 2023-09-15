@@ -12,5 +12,5 @@ data class LoginUiState(
     var message: String = "",
     val isSignInSuccess: Boolean = false,
     val hasMessage: Boolean = false,
-    val isSignInLoading: Boolean = false
+    val isSignInLoading: Boolean = false,
 )

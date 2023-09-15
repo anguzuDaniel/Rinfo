@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.screens.account
 
+import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.RinfoViewModel
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.common.ext.isValidEmail
@@ -10,6 +11,7 @@ import com.danotech.rinfo.model.service.LogService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.danotech.rinfo.R.string as AppText
 
@@ -120,7 +122,8 @@ class CreateAccountViewModel @Inject constructor(
         if (!password.isValidPassword()) {
             SnackbarManager.showMessage(AppText.password_error)
             _uiState.value = _uiState.value.copy(
-                isCreateAccountError = true, errorMessage = "Please enter a valid email!"
+                isCreateAccountError = true,
+                errorMessage = "Your password should have at least six digits and include one special character, one lower case letter and one upper case letter."
             )
             return
         }
@@ -128,17 +131,33 @@ class CreateAccountViewModel @Inject constructor(
         if (!password.passwordMatches(uiState.value.confirmPassword)) {
             SnackbarManager.showMessage(AppText.password_match_error)
             _uiState.value = _uiState.value.copy(
-                isCreateAccountError = true, errorMessage = "Please enter a valid email!"
+                isCreateAccountError = true, errorMessage = "Please make sure the passwords match."
             )
             return
         }
 
-        launchCatching {
-            accountService.createAccountWithEmailAndPassword(email, password)
-            _uiState.value = _uiState.value.copy(isLoading = true)
-        }.invokeOnCompletion {
-            _uiState.value =
-                _uiState.value.copy(errorMessage = "You are ready to login !", isLoading = false)
+        viewModelScope.launch {
+            if (accountService.checkUserExistsByEmail(email)) {
+                _uiState.value =
+                    _uiState.value.copy(
+                        isCreateAccountError = true,
+                        errorMessage = "An account with this email already exits.",
+                        isLoading = false
+                    )
+            } else {
+                launchCatching {
+                    _uiState.value = _uiState.value.copy(isLoading = true)
+
+                    accountService.createAccountWithEmailAndPassword(email, password)
+                }.invokeOnCompletion {
+                    _uiState.value =
+                        _uiState.value.copy(
+                            isCreateAccountError = true,
+                            errorMessage = "You are ready to login!",
+                            isLoading = false
+                        )
+                }
+            }
         }
     }
 }

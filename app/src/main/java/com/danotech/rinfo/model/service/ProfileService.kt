@@ -10,5 +10,5 @@ interface ProfileService {
     suspend fun getProfile(profileId: String): Profile?
     suspend fun create(profile: Profile): String
     suspend fun update(profile: Profile)
-    suspend fun delete(profile: String)
+    suspend fun delete(profileId: String)
 }

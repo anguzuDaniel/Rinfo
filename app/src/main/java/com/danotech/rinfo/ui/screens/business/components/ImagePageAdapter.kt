@@ -1,8 +1,9 @@
-package com.danotech.rinfo.ui.screens.business
+package com.danotech.rinfo.ui.screens.business.components
 
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.danotech.rinfo.ui.screens.business.ImageItem
 
 class ImagePagerAdapter(private val imageList: List<ImageItem>) : RecyclerView.Adapter<ImagePagerViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImagePagerViewHolder {

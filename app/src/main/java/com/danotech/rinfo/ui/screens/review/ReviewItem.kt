@@ -37,7 +37,7 @@ import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.ui.components.ProfileImageBitmap
 import com.danotech.rinfo.ui.components.ProfileImageShimmer
 import com.danotech.rinfo.ui.components.RatingStars
-import com.danotech.rinfo.ui.screens.business.subsections.components.StarRating
+import com.danotech.rinfo.ui.screens.business.components.StarRating
 import com.google.firebase.auth.FirebaseAuth
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

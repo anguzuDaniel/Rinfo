@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.business
+package com.danotech.rinfo.ui.screens.business.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.business
+package com.danotech.rinfo.ui.screens.business.components
 
 import android.content.Intent
 import android.net.Uri

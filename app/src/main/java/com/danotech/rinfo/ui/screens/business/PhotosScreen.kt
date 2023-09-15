@@ -1,12 +1,9 @@
 package com.danotech.rinfo.ui.screens.business
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.view.Window
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -20,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.ui.components.PhotoGrid
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
+import com.danotech.rinfo.ui.screens.business.components.downloadImages
 
 @Composable
 fun PhotosScreen(

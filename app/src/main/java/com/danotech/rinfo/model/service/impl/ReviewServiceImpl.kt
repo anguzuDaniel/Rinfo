@@ -84,7 +84,10 @@ constructor(
                             DocumentChange.Type.REMOVED -> reviews.add(dc.document.toObject(Review::class.java))
                         }
 
-                        Log.d(TAG, "Downloaded from Document: ${dc.document.toObject(Review::class.java)}")
+                        Log.d(
+                            TAG,
+                            "Downloaded from Document: ${dc.document.toObject(Review::class.java)}"
+                        )
                     }
 
                     // Emit the updated list of reviews
@@ -128,6 +131,11 @@ constructor(
         trace(UPDATE_REVIEW_TRACE) {
             fireStore.collection(REVIEW_COLLECTION).document(reviewId).delete().await()
         }
+    }
+
+    override suspend fun deleteUserReviews(userId: String): Boolean {
+        fireStore.collection(REVIEW_COLLECTION).whereEqualTo(USER_ID_FIELD, userId)
+        return false
     }
 
     companion object {

@@ -38,7 +38,7 @@ import com.danotech.rinfo.ui.components.BusinessGalleryRowShimmer
 import com.danotech.rinfo.ui.components.PhotoItemBitmap
 import com.danotech.rinfo.ui.screens.business.BusinessViewModel
 import com.danotech.rinfo.ui.screens.business.ImageItem
-import com.danotech.rinfo.ui.screens.business.downloadImages
+import com.danotech.rinfo.ui.screens.business.components.downloadImages
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable

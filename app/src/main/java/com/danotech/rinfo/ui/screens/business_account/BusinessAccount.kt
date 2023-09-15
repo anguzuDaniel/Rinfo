@@ -286,6 +286,7 @@ fun BusinessAccountContent(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     val imageSize = 150.dp
+
                     Surface(
                         onClick = {
                             showDialog = true
@@ -389,7 +390,8 @@ fun BusinessAccountContent(
                 RinfoButton(
                     name = R.string.next_page,
                     modifier = Modifier.fillMaxWidth(),
-                    onClicked = onNextButtonClick
+                    onClicked = onNextButtonClick,
+                    enabled = true
                 )
             }
         }

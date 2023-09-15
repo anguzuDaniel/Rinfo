@@ -2,6 +2,7 @@ package com.danotech.rinfo.ui.screens.settings
 
 import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.model.service.AccountService
+import com.danotech.rinfo.model.service.BusinessAccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.model.service.ProfileService
 import com.danotech.rinfo.ui.screens.RInfoScreen
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val profileService: ProfileService,
+    private val businessAccountService: BusinessAccountService,
     private val accountService: AccountService,
     logService: LogService
 ) : RinfoViewModel(logService) {
@@ -60,7 +62,10 @@ class SettingsViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             try {
+                profileService.delete(FirebaseAuth.getInstance().currentUser?.email!!)
+                businessAccountService.delete(FirebaseAuth.getInstance().currentUser?.email!!)
                 accountService.deleteAccount()
+                accountService.signOut()
                 openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Settings.name)
             } catch (e: Exception) {
                 // Handle exceptions here

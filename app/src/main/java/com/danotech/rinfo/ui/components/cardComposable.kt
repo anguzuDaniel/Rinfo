@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Business
-import com.danotech.rinfo.ui.screens.business.IconAndText
+import com.danotech.rinfo.ui.screens.business.components.IconAndText
 import com.danotech.rinfo.ui.screens.home.HomesScreenViewModel
 
 /**

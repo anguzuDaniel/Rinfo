@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,20 +52,34 @@ import com.danotech.rinfo.ui.theme.AppTheme
 
 @Composable
 fun SignUpButton(
-    isLoading: Boolean,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    action: () -> Unit
+    isLoading: Boolean,
+    enabled: Boolean,
+    action: () -> Unit, // DON'T REMOVE: should always be the last
 ) {
-    ButtonWithLoader(isLoading = isLoading, modifier = modifier, action = onClick)
+    RinfoButton(
+        name = R.string.sign_in,
+        isLoading = isLoading,
+        enabled = enabled,
+        onClicked = action,
+        modifier = modifier
+    )
 }
 
 @Composable
 fun SignInButton(
     modifier: Modifier = Modifier,
-    action: () -> Unit,
+    isLoading: Boolean,
+    enabled: Boolean,
+    action: () -> Unit, // DON'T REMOVE: should always be the last
 ) {
-    RinfoButton(name = R.string.sign_in, onClicked = action, modifier = modifier)
+    RinfoButton(
+        name = R.string.sign_in,
+        isLoading = isLoading,
+        enabled = enabled,
+        onClicked = action,
+        modifier = modifier
+    )
 }
 
 @Composable
@@ -134,18 +149,30 @@ fun RinfoButton(
     modifier: Modifier = Modifier,
     @StringRes name: Int,
     onClicked: () -> Unit = {},
+    isLoading: Boolean = false,
+    enabled: Boolean = false
 ) {
     Button(
         onClick = onClicked,
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-        shape = MaterialTheme.shapes.small
+        shape = MaterialTheme.shapes.small,
+        enabled = enabled
     ) {
-        Text(
-            text = stringResource(id = name),
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.White
-        )
+        if (!isLoading) {
+            Text(
+                text = stringResource(id = name),
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White
+            )
+        } else {
+            CircularProgressIndicator(
+                modifier = Modifier.size(15.dp),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+
     }
 }
 

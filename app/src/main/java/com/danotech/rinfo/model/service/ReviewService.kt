@@ -29,5 +29,6 @@ interface ReviewService {
     suspend fun create(review: Review): String
     suspend fun update(review: Review)
     suspend fun delete(reviewId: String)
+    suspend fun deleteUserReviews(userId: String): Boolean
     suspend fun getReviewsFlow(): Flow<List<Review>>
 }

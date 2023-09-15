@@ -1,4 +1,4 @@
-package com.danotech.rinfo.ui.screens.business
+package com.danotech.rinfo.ui.screens.business.components
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -57,6 +57,9 @@ import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
+import com.danotech.rinfo.ui.screens.business.BusinessTabs
+import com.danotech.rinfo.ui.screens.business.BusinessViewModel
+import com.danotech.rinfo.ui.screens.business.ImageItem
 import com.danotech.rinfo.ui.screens.review.ReviewScreenViewModel
 
 @RequiresApi(Build.VERSION_CODES.P)
@@ -153,6 +156,19 @@ fun BusinessContent(
                 BusinessImageShimmer(
                     isLoading = imageList.isEmpty() && downloadedImages.isEmpty()
                 ) {
+
+                    /**
+                     * if image is loading the the default image is added
+                     *
+                     */
+                    /**
+                     * if image is loading the the default image is added
+                     *
+                     */
+                    /**
+                     * if image is loading the the default image is added
+                     *
+                     */
 
                     /**
                      * if image is loading the the default image is added

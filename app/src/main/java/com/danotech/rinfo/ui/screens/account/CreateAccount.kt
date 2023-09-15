@@ -18,9 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
+import com.danotech.rinfo.common.ext.isValidEmail
+import com.danotech.rinfo.common.ext.isValidPassword
 import com.danotech.rinfo.ui.components.ClickableTextRow
 import com.danotech.rinfo.ui.components.EmailField
 import com.danotech.rinfo.ui.components.GoogleButton
@@ -82,7 +85,8 @@ fun CreateAccount(
                     Text(
                         text = uiState.errorMessage,
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.44f),
+                        textAlign = TextAlign.Center
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
@@ -114,9 +118,9 @@ fun CreateAccount(
                 SignUpButton(
                     isLoading = uiState.isLoading,
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = viewModel::onSignUpClick
+                    enabled = uiState.email.isValidEmail() && uiState.password.isNotEmpty() && uiState.confirmPassword.isNotEmpty(),
                 ) {
-
+                    viewModel.onSignUpClick()
                 }
             }
 

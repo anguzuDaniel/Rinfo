@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.danotech.rinfo.R
+import com.danotech.rinfo.common.ext.isValidEmail
 import com.danotech.rinfo.presentation.sign_in.GoogleAuthUiClient
 import com.danotech.rinfo.presentation.sign_in.SignInState
 import com.danotech.rinfo.presentation.sign_in.SignInViewModel
@@ -221,7 +222,9 @@ fun LoginForm(
 
         SignInButton(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            isLoading = uiState.isSignInLoading,
+            enabled = uiState.email.isValidEmail() && uiState.password.isNotEmpty()
         ) {
             viewModel.signInClick(openAndPopUp)
             userViewModel.login(uiState.email, uiState.password)
@@ -234,7 +237,7 @@ fun LoginForm(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Box() {
+            Box {
 
             }
 //            Row(

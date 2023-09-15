@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.danotech.rinfo.ui.screens.business
+package com.danotech.rinfo.ui.screens.business.components
 
 import android.graphics.Bitmap
 import android.view.Window
@@ -27,7 +27,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.ui.ThemeViewModel
-import com.google.accompanist.systemuicontroller.SystemUiController
+import com.danotech.rinfo.ui.screens.business.ImageItem
 import kotlinx.coroutines.launch
 import kotlin.math.min
 

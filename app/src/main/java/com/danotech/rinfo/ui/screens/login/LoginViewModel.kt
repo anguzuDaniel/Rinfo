@@ -78,18 +78,31 @@ class LoginViewModel @Inject constructor(
         }
 
         launchCatching {
-            accountService.authenticate(email, password)
             _uiState.value = _uiState.value.copy(
-                isSignInSuccess = true,
-                hasMessage = true,
-                message = "Login successfully! kindly wait as we redirect you."
+                isSignInLoading = true
             )
-            openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Login.name)
+
+            if (accountService.checkUserExistsByEmail(email)) {
+                accountService.authenticate(email, password)
+                openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Login.name)
+            }
         }.invokeOnCompletion {
-            _uiState.value = _uiState.value.copy(
-                hasMessage = true,
-                message = "Login successfully! kindly wait as we redirect you."
-            )
+            launchCatching {
+                if (!accountService.checkUserExistsByEmail(email)) {
+                    _uiState.value = _uiState.value.copy(
+                        hasMessage = true,
+                        isSignInLoading = false,
+                        message = "User with email doesn't exist."
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isSignInSuccess = true,
+                        hasMessage = true,
+                        isSignInLoading = false,
+                        message = "Login successfully! kindly wait as we redirect you."
+                    )
+                }
+            }
         }
     }
 
@@ -128,7 +141,11 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun signUpWithOneTap(email: String, password: String?, openAndPopUp: (String, String) -> Unit) {
+    fun signUpWithOneTap(
+        email: String,
+        password: String?,
+        openAndPopUp: (String, String) -> Unit
+    ) {
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
                 accountService.linkAccount(email, password!!)
@@ -147,7 +164,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun signInWithCredentials(credential: AuthCredential, openAndPopUp: (String, String) -> Unit) {
+    fun signInWithCredentials(
+        credential: AuthCredential,
+        openAndPopUp: (String, String) -> Unit
+    ) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSignInLoading = true)
 

@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.danotech.rinfo.ui.screens.business.subsections.components.RatingRow
-import com.danotech.rinfo.ui.screens.business.subsections.components.StarRating
+import com.danotech.rinfo.ui.screens.business.components.RatingRow
+import com.danotech.rinfo.ui.screens.business.components.StarRating
 
 @Composable
 fun ReviewStatisticsScreen(

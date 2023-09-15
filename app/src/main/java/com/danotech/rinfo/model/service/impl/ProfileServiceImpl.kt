@@ -46,8 +46,8 @@ constructor(
             fireStore.collection(PROFILE_COLLECTION).document(profileId).set(profile).await()
         }
 
-    override suspend fun delete(profile: String) {
-        fireStore.collection(PROFILE_COLLECTION).document(profile).delete().await()
+    override suspend fun delete(profileId: String) {
+        fireStore.collection(PROFILE_COLLECTION).document(profileId).delete().await()
     }
 
     companion object {
