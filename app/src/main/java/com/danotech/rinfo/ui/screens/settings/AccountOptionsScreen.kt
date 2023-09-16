@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -143,45 +142,41 @@ fun AccountOptionsContent(
     ) {
         SettingsClickableComp(
             leadingIcon = Icons.Filled.AccountBox,
-            name = R.string.profile,
-            icon = Icons.Rounded.FavoriteBorder,
+            description = "Edit your profile",
             iconDesc = R.string.account,
+            name = R.string.profile,
             settingType = settingType,
             onClick = {
                 onNavClicked(RInfoScreen.EditAccount.name)
-            },
-            description = "Edit your profile"
+            }
         )
 
         SettingsClickableComp(
             leadingIcon = Icons.Filled.AccountBox,
-            name = R.string.business_account,
-            icon = Icons.Rounded.FavoriteBorder,
+            description = "Edit your Business Account",
             iconDesc = R.string.about,
+            name = R.string.business_account,
             settingType = settingType,
             onClick = {
                 onNavClicked(RInfoScreen.BusinessAccount.name)
-            },
-            description = "Edit your Business Account"
+            }
         )
 
         SettingsClickableComp(
             leadingIcon = Icons.Filled.Password,
-            name = R.string.change_password,
-            icon = Icons.Rounded.FavoriteBorder,
+            description = "Change your password",
             iconDesc = R.string.change_password,
+            name = R.string.change_password,
             settingType = settingType,
             onClick = {
                 onNavClicked(RInfoScreen.ChangePassword.name)
-            },
-            description = "Change your password"
+            }
         )
 
         SettingsClickableComp(
             leadingIcon = Icons.Filled.DeleteForever,
-            name = R.string.delete_account,
-            icon = Icons.Rounded.FavoriteBorder,
             iconDesc = R.string.delete_account,
+            name = R.string.delete_account,
             settingType = settingType,
             onClick = {
                 isShowingDialog = true

@@ -32,12 +32,12 @@ fun AppVersion(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     versionText,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
                 )
                 Text(
                     copyrights,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
                 )
             }

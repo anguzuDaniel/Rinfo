@@ -49,4 +49,29 @@ val Typography = Typography(
         fontWeight = FontWeight.Light,
         fontSize = 14.sp
     ),
+    headlineSmall = TextStyle(
+        fontFamily = OPEN_SANS,
+        fontWeight = FontWeight.Light,
+        fontSize = 14.sp
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = OPEN_SANS,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp
+    ),
+    headlineLarge = TextStyle(
+        fontFamily = Montserrat,
+        fontWeight = FontWeight.Normal,
+        fontSize = 30.sp
+    ),
+    labelMedium = TextStyle(
+        fontFamily = Montserrat,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = OPEN_SANS,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    )
 )

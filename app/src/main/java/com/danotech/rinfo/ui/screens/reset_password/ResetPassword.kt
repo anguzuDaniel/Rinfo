@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.danotech.rinfo.common.ext.isValidEmail
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -194,7 +195,7 @@ fun RequestRestPassword(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            enabled = uiState.email.isNotEmpty(),
+            enabled = uiState.email.isValidEmail(),
             shape = MaterialTheme.shapes.small
         ) {
             Row(

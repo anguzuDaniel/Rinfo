@@ -49,7 +49,7 @@ fun ProfileImage(
     ) {
         // Load the image using AsyncImage and the custom ImageLoader
         AsyncImage(
-            model = "https://images.app.goo.gl/Rvxi3DX6NKuJnyBV8",
+            model = image,
             error = painterResource(R.drawable.ic_broken_image),
             placeholder = painterResource(R.drawable.loading_img),
             contentDescription = stringResource(R.string.description),

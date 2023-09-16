@@ -1,32 +1,35 @@
 package com.danotech.rinfo.ui.screens.settings.whats_new
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.components.centeredTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WhatsNewPage(
     onBackClick: () -> Unit = {}
 ) {
+    BackHandler {
+        onBackClick()
+    }
+
     var searchText by remember { mutableStateOf("") }
     val newsItems = generateNewsItems()
 
@@ -40,27 +43,10 @@ fun WhatsNewPage(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = if (isSystemInDarkTheme()) {
-                        MaterialTheme.colorScheme.surfaceVariant.copy(
-                            alpha = if (hasScrolled) 1f else 0f
-                        )
-                    } else {
-                        MaterialTheme.colorScheme.surface
-                    },
-                ),
-                modifier = Modifier.shadow(appBarElevation),
-                title = { Text(text = "Whats New") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.Rounded.ArrowBack,
-                            contentDescription = "Go back"
-                        )
-                    }
-                },
-                actions = { },
+            centeredTopAppBar(
+                onBackClick = onBackClick,
+                text = R.string.whats_new,
+                hasBack = false
             )
         },
     ) { innerPadding ->
@@ -108,33 +94,33 @@ fun WhatsNewPage(
 
 @Composable
 fun NewsItemCard(newsItem: NewsItem) {
-        Card(
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = newsItem.title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                Text(
-                    text = newsItem.date,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                Text(
-                    text = newsItem.content,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
+            Text(
+                text = newsItem.title,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = newsItem.date,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = newsItem.content,
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
+    }
 }
 
 data class NewsItem(

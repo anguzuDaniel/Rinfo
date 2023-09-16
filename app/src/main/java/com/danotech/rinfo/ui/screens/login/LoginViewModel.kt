@@ -77,14 +77,27 @@ class LoginViewModel @Inject constructor(
             return
         }
 
-        launchCatching {
+        viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isSignInLoading = true
             )
 
-            if (accountService.checkUserExistsByEmail(email)) {
-                accountService.authenticate(email, password)
-                openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Login.name)
+            try {
+                if (accountService.checkUserExistsByEmail(email)) {
+                    accountService.authenticate(email, password)
+                    openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Login.name)
+                }
+            } catch (e: Exception) {
+                // Handle exceptions here
+                _uiState.value = _uiState.value.copy(
+                    isSignInSuccess = false,
+                    hasMessage = true,
+                    message = "Sign-in failed: ${e.message}"
+                )
+            } finally {
+                _uiState.value = _uiState.value.copy(
+                    isSignInLoading = false
+                )
             }
         }.invokeOnCompletion {
             launchCatching {
@@ -94,14 +107,11 @@ class LoginViewModel @Inject constructor(
                         isSignInLoading = false,
                         message = "User with email doesn't exist."
                     )
-                } else {
-                    _uiState.value = _uiState.value.copy(
-                        isSignInSuccess = true,
-                        hasMessage = true,
-                        isSignInLoading = false,
-                        message = "Login successfully! kindly wait as we redirect you."
-                    )
                 }
+
+                _uiState.value = _uiState.value.copy(
+                    isSignInLoading = false,
+                )
             }
         }
     }
@@ -209,6 +219,5 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
-
     }
 }

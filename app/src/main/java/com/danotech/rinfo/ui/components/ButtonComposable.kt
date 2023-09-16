@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -169,10 +168,9 @@ fun RinfoButton(
             CircularProgressIndicator(
                 modifier = Modifier.size(15.dp),
                 strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.onBackground
+                color = Color.White
             )
         }
-
     }
 }
 
@@ -285,13 +283,13 @@ fun CategoryIconButton(
             }
         }
 
-        Spacer(modifier = Modifier.padding(5.dp))
-
-        Text(
-            text = stringResource(id = name),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
+//        Spacer(modifier = Modifier.padding(5.dp))
+//
+//        Text(
+//            text = stringResource(id = name),
+//            style = MaterialTheme.typography.labelSmall,
+//            color = MaterialTheme.colorScheme.onSurface,
+//        )
     }
 }
 

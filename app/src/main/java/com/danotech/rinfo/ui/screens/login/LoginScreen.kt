@@ -113,7 +113,7 @@ fun LoginScreen(
                 Toast.LENGTH_LONG
             ).show()
 
-            openAndPopUp(RInfoScreen.Login.name, RInfoScreen.Home.name)
+//            openAndPopUp(RInfoScreen.Login.name, RInfoScreen.Home.name)
             viewModel.resetState()
         }
     }
@@ -178,6 +178,10 @@ fun LoginForm(
 
     val spaceLarge = 16.dp
 
+    // checks if length of password and if password is empty
+    // used to enable the submit button
+    val passwordCheck = uiState.password.isNotEmpty() && uiState.password.length >= 8
+
     LaunchedEffect(key1 = signInState.signInError) {
         signInState.signInError?.let { error ->
             Toast.makeText(
@@ -220,14 +224,15 @@ fun LoginForm(
             onValueChanged = viewModel::onPasswordChange,
         )
 
+
         SignInButton(
             modifier = Modifier
                 .fillMaxWidth(),
             isLoading = uiState.isSignInLoading,
-            enabled = uiState.email.isValidEmail() && uiState.password.isNotEmpty()
+            enabled = uiState.email.isValidEmail() && passwordCheck
         ) {
             viewModel.signInClick(openAndPopUp)
-            userViewModel.login(uiState.email, uiState.password)
+//            userViewModel.login(uiState.email, uiState.password, openAndPopUp)
         }
 
         Spacer(modifier = Modifier.height(spaceLarge))
@@ -295,7 +300,9 @@ fun LoginForm(
         )
 
         GoogleButton(
-            onClick = onSignInClick,
+            onClick = {
+                state.open()
+            },
             text = "SignIn with google",
             modifier = modifier.fillMaxWidth()
         )

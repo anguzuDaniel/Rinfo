@@ -3,9 +3,8 @@ package com.danotech.rinfo.ui.screens.business_account
 import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
-import android.util.Base64
 import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.data.LocalOfflineDatabase
@@ -16,13 +15,15 @@ import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
@@ -47,6 +48,7 @@ class BusinessAccountViewModel @Inject constructor(
             business.map { accounts ->
                 if (accounts.isNotEmpty()) {
                     val account = accounts[0]
+
                     _uiState.value = BusinessAccountUiState(
                         name = account.name,
                         email = account.email,
@@ -100,8 +102,7 @@ class BusinessAccountViewModel @Inject constructor(
     }
 
     fun onBusinessAccountCreated(
-        onSuccess: () -> Unit = {},
-        onFailure: (String) -> Unit = {}
+        onSuccess: () -> Unit = {}, onFailure: (String) -> Unit = {}
     ) {
         if (_uiState.value.name.isEmpty()) {
             SnackbarManager.showMessage(R.string.name_is_required)
@@ -139,11 +140,9 @@ class BusinessAccountViewModel @Inject constructor(
         }
 
         if (_uiState.value.businessCategory.name.isEmpty()) {
-            _uiState.value =
-                _uiState.value.copy(
-                    hasMessage = true,
-                    message = "Please Provide a business Category"
-                )
+            _uiState.value = _uiState.value.copy(
+                hasMessage = true, message = "Please Provide a business Category"
+            )
             return
         }
 
@@ -153,91 +152,52 @@ class BusinessAccountViewModel @Inject constructor(
 
             val updateUiState = uiState.value
 
-            // Upload the image to Firebase Storage
-            val storageRef = FirebaseStorage.getInstance().reference
-            val logoRef = storageRef.child("logos/${updateUiState.email}.jpg")
+            val business = Business(
+                userId = FirebaseAuth.getInstance().currentUser!!.email.toString(),
+                name = updateUiState.name,
+                email = updateUiState.email,
+                phone = updateUiState.phone,
+                whatsapp = updateUiState.whatsapp,
+                address = updateUiState.address,
+                description = updateUiState.description,
+                businessCategory = updateUiState.businessCategory.name,
+                logo = updateUiState.logo, // Use the download URL here
+                reviews = 0,
+            )
 
-            // Convert ByteArray to Base64 string before storing
-            val base64Logo = Base64.encodeToString(updateUiState.logo.toByteArray(), Base64.DEFAULT)
+            Log.d("Business: ", business.toString())
 
-            // Retrieve and decode from Base64 when reading from Firestore
-            val logoByteArray = Base64.decode(base64Logo, Base64.DEFAULT)
+            // Update information in the database
+            businessAccountService.update(business)
 
-            val uploadTask = logoRef.putBytes(logoByteArray)
-
-            // Assuming you are inside a coroutine scope or function
-            val downloadUri: Uri? = try {
-                val downloadUri = uploadTask.continueWithTask { task ->
-                    if (!task.isSuccessful) {
-                        throw task.exception ?: Exception("Image upload failed")
-                    }
-                    // Continue with the task to get the download URL
-                    logoRef.downloadUrl
-                }.await() // Call await() within a coroutine
-
-                downloadUri // Assign to downloadUri
-            } catch (exception: Exception) {
-                // Handle errors here, log or display an error message
-                Log.e("Business Account Update", "Error: ${exception.message}", exception)
-                // Show an error message or update UI accordingly
-                // Example: _uiState.value = _uiState.value.copy(hasError = true, errorMessage = "An error occurred")
-                null // Assign null to downloadUri in case of an error
-            }
-
-            if (downloadUri != null) {
-                val downloadUrl = downloadUri.toString()
-
-                // Now you can proceed with updating the database and UI
-                val business = Business(
-                    userId = FirebaseAuth.getInstance().currentUser!!.email.toString(),
-                    name = updateUiState.name,
-                    email = updateUiState.email,
-                    phone = updateUiState.phone,
-                    whatsapp = updateUiState.whatsapp,
-                    address = updateUiState.address,
-                    description = updateUiState.description,
-                    businessCategory = updateUiState.businessCategory.name,
-                    logo = downloadUrl, // Use the download URL here
-                    reviews = 0,
-                )
-
-                Log.d("Business: ", business.toString())
-
-                // Update information in the database
-                businessAccountService.update(business)
-
-                // Show a success message or handle errors as needed
-                _uiState.value =
-                    _uiState.value.copy(
-                        hasMessage = true,
-                        message = "You business account has been updated!",
-                        dialogOpened = true
-                    )
-            }
+            // Show a success message or handle errors as needed
+            _uiState.value = _uiState.value.copy(
+                hasMessage = true,
+                message = "You business account has been updated!",
+                dialogOpened = true
+            )
         }.invokeOnCompletion { throwable ->
             if (throwable != null) {
                 // Handle the error here, log it, and provide feedback to the user
 //                SnackbarManager.showMessage(message = "An error occurred: ${throwable.message}")
                 onFailure("An error occurred: ${throwable.message}")                // runs when operation is successful
-                _uiState.value =
-                    _uiState.value.copy(
-                        hasMessage = true,
-                        message = "An error occurred: ${throwable.message}",
-                        isLoading = false,
-                        dialogOpened = true
-                    )
+                _uiState.value = _uiState.value.copy(
+                    hasMessage = true,
+                    message = "An error occurred: ${throwable.message}",
+                    isLoading = false,
+                    dialogOpened = true
+                )
             } else {
                 // Operation was successful
                 onSuccess()
 
                 // runs when operation is successful
-                _uiState.value =
-                    _uiState.value.copy(
-                        hasMessage = true,
-                        message = "Congratulation!! you have successfully created a business account.",
-                        isLoading = false,
-                        dialogOpened = true
-                    )
+                _uiState.value = _uiState.value.copy(
+                    hasMessage = true,
+                    message = "Congratulation!! you have successfully created a business account.",
+                    isLoading = false,
+                    dialogOpened = true
+                )
             }
         }
     }
@@ -245,33 +205,13 @@ class BusinessAccountViewModel @Inject constructor(
     fun getBusinessAccount(userId: String) {
         launchCatching {
             _uiState.value = _uiState.value.copy(
-                isLoading = true,
-                imageLoading = true
+                isLoading = true, imageLoading = true
             )
 
             val business =
                 businessAccountService.getBusinessById(FirebaseAuth.getInstance().currentUser!!.email.toString())
 
             if (business != null) {
-                // Inside your function
-                val storage = FirebaseStorage.getInstance()
-                val storageRef = storage.reference
-
-                val imageName = "${userId}.jpg"
-                // Replace with the actual image name
-                val imageRef = storageRef.child("logos/${imageName}")
-
-                imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
-                    // Successfully retrieved image bytes
-                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    // Use the bitmap as needed (e.g., display in ImageView)
-                    _uiState.value = _uiState.value.copy(
-                        imageLoading = false
-                    )
-                }.addOnFailureListener {
-                    // Handle failure
-                }
-
                 _uiState.value = _uiState.value.copy(
                     name = business.name,
                     email = business.email,
@@ -310,34 +250,65 @@ class BusinessAccountViewModel @Inject constructor(
 
     /**
      * Uploads image to firebase storage
-     * @param image
-     * uses the user id as the name of the image
+     * @param image takes in a image Bitmap
+     * @param userId the users id, this is used to name the image
      */
     fun upLoadImageToFireBase(image: Bitmap, userId: String) {
         // Inside your Composable function
         val storageRef = Firebase.storage.reference
 
-        launchCatching {
-            // sets loading to true
-            _uiState.value = _uiState.value.copy(isLoading = true)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                // sets loading to true
+                _uiState.value = _uiState.value.copy(isLoading = true)
 
-            val imageName = "${userId}.jpg"
-            val imageRef = storageRef.child("logos/${imageName}")
+                val imageName = "${userId}.jpg"
+                val imageRef = storageRef.child("logos/${imageName}")
 
-            val stream = ByteArrayOutputStream()
-            image.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                val stream = ByteArrayOutputStream()
+                image.compress(Bitmap.CompressFormat.JPEG, 100, stream)
 
-            val data = stream.toByteArray()
-            val uploadTask = imageRef.putBytes(data)
+                val data = stream.toByteArray()
 
-            uploadTask.addOnSuccessListener {
-                SnackbarManager.showMessage(R.string.image_uploaded_successfully)
-            }.addOnFailureListener {
-                // Handle upload failure
-                SnackbarManager.showMessage(R.string.something_went_wrong)
+//                // Convert ByteArray to Base64 string before storing
+//                val base64Logo = Base64.encodeToString(data, Base64.DEFAULT)
+//
+//                // Retrieve and decode from Base64 when reading from Firestore
+//                val logoByteArray = Base64.decode(base64Logo, Base64.DEFAULT)
+
+                val uploadTask = imageRef.putBytes(data)
+
+                // Assuming you are inside a coroutine scope or function
+                val downloadUri = try {
+                    val downloadUri = uploadTask.continueWithTask { task ->
+                        if (!task.isSuccessful) {
+                            throw task.exception ?: Exception("Image upload failed")
+                        }
+                        // Continue with the task to get the download URL
+                        imageRef.downloadUrl
+
+                    }.await() // Call await() within a coroutine
+
+                    downloadUri // Assign to downloadUri
+                } catch (exception: Exception) {
+                    // Handle errors here, log or display an error message
+                    Log.e("Business Account Update", "Error: ${exception.message}", exception)
+                    // Show an error message or update UI accordingly
+                    _uiState.value = _uiState.value.copy(
+                        hasMessage = true, message = "An error occurred"
+                    )
+                    null // Assign null to downloadUri in case of an error
+                }
+
+                uploadTask.addOnSuccessListener {
+                    SnackbarManager.showMessage(R.string.image_uploaded_successfully)
+                }.addOnFailureListener {
+                    // Handle upload failure
+                    SnackbarManager.showMessage(R.string.something_went_wrong)
+                }
+
+                _uiState.value = _uiState.value.copy(logo = downloadUri.toString())
             }
-
-            _uiState.value = _uiState.value.copy(logo = data.toString())
         }.invokeOnCompletion {
             _uiState.value = _uiState.value.copy(isLoading = false)
         }

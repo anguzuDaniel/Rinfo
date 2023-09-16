@@ -49,13 +49,14 @@ constructor(
     // You can use the launchCatching function for error handling.
 
     // Example login function:
-    fun login(username: String, password: String) {
+    fun login(username: String, password: String, openAndPopUp: (String, String) -> Unit) {
         launchCatching {
             // Implement your login logic here.
             // If login is successful, update the user's login state.
             val loggedIn = performLogin(username, password) // Implement this function
             if (loggedIn) {
                 _isUserLoggedIn.value = true
+                openAndPopUp(RInfoScreen.Home.name, RInfoScreen.Login.name)
             }
         }
     }
@@ -64,13 +65,33 @@ constructor(
         var loginSuccess = false
 
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isSignInLoading = true)
+
             try {
                 val authResult = accountService.authenticate(email, password)
                 // The user is successfully logged in, you can handle it accordingly.
                 loginSuccess = true
             } catch (e: Exception) {
                 // Handle login failure, e.g., display an error message.
-                _uiState.value = _uiState.value.copy(hasMessage = true, message = "Login failed: ${e.message}")
+                _uiState.value =
+                    _uiState.value.copy(hasMessage = true, message = "Login failed: ${e.message}")
+            }
+        }.invokeOnCompletion {
+            viewModelScope.launch {
+                if (!accountService.checkUserExistsByEmail(email)) {
+                    _uiState.value = _uiState.value.copy(
+                        hasMessage = true,
+                        isSignInLoading = false,
+                        message = "User with email doesn't exist."
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isSignInSuccess = true,
+                        hasMessage = true,
+                        isSignInLoading = false,
+                        message = "Login successfully! kindly wait as we redirect you."
+                    )
+                }
             }
         }
 

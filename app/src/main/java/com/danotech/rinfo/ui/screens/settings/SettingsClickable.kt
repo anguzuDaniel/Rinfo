@@ -4,27 +4,34 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.ThemeViewModel
 import com.danotech.rinfo.ui.components.SettingSwitch
 
 /**
@@ -32,7 +39,6 @@ import com.danotech.rinfo.ui.components.SettingSwitch
  * used to redirect to particular page
  * or used for particular page
  * @param leadingIcon leading icon shown before the text/name
- * @param icon
  * @param iconDesc the icon description
  * @param name text shown for the setting
  * @param settingType
@@ -43,7 +49,6 @@ import com.danotech.rinfo.ui.components.SettingSwitch
 fun SettingsClickableComp(
     modifier: Modifier = Modifier,
     leadingIcon: ImageVector,
-    icon: ImageVector,
     description: String = "",
     @StringRes iconDesc: Int,
     @StringRes name: Int,
@@ -51,7 +56,8 @@ fun SettingsClickableComp(
     onClick: () -> Unit = {},
     opensDialogWhenClicked: Boolean = false,
     isSwitchedOn: Boolean = false,
-    onSwitchClick: (Boolean) -> Unit = {}
+    themeViewModel: ThemeViewModel = hiltViewModel(),
+    onSwitchClick: (Boolean) -> Unit = {}, // DO NOT REMOVE: should always be the last
 ) {
     Surface(
         color = Color.Transparent,
@@ -60,15 +66,42 @@ fun SettingsClickableComp(
         onClick = onClick,
     ) {
         Row(
+            modifier = Modifier.padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(
-                imageVector = leadingIcon,
-                contentDescription = null,
-                modifier = Modifier.weight(1f),
-                tint = if (!opensDialogWhenClicked) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
-            )
+            Column(
+                modifier = Modifier
+                    .weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(shape = MaterialTheme.shapes.medium)
+                ) {
+                    IconButton(
+                        onClick = {},
+                        modifier = modifier
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
+                        enabled = false
+                    ) {
+                        Icon(
+                            imageVector = leadingIcon,
+                            contentDescription = stringResource(id = iconDesc),
+                            tint = if (!opensDialogWhenClicked) MaterialTheme.colorScheme.onSurface.copy(
+                                0.50f
+                            ) else MaterialTheme.colorScheme.error.copy(
+                                0.50f
+                            )
+                        )
+                    }
+                }
+            }
 
             Column(
                 modifier = Modifier.weight(
@@ -80,7 +113,7 @@ fun SettingsClickableComp(
             ) {
                 Text(
                     text = stringResource(id = name),
-                    style = MaterialTheme.typography.bodyMedium.copy(
+                    style = MaterialTheme.typography.headlineMedium.copy(
                         color = if (!opensDialogWhenClicked) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
                     ),
                     textAlign = TextAlign.Start,
@@ -90,13 +123,13 @@ fun SettingsClickableComp(
                 if (description != "") {
                     Text(
                         text = description,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.80f)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1.0f))
+//            Spacer(modifier = Modifier.weight(1.0f))
             if (settingType == SettingType.SWITCH) {
                 SettingSwitch(
                     checked = isSwitchedOn,
@@ -113,14 +146,15 @@ fun SettingsClickableComp(
             } else {
                 if (!opensDialogWhenClicked) {
                     Icon(
-                        Icons.Rounded.KeyboardArrowRight,
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                        tint = if (themeViewModel.themeState.value.isDarkMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(
+                            0.50f
+                        ),
                         contentDescription = stringResource(id = R.string.arrow_forward),
                         modifier = Modifier.weight(1f)
                     )
                 }
             }
-
         }
     }
 }

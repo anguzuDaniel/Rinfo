@@ -8,8 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,7 +42,7 @@ fun RinfoTopAppBar(
             {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center,
                     modifier = modifier
@@ -53,7 +52,7 @@ fun RinfoTopAppBar(
             {
                 Text(
                     text = stringResource(id = R.string.app_name),
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.headlineLarge
                 )
             }
         },
@@ -66,7 +65,7 @@ fun RinfoTopAppBar(
                      */
                     if (showBackgroundColor) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = stringResource(id = R.string.back_button)
                         )
                     } else {
@@ -77,7 +76,7 @@ fun RinfoTopAppBar(
                                 .background(MaterialTheme.colorScheme.surface, shape = CircleShape),
                         ) {
                             Icon(
-                                imageVector = Icons.Rounded.ArrowBack,
+                                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                                 contentDescription = stringResource(id = R.string.back_button)
                             )
                         }

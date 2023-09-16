@@ -1,17 +1,10 @@
 package com.danotech.rinfo.ui.components
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
@@ -21,15 +14,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,6 +24,7 @@ import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.screens.business.components.IconAndText
 import com.danotech.rinfo.ui.screens.home.HomesScreenViewModel
+import com.danotech.rinfo.ui.screens.review.BusinessCardImage
 
 /**
  * Review card
@@ -53,25 +40,6 @@ fun BusinessCard(
     onReviewCardClicked: (Business) -> Unit = {},
     viewModel: HomesScreenViewModel = hiltViewModel()
 ) {
-
-    val context = LocalContext.current
-
-    val defaultProfilePicture: Bitmap = BitmapFactory.decodeResource(
-        context.resources,
-        R.drawable.no_image
-    )
-
-    val bitmap = remember {
-        mutableStateOf(defaultProfilePicture)
-    }
-
-    LaunchedEffect(viewModel) {
-        viewModel.getImage(
-            businessId = business.id,
-            bitmap = bitmap
-        )
-    }
-
     val uiState = viewModel.uiState.collectAsState().value
 
     Card(
@@ -83,6 +51,7 @@ fun BusinessCard(
             .fillMaxWidth(),
     ) {
         val imageSize = 100.dp
+
         Row(
             modifier = Modifier.padding(10.dp),
             horizontalArrangement = Arrangement
@@ -92,39 +61,29 @@ fun BusinessCard(
                 size = imageSize,
                 isLoading = uiState.imageLoading
             ) {
-                Column(
-                    modifier = Modifier
-                        .size(imageSize),
-                ) {
-                    Image(
-                        bitmap = bitmap.value.asImageBitmap(),
-                        contentDescription = "${business.name} logo",
-                        modifier = Modifier
-                            .clip(MaterialTheme.shapes.small)
-                            .aspectRatio(1f),
-                        contentScale = ContentScale.Crop,
-                    )
-                }
+                BusinessCardImage(
+                    imageSize = imageSize,
+                    url = business.logo,
+                    description = "${business.name} logo"
+                )
             }
 
 
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 Text(
                     text = business.name,
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )
-
-                Spacer(modifier = Modifier.height(4.dp))
 
                 IconAndText(
                     icon = Icons.Filled.LocationOn,
                     iconDes = stringResource(id = R.string.location),
                     text = business.address
                 )
-
-                Spacer(modifier = Modifier.height(4.dp))
 
                 IconAndText(
                     icon = Icons.Filled.Favorite,

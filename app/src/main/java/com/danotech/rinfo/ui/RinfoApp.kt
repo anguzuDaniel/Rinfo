@@ -60,7 +60,6 @@ import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.common.composable.PermissionDialog
 import com.danotech.rinfo.common.composable.RationaleDialog
 import com.danotech.rinfo.model.Business
-import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.UserViewModel
 import com.danotech.rinfo.ui.screens.account.ChangePasswordScreen
@@ -69,6 +68,8 @@ import com.danotech.rinfo.ui.screens.business.PhotosScreen
 import com.danotech.rinfo.ui.screens.business.BusinessScreen
 import com.danotech.rinfo.ui.screens.business_account.BusinessAccount
 import com.danotech.rinfo.ui.screens.category.CategoryScreen
+import com.danotech.rinfo.ui.screens.chat.ChatScreen
+import com.danotech.rinfo.ui.screens.chat.ConversationScreen
 import com.danotech.rinfo.ui.screens.favorites.FavoriteScreen
 import com.danotech.rinfo.ui.screens.home.HomeScreen
 import com.danotech.rinfo.ui.screens.login.LoginScreen
@@ -250,42 +251,6 @@ fun NavGraphBuilder.makeItSoGraph(
     }
     composable(
         route = RInfoScreen.Home.name,
-        enterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { -300 },
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
-            ) + fadeIn(animationSpec = tween(durationMillis = 300))
-        },
-        exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { 300 },
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutLinearInEasing
-                )
-            ) + fadeOut(animationSpec = tween(durationMillis = 300))
-        },
-        popEnterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { -300 },
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutLinearInEasing
-                )
-            ) + fadeIn(animationSpec = tween(durationMillis = 300))
-        },
-        popExitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { 300 },
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
-            ) + fadeOut(animationSpec = tween(durationMillis = 300))
-        }
     ) {
         HomeScreen(
             onTabSelected = { screen ->
@@ -315,7 +280,15 @@ fun NavGraphBuilder.makeItSoGraph(
 
                 appState.navigate(RInfoScreen.Categories.name)
             },
-            window = window
+            window = window,
+            onChatClick = {
+                if (!appState.isLoggedIn) {
+                    appState.navigate(RInfoScreen.Login.name)
+                    return@HomeScreen
+                }
+
+                appState.navigate(RInfoScreen.Chats.name)
+            }
         ) {
             if (!appState.isLoggedIn) {
                 appState.navigate(RInfoScreen.Login.name)
@@ -481,38 +454,16 @@ fun NavGraphBuilder.makeItSoGraph(
     ) {
         FavoriteScreen(onBackPressed = {
             appState.popUp()
-        }, onFabClicked = {
-            appState.navigate(RInfoScreen.Search.name)
-        }, onTabSelected = { screen ->
+        }) { screen ->
             appState.navigate(screen.name)
-        }, onReviewCardClicked = { _: Review ->
-            appState.navigate(RInfoScreen.Business.name)
-        })
+        }
     }
 
     composable(
-        route = RInfoScreen.Notification.name,
-        enterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Down,
-                animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
-                animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-        },
+        route = RInfoScreen.Notification.name
     ) {
         NotificationPage(
-            onBackPressed = {
+            onBackClick = {
                 appState.popUp()
             },
             onTabSelected = { screen ->
@@ -1153,25 +1104,25 @@ fun NavGraphBuilder.makeItSoGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(300)
             )
         },
         exitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(300)
             )
         },
         popEnterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
+                animationSpec = tween(300)
             )
         },
         popExitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
+                animationSpec = tween(300)
             )
         }
     ) { backStackEntry ->
@@ -1186,5 +1137,82 @@ fun NavGraphBuilder.makeItSoGraph(
                 },
             )
         }
+    }
+
+    composable(
+        route = RInfoScreen.Chats.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) {
+        ChatScreen(
+            onBackClick = {
+                appState.popUp()
+            },
+            onChatClick = {
+                appState.navigate(RInfoScreen.Conversation.name)
+            }
+        )
+    }
+
+    composable(
+        route = RInfoScreen.Conversation.name,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        }
+    ) {
+        ConversationScreen(
+            onBackClick = {
+                appState.popUp()
+            },
+        )
     }
 }

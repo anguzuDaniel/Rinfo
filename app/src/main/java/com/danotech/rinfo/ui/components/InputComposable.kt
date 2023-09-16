@@ -2,7 +2,6 @@ package com.danotech.rinfo.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,7 +11,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -20,7 +18,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -28,10 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.theme.AppTheme
 
 // reusable text input
 @Composable
@@ -73,10 +68,10 @@ fun TextInput(
 
 @Composable
 fun NumberInputWithLabel(
+    modifier: Modifier = Modifier,
     @StringRes placeholder: Int = R.string.empty,
     labelText: String,
     value: String,
-    modifier: Modifier = Modifier,
     onValueChanged: (String) -> Unit = {},
     onSearchInputClicked: () -> Unit = {},
 ) {
@@ -108,10 +103,10 @@ fun NumberInputWithLabel(
 
 @Composable
 fun TextInputWithLabel(
+    modifier: Modifier = Modifier,
     @StringRes placeholder: Int = R.string.empty,
     labelText: String,
     value: String,
-    modifier: Modifier = Modifier,
     onValueChanged: (String) -> Unit = {},
     onSearchInputClicked: () -> Unit = {},
 ) {
@@ -195,10 +190,9 @@ fun EmailField(
             )
         }
     )
-    Spacer(modifier = modifier.height(5.dp))
+    Spacer(modifier = modifier.height(10.dp))
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchTextField(
     value: TextFieldValue,
@@ -232,36 +226,4 @@ fun SearchTextField(
         keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
         modifier = modifier.clickable(onClick = onSearchInputClicked)
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TextInputPreview() {
-    AppTheme(
-        darkTheme = true
-    ) {
-        TextInput(
-            labelText = "Name",
-            value = "",
-            leadingIcon = Icons.Filled.Person
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ReviewInputPreview() {
-    AppTheme(
-        darkTheme = true
-    ) {
-        Column(
-            modifier = Modifier.padding(5.dp)
-        ) {
-            ReviewInputWithLabel(
-                placeholder = R.string.review,
-                value = "",
-                modifier = Modifier.height(150.dp)
-            )
-        }
-    }
 }

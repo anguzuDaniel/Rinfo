@@ -36,6 +36,7 @@ fun NoDataScreen(
         Text(
             text = stringResource(text),
             style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface.copy(0.44f),
             fontWeight = FontWeight.Bold
         )
     }
