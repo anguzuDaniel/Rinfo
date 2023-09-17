@@ -27,9 +27,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.components.FilterRow
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 import com.danotech.rinfo.ui.screens.business.subsections.ReviewShimmer
-import com.danotech.rinfo.ui.screens.home.FilterRow
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -92,7 +92,8 @@ fun ReviewContent(
     ) {
         item {
             FilterRow(
-                heading = stringResource(id = R.string.reviews)
+                heading = stringResource(id = R.string.reviews),
+                paddingHorizontal = 0
             )
             Spacer(modifier = Modifier.height(10.dp))
         }

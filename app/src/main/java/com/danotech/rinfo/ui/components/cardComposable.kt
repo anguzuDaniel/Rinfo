@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.components
 
+import androidx.annotation.DimenRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,7 +40,8 @@ fun BusinessCard(
     business: Business,
     modifier: Modifier = Modifier,
     onReviewCardClicked: (Business) -> Unit = {},
-    viewModel: HomesScreenViewModel = hiltViewModel()
+    viewModel: HomesScreenViewModel = hiltViewModel(),
+    @DimenRes paddingHorizontal: Int
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
@@ -48,7 +51,8 @@ fun BusinessCard(
         ),
         onClick = { onReviewCardClicked(business) },
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(horizontal = dimensionResource(id = paddingHorizontal)),
     ) {
         val imageSize = 100.dp
 
@@ -74,7 +78,7 @@ fun BusinessCard(
             ) {
                 Text(
                     text = business.name,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )

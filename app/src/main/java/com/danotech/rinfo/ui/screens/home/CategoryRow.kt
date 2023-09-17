@@ -2,6 +2,7 @@
 
 package com.danotech.rinfo.ui.screens.home
 
+import androidx.annotation.DimenRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.Dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.CategoryIconButton
 
@@ -24,6 +27,8 @@ import com.danotech.rinfo.ui.components.CategoryIconButton
 @Composable
 fun CategoryOptionRow(
     onCategoryClicked: () -> Unit = {},
+    @DimenRes paddingVertical: Int,
+    @DimenRes paddingHorizontal: Int
 ) {
     Row(
         modifier = Modifier
@@ -31,6 +36,14 @@ fun CategoryOptionRow(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        CategoryIconButton(
+            description = "Category",
+            icon = R.drawable.baseline_view_module_24,
+            name = R.string.all,
+            modifier = Modifier.weight(1f),
+            onCategoryClicked = { onCategoryClicked() }
+        )
+
         CategoryIconButton(
             description = "Category",
             icon = R.drawable.baseline_view_module_24,

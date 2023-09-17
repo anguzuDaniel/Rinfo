@@ -3,6 +3,7 @@
 
 package com.danotech.rinfo.ui.screens.home
 
+
 import android.annotation.SuppressLint
 import android.os.Build
 import android.view.Window
@@ -10,8 +11,10 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,12 +24,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.ReadMore
+import androidx.compose.material.icons.automirrored.filled.ViewList
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -38,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
@@ -191,14 +200,10 @@ fun HomePageContent(
                     paddingStart = R.dimen.body_padding
                 )
             }
-//
-//            item {
-//                CategoryOptionRow(
-//                    onCategoryClicked = { onCategoryClicked() },
-//                    paddingHorizontal = R.dimen.body_padding,
-//                    paddingVertical = R.dimen.body_padding_small
-//                )
-//            }
+
+            item {
+                ChangeLayoutAction()
+            }
 
             item {
                 FilterRow(
@@ -213,10 +218,10 @@ fun HomePageContent(
                     BusinessCard(
                         business = business,
                         onReviewCardClicked = onReviewCardClicked,
+                        paddingHorizontal = R.dimen.body_padding
                     )
                 }
             }
         }
     }
 }
-
