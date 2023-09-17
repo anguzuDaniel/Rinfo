@@ -4,7 +4,6 @@ import android.os.Build
 import android.view.Window
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,10 +19,8 @@ import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.ModeNight
 import androidx.compose.material.icons.filled.NewLabel
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,7 +32,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,6 +39,7 @@ import com.danotech.rinfo.BuildConfig
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.ThemeViewModel
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
+import com.danotech.rinfo.ui.components.SectionHeading
 import com.danotech.rinfo.ui.components.centeredTopAppBar
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
@@ -141,7 +138,7 @@ fun SettingsContent(
             state = scrollState,
         ) {
             item {
-                SettingSectionHeading(
+                SectionHeading(
                     text = R.string.appearance,
                     modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
                 )
@@ -162,7 +159,7 @@ fun SettingsContent(
             }
 
             item {
-                SettingSectionHeading(
+                SectionHeading(
                     text = R.string.notifications,
                     modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
                 )
@@ -178,7 +175,7 @@ fun SettingsContent(
             }
 
             item {
-                SettingSectionHeading(
+                SectionHeading(
                     text = R.string.account,
                     modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
                 )
@@ -277,19 +274,3 @@ fun SettingsContent(
     }
 }
 
-@Composable
-fun SettingSectionHeading(
-    @StringRes text: Int,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier
-            .fillMaxWidth(),
-    ) {
-        Text(
-            text = stringResource(id = text),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
-        )
-    }
-}

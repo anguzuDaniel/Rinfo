@@ -45,7 +45,7 @@ private fun ChangeLayoutIconItem(
         Icon(
             imageVector = icon,
             contentDescription = "show all",
-            tint = MaterialTheme.colorScheme.onSurface
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

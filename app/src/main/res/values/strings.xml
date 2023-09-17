@@ -649,4 +649,5 @@
     <string name="no_chats">You don\'t have any chats</string>
     <string name="chats">Chats</string>
     <string name="conversation">Conversation</string>
+    <string name="recommendations">Recommendations</string>
 </resources>

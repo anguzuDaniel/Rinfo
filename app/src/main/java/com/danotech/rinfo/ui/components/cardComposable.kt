@@ -68,7 +68,8 @@ fun BusinessCard(
                 BusinessCardImage(
                     imageSize = imageSize,
                     url = business.logo,
-                    description = "${business.name} logo"
+                    description = "${business.name} logo",
+                    shape = MaterialTheme.shapes.small
                 )
             }
 

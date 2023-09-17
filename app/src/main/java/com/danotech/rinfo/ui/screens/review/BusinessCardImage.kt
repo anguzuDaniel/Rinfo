@@ -1,11 +1,13 @@
 package com.danotech.rinfo.ui.screens.review
 
 import android.content.ContentValues.TAG
+import android.graphics.drawable.shapes.Shape
 import android.util.Log
-import android.widget.ImageView
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,7 +24,8 @@ import com.danotech.rinfo.R
 fun BusinessCardImage(
     imageSize: Dp,
     url: String,
-    description: String
+    description: String,
+    shape: CornerBasedShape
 ) {
     Column(
         modifier = Modifier.size(imageSize)
@@ -43,7 +46,7 @@ fun BusinessCardImage(
             error = painterResource(R.drawable.no_image),
             placeholder = painterResource(R.drawable.loading_img),
             modifier = Modifier
-                .clip(MaterialTheme.shapes.small)
+                .clip(shape)
                 .aspectRatio(1f),
             contentScale = ContentScale.Crop,
         )

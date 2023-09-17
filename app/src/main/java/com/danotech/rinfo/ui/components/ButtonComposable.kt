@@ -16,20 +16,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,11 +38,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.danotech.rinfo.R
-import com.danotech.rinfo.ui.theme.AppTheme
 
 
 @Composable
@@ -174,78 +167,6 @@ fun RinfoButton(
     }
 }
 
-@Composable
-fun RinfoOutlineButton(
-    modifier: Modifier = Modifier,
-    @StringRes name: Int,
-    onClicked: () -> Unit = {},
-) {
-    OutlinedButton(
-        onClick = onClicked,
-        modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-    ) {
-        Text(
-            text = stringResource(id = name),
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.White
-        )
-    }
-}
-
-@Composable
-fun BusinessImageButton(
-    modifier: Modifier = Modifier,
-    @DrawableRes icon: Int,
-    @StringRes name: Int,
-    onClicked: () -> Unit = {},
-) {
-    Button(
-        onClick = onClicked,
-        modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(20.dp)
-            )
-
-            Text(
-                text = stringResource(id = name),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White
-            )
-        }
-    }
-}
-
-/**
- * FAB for the search button
- * provide a click handler
- * sends your the search screen
- */
-@Composable
-fun RinfoFAB(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    FloatingActionButton(
-        modifier = modifier,
-        onClick = onClick
-    ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = stringResource(R.string.Search),
-        )
-    }
-}
-
 /**
  * reusable text input
  */
@@ -300,7 +221,7 @@ fun CategoryIconButton(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterBusinessButton(
-    @StringRes name: Int,
+    name: String,
     active: Boolean = false,
     onFilterClick: () -> Unit = {}
 ) {
@@ -313,7 +234,7 @@ fun FilterBusinessButton(
             selected = !selected
             onFilterClick()
         },
-        label = { Text(stringResource(id = name)) },
+        label = { Text(text = name) },
         leadingIcon = if (selected) {
             {
                 Icon(
@@ -326,57 +247,4 @@ fun FilterBusinessButton(
             {}
         }
     )
-}
-
-@Composable
-fun BasicButton(@StringRes text: Int, modifier: Modifier, action: () -> Unit) {
-    Button(
-        onClick = action,
-        modifier = modifier,
-        colors =
-        buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        )
-    ) {
-        Text(text = stringResource(text), fontSize = 16.sp)
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CategoryIconButtonPreview() {
-    AppTheme {
-        CategoryIconButton(
-            description = "test",
-            icon = R.drawable.baseline_dining_24,
-            name = R.string.all
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CategoryIconButtonDarkPreview() {
-    AppTheme {
-        CategoryIconButton(
-            description = "test",
-            icon = R.drawable.baseline_dining_24,
-            name = R.string.all
-        )
-    }
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BusinessButtonPreview() {
-    AppTheme {
-        BusinessAccountButton(
-            isLoading = false,
-            modifier = Modifier.padding(16.dp),
-        ) {
-
-        }
-    }
 }
