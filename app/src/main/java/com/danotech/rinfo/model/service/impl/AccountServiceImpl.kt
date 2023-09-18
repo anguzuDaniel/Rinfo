@@ -79,10 +79,10 @@ constructor(private val auth: FirebaseAuth) : AccountService {
                         val exception = task.exception
                         // Handle the error and provide feedback to the user.
                         continuation.resume(false)
+                        println("Password reset failed: $exception())")
                     }
                 }
         }
-
     }
 
     // Function to check if a user account exists by email
@@ -90,19 +90,23 @@ constructor(private val auth: FirebaseAuth) : AccountService {
         return suspendCoroutine { continuation ->
             val auth = FirebaseAuth.getInstance()
 
-            // Check if a user with the given email exists
-            auth.fetchSignInMethodsForEmail(email)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // If task.isSuccessful, a user with the email exists
-                        val signInMethods = task.result?.signInMethods
-                        val userExists = !signInMethods.isNullOrEmpty()
-                        continuation.resume(userExists)
-                    } else {
-                        // An error occurred
-                        continuation.resume(false)
+            try {
+                // Check if a user with the given email exists
+                auth.fetchSignInMethodsForEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // If task.isSuccessful, a user with the email exists
+                            val signInMethods = task.result?.signInMethods
+                            val userExists = !signInMethods.isNullOrEmpty()
+                            continuation.resume(userExists)
+                        } else {
+                            // An error occurred
+                            continuation.resume(false)
+                        }
                     }
-                }
+            } catch (e: Exception) {
+                println("Password reset failed: ${e.message})")
+            }
         }
     }
 

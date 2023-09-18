@@ -73,13 +73,12 @@ fun BusinessCard(
                 )
             }
 
-
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = business.name,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )

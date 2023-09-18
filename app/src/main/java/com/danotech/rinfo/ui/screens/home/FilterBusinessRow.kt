@@ -68,10 +68,12 @@ fun FilterBusinessRow(
     val clicked by remember { mutableStateOf(false) }
 
     LazyRow(
-        modifier = Modifier.padding(
-            start = dimensionResource(id = paddingStart),
-            top = dimensionResource(id = paddingHorizontal),
-        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = dimensionResource(id = paddingStart),
+                top = dimensionResource(id = paddingHorizontal),
+            ),
         horizontalArrangement = Arrangement.spacedBy(2.dp, Alignment.End),
         verticalAlignment = Alignment.CenterVertically,
     ) {

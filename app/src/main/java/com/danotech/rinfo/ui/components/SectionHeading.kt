@@ -20,8 +20,7 @@ fun SectionHeading(
     ) {
         Text(
             text = stringResource(id = text),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
+            style = MaterialTheme.typography.displayMedium,
         )
     }
 }

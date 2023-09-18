@@ -1,13 +1,16 @@
 package com.danotech.rinfo.ui.screens.login
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.common.ext.isValidEmail
 import com.danotech.rinfo.common.ext.isValidPassword
-import com.danotech.rinfo.data.preferences.utils.DataStoreUtil
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
+import com.danotech.rinfo.model.service.impl.DataStoreUtil
+import com.danotech.rinfo.model.service.impl.EmailValidator
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.RinfoViewModel
 import com.google.firebase.auth.AuthCredential
@@ -21,27 +24,39 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
+class LoginViewModel
+@Inject
+constructor(
     private val dataStoreUtil: DataStoreUtil,
     private val accountService: AccountService,
-    logService: LogService
+    private val emailValidator: EmailValidator,
+    logService: LogService,
 ) : RinfoViewModel(logService) {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStoreUtil.dataStore.data
-                .map { preferences ->
-                    LoginUiState(
-                        password = preferences[DataStoreUtil.USER_ID_KEY] ?: "",
-                        email = preferences[DataStoreUtil.USER_EMAIL_KEY] ?: ""
-                    )
-                }
-                .collect {
-                    _uiState.value = it
-                }
+            try {
+                dataStoreUtil.store().data
+                    .map { preferences ->
+                        LoginUiState(
+                            password = preferences[DataStoreUtil.USER_ID_KEY] ?: "",
+                            email = preferences[DataStoreUtil.USER_EMAIL_KEY] ?: ""
+                        )
+                    }
+                    .collect {
+                        _uiState.value = it
+                    }
+            } catch (e: Exception) {
+                handleError(e)
+            }
         }
+    }
+
+
+    fun isEmailValid(email: String): Boolean {
+        return emailValidator.isValidEmail(email)
     }
 
     private val email: String
@@ -50,16 +65,16 @@ class LoginViewModel @Inject constructor(
     private val password: String
         get() = _uiState.value.password
 
-    fun onEmailChange(newValue: String) {
-        _uiState.value = _uiState.value.copy(email = newValue)
+    fun onEmailChange(email: String) {
+        _uiState.value = _uiState.value.copy(email = email)
     }
 
-    fun onPasswordChange(newValue: String) {
-        _uiState.value = _uiState.value.copy(password = newValue)
+    fun onPasswordChange(password: String) {
+        _uiState.value = _uiState.value.copy(password = password)
     }
 
     fun signInClick(openAndPopUp: (String, String) -> Unit) {
-        if (!email.isValidEmail()) {
+        if (!isEmailValid(email)) {
             SnackbarManager.showMessage(R.string.email_error)
             _uiState.value = _uiState.value.copy(
                 hasMessage = true,
@@ -117,7 +132,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun rememberUser(openAndPopUp: (String, String) -> Unit) {
-        if (!email.isValidEmail()) {
+        if (isEmailValid(email)) {
             SnackbarManager.showMessage(R.string.email_error)
             _uiState.value = _uiState.value.copy(
                 hasMessage = true,
@@ -220,4 +235,17 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    private fun handleError(e: Exception) {
+        // Log the error for debugging purposes
+        Log.e(TAG, "An error occurred: ${e.message}", e)
+
+        _uiState.value = _uiState.value.copy(
+            isSignInLoading = false,
+            hasMessage = true,
+            message = "An error occurred: ${e.message}"
+        )
+    }
 }
+
+

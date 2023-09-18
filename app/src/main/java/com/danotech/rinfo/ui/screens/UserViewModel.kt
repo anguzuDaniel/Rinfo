@@ -1,7 +1,7 @@
 package com.danotech.rinfo.ui.screens
 
 import androidx.lifecycle.viewModelScope
-import com.danotech.rinfo.data.preferences.utils.DataStoreUtil
+import com.danotech.rinfo.model.service.impl.DataStoreUtil
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.ui.screens.login.LoginUiState

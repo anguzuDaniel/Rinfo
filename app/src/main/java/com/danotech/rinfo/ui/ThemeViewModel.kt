@@ -6,10 +6,10 @@ import com.danotech.rinfo.RinfoViewModel
 import com.danotech.rinfo.data.preferences.ThemeState
 import com.danotech.rinfo.data.preferences.UserState
 import com.danotech.rinfo.model.service.LogService
-import com.danotech.rinfo.data.preferences.utils.DataStoreUtil
-import com.danotech.rinfo.data.preferences.utils.DataStoreUtil.Companion.IS_DARK_MODE_KEY
-import com.danotech.rinfo.data.preferences.utils.DataStoreUtil.Companion.USER_EMAIL_KEY
-import com.danotech.rinfo.data.preferences.utils.DataStoreUtil.Companion.USER_ID_KEY
+import com.danotech.rinfo.model.service.impl.DataStoreUtil
+import com.danotech.rinfo.model.service.impl.DataStoreUtil.Companion.IS_DARK_MODE_KEY
+import com.danotech.rinfo.model.service.impl.DataStoreUtil.Companion.USER_EMAIL_KEY
+import com.danotech.rinfo.model.service.impl.DataStoreUtil.Companion.USER_ID_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +29,7 @@ constructor(
     private val _themeState = MutableStateFlow(ThemeState(false))
     val themeState: StateFlow<ThemeState> = _themeState
 
-    private val dataStore = dataStoreUtil.dataStore
+    private val dataStore = dataStoreUtil.store()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
