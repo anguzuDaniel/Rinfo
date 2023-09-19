@@ -20,7 +20,7 @@ fun SectionHeading(
     ) {
         Text(
             text = stringResource(id = text),
-            style = MaterialTheme.typography.displayMedium,
+            style = MaterialTheme.typography.headlineMedium,
         )
     }
 }

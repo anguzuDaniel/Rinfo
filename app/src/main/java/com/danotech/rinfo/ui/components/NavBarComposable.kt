@@ -193,7 +193,7 @@ private fun prepareBottomMenu(): List<BottomMenuItem> {
 }
 
 /**
- * @param hasBack show back button if true
+ * @param hasBack shows back button if true
  * @param onBackClick called when back button is clicked
  * @param text a string resource id representing the text you want to be shown
  */

@@ -52,17 +52,17 @@ val Typography = Typography(
     headlineSmall = TextStyle(
         fontFamily = OPEN_SANS,
         fontWeight = FontWeight.Light,
-        fontSize = 14.sp
+        fontSize = 18.sp
     ),
     headlineMedium = TextStyle(
         fontFamily = OPEN_SANS,
         fontWeight = FontWeight.Medium,
-        fontSize = 16.sp
+        fontSize = 22.sp
     ),
     headlineLarge = TextStyle(
-        fontFamily = Montserrat,
-        fontWeight = FontWeight.Normal,
-        fontSize = 30.sp
+        fontFamily = OPEN_SANS,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp
     ),
     labelMedium = TextStyle(
         fontFamily = Montserrat,

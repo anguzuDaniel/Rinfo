@@ -161,19 +161,6 @@ fun BusinessContent(
                      * if image is loading the the default image is added
                      *
                      */
-                    /**
-                     * if image is loading the the default image is added
-                     *
-                     */
-                    /**
-                     * if image is loading the the default image is added
-                     *
-                     */
-
-                    /**
-                     * if image is loading the the default image is added
-                     *
-                     */
                     if (downloadedImages.isEmpty()) {
                         ImageListViewImageItem(
                             imageList = imageList,
@@ -280,10 +267,6 @@ fun BusinessContent(
 
 
         item {
-            /**
-             * Subsection tags
-             * when clicked they switch to the tab that matches the index
-             */
             /**
              * Subsection tags
              * when clicked they switch to the tab that matches the index

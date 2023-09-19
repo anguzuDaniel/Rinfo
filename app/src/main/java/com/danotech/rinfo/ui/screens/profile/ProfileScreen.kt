@@ -27,7 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.components.Loading
-import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
+import com.danotech.rinfo.ui.components.centeredTopAppBar
 import com.danotech.rinfo.ui.screens.business_account.BottomSheetAddImage
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -37,10 +37,10 @@ import kotlinx.coroutines.launch
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
-    onBackClicked: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     BackHandler {
-        onBackClicked()
+        onBackClick()
     }
 
     LaunchedEffect(viewModel) {
@@ -87,16 +87,12 @@ fun ProfileScreen(
     Scaffold(
         modifier = modifier
             .fillMaxSize(),
-        topBar = if (!uiState.isLoading) {
-            {
-                RinfoTopAppBar(
-                    title = "Profile",
-                    isShowingHomePage = false,
-                    onBackButtonClicked = onBackClicked,
-                )
-            }
-        } else {
-            {}
+        topBar = {
+            centeredTopAppBar(
+                onBackClick = onBackClick,
+                text = R.string.contact_us,
+                hasBack = true
+            )
         },
     ) { innerPadding ->
         if (!uiState.isLoading) {

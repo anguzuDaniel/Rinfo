@@ -19,7 +19,7 @@ android {
         minSdk 25
         targetSdk 34
         versionCode 2
-        versionName "1.0.22"
+        versionName "1.0.25"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "TEST", "false"
@@ -80,7 +80,7 @@ dependencies {
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    def nav_version = "2.7.1"
+    def nav_version = "2.7.2"
 
     // Dependency to include Maps SDK for Android
     implementation 'com.google.android.gms:play-services-maps:18.1.0'

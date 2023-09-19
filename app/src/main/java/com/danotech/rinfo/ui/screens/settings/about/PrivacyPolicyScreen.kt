@@ -1,26 +1,37 @@
 package com.danotech.rinfo.ui.screens.settings.about
 
-import androidx.compose.foundation.layout.*
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.components.centeredTopAppBar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrivacyPolicyScreen(
     onBackClick: () -> Unit = {}
 ) {
+    BackHandler {
+        onBackClick()
+    }
+
     Scaffold(topBar = {
-        TopAppBar(title = { Text("Privacy Policy") }, navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = null)
-            }
-        })
+        centeredTopAppBar(
+            onBackClick = onBackClick,
+            text = R.string.privacy_policy,
+            hasBack = true
+        )
     }, content = { innerPadding ->
         val textSpace = 4.dp
         val paragraphSpace = 16.dp

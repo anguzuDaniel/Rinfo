@@ -650,4 +650,6 @@
     <string name="chats">Chats</string>
     <string name="conversation">Conversation</string>
     <string name="recommendations">Recommendations</string>
+    <string name="feed_back">Feedback</string>
+    <string name="About">About</string>
 </resources>

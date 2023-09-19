@@ -8,6 +8,8 @@ package com.danotech.rinfo.ui
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.res.Resources
@@ -15,14 +17,9 @@ import android.os.Build
 import android.view.Window
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -32,11 +29,8 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -48,7 +42,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -61,11 +54,10 @@ import com.danotech.rinfo.common.composable.PermissionDialog
 import com.danotech.rinfo.common.composable.RationaleDialog
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.screens.RInfoScreen
-import com.danotech.rinfo.ui.screens.UserViewModel
 import com.danotech.rinfo.ui.screens.account.ChangePasswordScreen
 import com.danotech.rinfo.ui.screens.account.CreateAccount
-import com.danotech.rinfo.ui.screens.business.PhotosScreen
 import com.danotech.rinfo.ui.screens.business.BusinessScreen
+import com.danotech.rinfo.ui.screens.business.PhotosScreen
 import com.danotech.rinfo.ui.screens.business_account.BusinessAccount
 import com.danotech.rinfo.ui.screens.category.CategoryScreen
 import com.danotech.rinfo.ui.screens.chat.ChatScreen
@@ -104,7 +96,7 @@ import kotlinx.coroutines.CoroutineScope
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RinfoApp(
-    window: Window, themeViewModel: UserViewModel = hiltViewModel()
+    window: Window
 ) {
     AppTheme {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -142,7 +134,6 @@ fun RinfoApp(
         val snackbarHostState = remember { SnackbarHostState() }
 
         // Define a remember variable to track whether to show the SplashScreen
-        var showSplashScreen by remember { mutableStateOf(true) }
 
         Surface(color = MaterialTheme.colorScheme.background) {
             val appState = rememberAppState()
@@ -166,7 +157,6 @@ fun RinfoApp(
                 ) {
                     makeItSoGraph(
                         appState = appState,
-                        themeViewModel = themeViewModel,
                         window = window,
                     )
                 }
@@ -215,7 +205,6 @@ fun resources(): Resources {
 @RequiresApi(Build.VERSION_CODES.Q)
 @ExperimentalMaterialApi
 fun NavGraphBuilder.makeItSoGraph(
-    themeViewModel: UserViewModel,
     appState: RinfoAppUiState,
     window: Window,
 ) {
@@ -304,7 +293,7 @@ fun NavGraphBuilder.makeItSoGraph(
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
                 animationSpec = tween(
-                    durationMillis = 100,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -338,16 +327,16 @@ fun NavGraphBuilder.makeItSoGraph(
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
                 animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
                 )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Down,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -359,32 +348,30 @@ fun NavGraphBuilder.makeItSoGraph(
             }
         )
     }
+
+    /**
+     * Sign uo or create Account
+     */
     composable(
         route = RInfoScreen.CreateAccount.name,
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        }
     ) {
         CreateAccount(onSignInTextClicked = {
             appState.navigate(RInfoScreen.Login.name)
@@ -397,18 +384,18 @@ fun NavGraphBuilder.makeItSoGraph(
         route = RInfoScreen.BusinessAccount.name,
         enterTransition = {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
                 )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -425,25 +412,25 @@ fun NavGraphBuilder.makeItSoGraph(
         route = RInfoScreen.EditAccount.name,
         enterTransition = {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
                 )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
         },
     ) {
         ProfileScreen(
-            onBackClicked = {
+            onBackClick = {
                 appState.popUp()
             }
         )
@@ -509,13 +496,19 @@ fun NavGraphBuilder.makeItSoGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(500)
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(500)
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
             )
         },
     ) {
@@ -541,18 +534,18 @@ fun NavGraphBuilder.makeItSoGraph(
         route = RInfoScreen.Search.name,
         enterTransition = {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
                 )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -597,11 +590,12 @@ fun NavGraphBuilder.makeItSoGraph(
             )
         }
     ) {
-        CategoryScreen(onBackPressed = {
-            appState.popUp()
-        }, onCategoryItemClicked = {
-            appState.navigate(RInfoScreen.SelectedCategory.name)
-        })
+        CategoryScreen(
+            onBackPressed = {
+                appState.popUp()
+            }, onCategoryItemClicked = {
+                appState.navigate(RInfoScreen.SelectedCategory.name)
+            })
     }
 
     composable(
@@ -630,13 +624,19 @@ fun NavGraphBuilder.makeItSoGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(500)
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(500)
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
             )
         },
     ) { backStackEntry ->
@@ -674,18 +674,18 @@ fun NavGraphBuilder.makeItSoGraph(
         arguments = listOf(navArgument("city") { type = NavType.StringType }),
         enterTransition = {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 500,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
                 )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                 animationSpec = tween(
-                    durationMillis = 500,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -712,18 +712,18 @@ fun NavGraphBuilder.makeItSoGraph(
         arguments = listOf(navArgument("businessId") { type = NavType.StringType }),
         enterTransition = {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
                 )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -754,18 +754,18 @@ fun NavGraphBuilder.makeItSoGraph(
         arguments = listOf(navArgument("businessId") { type = NavType.StringType }),
         enterTransition = {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
                 )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -797,18 +797,18 @@ fun NavGraphBuilder.makeItSoGraph(
         arguments = listOf(navArgument("businessId") { type = NavType.StringType }),
         enterTransition = {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
                 )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -836,27 +836,21 @@ fun NavGraphBuilder.makeItSoGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        }
     ) {
         AboutScreen(
             onBackClick = {
@@ -872,18 +866,18 @@ fun NavGraphBuilder.makeItSoGraph(
         route = RInfoScreen.AboutApp.name,
         enterTransition = {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
                 )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                 animationSpec = tween(
-                    durationMillis = 700,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -901,27 +895,21 @@ fun NavGraphBuilder.makeItSoGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        }
     ) {
         TermsOfUseScreen(
             onBackClick = {
@@ -935,27 +923,21 @@ fun NavGraphBuilder.makeItSoGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        }
     ) {
         PrivacyPolicyScreen(
             onBackClick = {
@@ -969,27 +951,21 @@ fun NavGraphBuilder.makeItSoGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        }
     ) {
         ChangePasswordScreen(
             onBackClick = {
@@ -1003,27 +979,21 @@ fun NavGraphBuilder.makeItSoGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        }
     ) {
         FeedbackScreen(
             onBackClick = {
@@ -1037,27 +1007,21 @@ fun NavGraphBuilder.makeItSoGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        }
     ) {
         ContactUsScreen(
             onBackClick = {
@@ -1070,27 +1034,21 @@ fun NavGraphBuilder.makeItSoGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(700)
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(700)
-            )
-        }
     ) {
         WhatsNewPage(
             onBackClick = {
@@ -1104,27 +1062,21 @@ fun NavGraphBuilder.makeItSoGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(300)
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(300)
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(300)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(300)
-            )
-        }
     ) { backStackEntry ->
         val businessId = backStackEntry.arguments?.getString("businessId")
 
@@ -1145,16 +1097,16 @@ fun NavGraphBuilder.makeItSoGraph(
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 300,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
                 )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                 animationSpec = tween(
-                    durationMillis = 300,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -1176,38 +1128,20 @@ fun NavGraphBuilder.makeItSoGraph(
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                 animationSpec = tween(
-                    durationMillis = 300,
-                    easing = LinearOutSlowInEasing
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
                 )
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                 animationSpec = tween(
-                    durationMillis = 300,
+                    durationMillis = 150,
                     easing = LinearOutSlowInEasing
                 )
             )
         },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-        }
     ) {
         ConversationScreen(
             onBackClick = {

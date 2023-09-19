@@ -5,6 +5,7 @@ import android.view.Window
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.ModeNight
 import androidx.compose.material.icons.filled.NewLabel
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -124,8 +126,6 @@ fun SettingsContent(
     val themeState by themeViewModel.themeState.collectAsState()
 
     val scrollState = rememberLazyListState()
-//    val uiState = viewModel.uiState.collectAsState().value
-    16.dp
 
     Surface(
         modifier = Modifier.nestedScroll(rememberNestedScrollInteropConnection()),
@@ -137,6 +137,32 @@ fun SettingsContent(
             contentPadding = PaddingValues(top = innerPadding.calculateTopPadding()),
             state = scrollState,
         ) {
+
+            item {
+                SectionHeading(
+                    text = R.string.account,
+                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
+                )
+            }
+
+            item {
+                SettingsClickableComp(
+                    hasImage = true,
+                    leadingIcon = Icons.Filled.AccountBox,
+                    description = "Update, download, delete or deactivate your account.",
+                    iconDesc = R.string.account,
+                    name = R.string.account,
+                    settingType = settingType,
+                    onClick = {
+                        onNavClicked(RInfoScreen.Account.name)
+                    }
+                )
+            }
+
+            item {
+                SectionDivider()
+            }
+
             item {
                 SectionHeading(
                     text = R.string.appearance,
@@ -147,7 +173,7 @@ fun SettingsContent(
             item {
                 SettingsClickableComp(
                     leadingIcon = if (themeState.isDarkMode) Icons.Filled.ModeNight else Icons.Filled.LightMode,
-                    description = if (themeState.isDarkMode) "ON" else "OFF",
+                    description = if (themeState.isDarkMode) "On" else "Off",
                     iconDesc = R.string.dark_mode,
                     name = R.string.dark_mode,
                     settingType = SettingType.SWITCH,
@@ -156,6 +182,10 @@ fun SettingsContent(
                     themeState.isDarkMode = it
                     themeViewModel.toggleTheme()
                 }
+            }
+
+            item {
+                SectionDivider()
             }
 
             item {
@@ -175,22 +205,13 @@ fun SettingsContent(
             }
 
             item {
-                SectionHeading(
-                    text = R.string.account,
-                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
-                )
+                SectionDivider()
             }
 
             item {
-                SettingsClickableComp(
-                    leadingIcon = Icons.Filled.AccountBox,
-                    description = "See and manage all information your account, delete or deactivate your account.",
-                    iconDesc = R.string.account,
-                    name = R.string.account,
-                    settingType = settingType,
-                    onClick = {
-                        onNavClicked(RInfoScreen.Account.name)
-                    }
+                SectionHeading(
+                    text = R.string.others,
+                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)
                 )
             }
 
@@ -211,7 +232,7 @@ fun SettingsContent(
                 SettingsClickableComp(
                     leadingIcon = Icons.Filled.Feedback,
                     iconDesc = R.string.send_feed_back,
-                    description = "Send us feedback on what we can do better and how we can make your experience better.",
+                    description = "We would like to be here from you.",
                     name = R.string.send_feed_back,
                     settingType = settingType,
                     onClick = {
@@ -224,7 +245,7 @@ fun SettingsContent(
                 SettingsClickableComp(
                     leadingIcon = Icons.Filled.NewLabel,
                     iconDesc = R.string.whats_new,
-                    description = "See the latest features... feature and updated..",
+                    description = "See the latest features & feature updates.",
                     name = R.string.whats_new,
                     settingType = settingType,
                     onClick = {
@@ -272,5 +293,16 @@ fun SettingsContent(
             }
         }
     }
+}
+
+/**
+ * Section divider
+ * shows where section starts and ends
+ */
+@Composable
+private fun SectionDivider() {
+    Spacer(modifier = Modifier.height(20.dp))
+    HorizontalDivider()
+    Spacer(modifier = Modifier.height(20.dp))
 }
 

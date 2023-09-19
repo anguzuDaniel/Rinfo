@@ -27,7 +27,7 @@ import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.screens.business.components.IconAndText
 import com.danotech.rinfo.ui.screens.home.HomesScreenViewModel
-import com.danotech.rinfo.ui.screens.review.BusinessCardImage
+import com.danotech.rinfo.ui.screens.review.FirebaseImageDisplay
 
 /**
  * Review card
@@ -68,7 +68,7 @@ fun BusinessCard(
                 size = imageSize,
                 isLoading = uiState.imageLoading
             ) {
-                BusinessCardImage(
+                FirebaseImageDisplay(
                     imageSize = imageSize,
                     url = business.logo,
                     description = "${business.name} logo",

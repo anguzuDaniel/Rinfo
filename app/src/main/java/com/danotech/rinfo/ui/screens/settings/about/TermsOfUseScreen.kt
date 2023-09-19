@@ -3,13 +3,13 @@ package com.danotech.rinfo.ui.screens.settings.about
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.danotech.rinfo.R
+import com.danotech.rinfo.ui.components.centeredTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,13 +22,10 @@ fun TermsOfUseScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Terms of Use") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = null)
-                    }
-                }
+            centeredTopAppBar(
+                onBackClick = onBackClick,
+                text = R.string.terms_of_use,
+                hasBack = true
             )
         },
         content = { innerPadding ->

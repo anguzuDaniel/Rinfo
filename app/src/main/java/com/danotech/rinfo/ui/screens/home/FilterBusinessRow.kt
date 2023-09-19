@@ -17,7 +17,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.ui.components.FilterBusinessButton
-import com.danotech.rinfo.ui.screens.review.BusinessCardImage
+import com.danotech.rinfo.ui.screens.review.FirebaseImageDisplay
 
 /**
  * Show filter options
@@ -104,7 +104,7 @@ fun BusinessSnippetRow(
         horizontalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         items(businessList) { business ->
-            BusinessCardImage(
+            FirebaseImageDisplay(
                 imageSize = imageSize,
                 url = business.logo,
                 description = "${business.name} logo",

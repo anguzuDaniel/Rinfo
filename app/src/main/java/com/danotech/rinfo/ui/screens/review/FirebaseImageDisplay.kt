@@ -18,14 +18,14 @@ import coil.request.ImageRequest
 import com.danotech.rinfo.R
 
 /**
- * Used to show the business images
+ * Used to show the images from firebase
  * @param imageSize image size in Dp
  * @param url the url of the image you want to display
  * @param description the image description
  * @param shape the shape you want the image to be - should be of typ CornerBasedShape
  */
 @Composable
-fun BusinessCardImage(
+fun FirebaseImageDisplay(
     imageSize: Dp,
     url: String,
     description: String,

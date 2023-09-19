@@ -93,6 +93,22 @@ fun ProfileButton(
 }
 
 @Composable
+fun FeedbackButton(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean,
+    enabled: Boolean,
+    action: () -> Unit, // DON'T REMOVE: should always be the last
+) {
+    RinfoButton(
+        name = R.string.sign_in,
+        isLoading = isLoading,
+        enabled = enabled,
+        onClicked = action,
+        modifier = modifier
+    )
+}
+
+@Composable
 private fun ButtonWithLoader(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
