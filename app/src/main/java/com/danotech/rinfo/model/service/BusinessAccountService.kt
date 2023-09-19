@@ -11,7 +11,7 @@ interface BusinessAccountService {
     suspend fun getBusinessByCategory(category: String): Flow<List<Business>>
     suspend fun getBusinessWhereLike(name: String): Flow<List<Business>>
     suspend fun getBusinessById(businessId: String): Business?
-    suspend fun upLoadImage(businessId: String, image: Bitmap?)
+    suspend fun upLoadImage(businessId: String, image: String)
     suspend fun getBusinessByOwner(owner: String): Flow<List<Business>>
     suspend fun create(business: Business): String
     suspend fun update(business: Business)

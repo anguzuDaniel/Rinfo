@@ -15,10 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
-import com.danotech.rinfo.common.ext.basicButton
 import com.danotech.rinfo.ui.components.BusinessAccountButton
 import com.danotech.rinfo.ui.screens.dropdown.SelectBusinessCategory
-import com.google.firebase.auth.FirebaseAuth
 
 /**
  * This page just shows the Business Account page
@@ -35,7 +33,6 @@ fun BusinessActionSectionPage(
     onSave: () -> Unit,
     onFailure: (String) -> Unit
 ) {
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -52,21 +49,18 @@ fun BusinessActionSectionPage(
         }
 
         SelectBusinessCategory(
-            selected = uiState.businessCategory, onCategorySelected = viewModel::onCategoryChange
+            selected = uiState.businessCategory,
+            onCategorySelected = viewModel::onCategoryChange
         )
 
         BusinessAccountButton(
             isLoading = uiState.isLoading, modifier = Modifier
                 .fillMaxWidth()
-                .basicButton()
         ) {
-            val currentUser = FirebaseAuth.getInstance().currentUser
-            if (currentUser != null) {
-                viewModel.upLoadImageToFireBase(bitmap.value, currentUser.email!!)
-            }
-            viewModel.onBusinessAccountCreated(onSuccess = onSave, onFailure = {
+            viewModel.upLoadImageToFireBase(bitmap.value)
+            viewModel.onBusinessAccountCreated(onSuccess = onSave) {
                 onFailure(it)
-            })
+            }
             onSave()
         }
     }

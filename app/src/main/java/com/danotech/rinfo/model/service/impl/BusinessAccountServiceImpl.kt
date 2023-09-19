@@ -1,6 +1,5 @@
 package com.danotech.rinfo.model.service.impl
 
-import android.graphics.Bitmap
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.BusinessAccountService
@@ -88,17 +87,16 @@ class BusinessAccountServiceImpl
      * @param businessId
      * @param image
      */
-    override suspend fun upLoadImage(businessId: String, image: Bitmap?) {
-
-
+    override suspend fun upLoadImage(businessId: String, image: String) {
         fireStore.collection(BUSINESS_COLLECTION).document(businessId)
-            .update("image", image.toString())
+            .update(BUSINESS_LOGO_FILED, image)
             .await()
     }
 
     companion object {
         private const val CATEGORY_FIELD = "category"
         private const val USER_ID_FIELD = "userId"
+        private const val BUSINESS_LOGO_FILED = "logo"
         private const val BUSINESS_NAME = "name"
         private const val BUSINESS_COLLECTION = "businessAccount"
         private const val SAVE_BUSINESS_TRACE = "saveBusinessAccount"

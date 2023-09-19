@@ -41,7 +41,9 @@ fun SelectBusinessCategory(
     ) {
         TextField(
             // The `menuAnchor` modifier must be passed to the text field for correctness.
-            modifier = Modifier.menuAnchor(),
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth(),
             value = selectedOptionText,
             onValueChange = { selectedOptionText = it },
             label = {
@@ -60,6 +62,7 @@ fun SelectBusinessCategory(
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth()
             ) {
                 filteringOptions.forEach { selectionOption ->
                     DropdownMenuItem(

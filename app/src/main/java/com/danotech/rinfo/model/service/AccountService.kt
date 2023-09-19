@@ -16,10 +16,8 @@ limitations under the License.
 
 package com.danotech.rinfo.model.service
 
-import android.credentials.Credential
 import com.danotech.rinfo.model.User
 import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.GoogleAuthCredential
 import kotlinx.coroutines.flow.Flow
 
 /**

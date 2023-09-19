@@ -7,14 +7,17 @@ import com.danotech.rinfo.model.service.impl.EmailValidator
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.anyString
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoJUnitRunner
@@ -42,6 +45,12 @@ class LoginViewModelTest {
     @Before
     fun setUp() {
         viewModel = LoginViewModel(dataStoreUtil, accountService, emailValidator, logService)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain() // Reset the Main dispatcher after the test
     }
 
     @Test
@@ -81,5 +90,24 @@ class LoginViewModelTest {
         assertTrue(viewModel.uiState.value.hasMessage)
         assertFalse(viewModel.uiState.value.isSignInSuccess)
         assertTrue(viewModel.uiState.value.message.isNotEmpty())
+    }
+
+    @Test
+    fun test_signIn_click_Success() = runTest {
+        // Mock the email validation function
+        `when`(viewModel.isEmailValid("email")).thenReturn(true)
+
+        // Set the email and password in the ViewModel
+        viewModel.onEmailChange("test@example.com")
+        viewModel.onPasswordChange("password")
+
+        // Trigger the sign-in click action
+        viewModel.signInClick { _, _ -> }
+
+        // Assertions
+        assertFalse(viewModel.uiState.value.isSignInLoading) // Check loading is false
+        assertFalse(viewModel.uiState.value.isSignInSuccess) // Check login is successful
+        assertTrue(viewModel.uiState.value.hasMessage) // Check there is a message
+        assertTrue(viewModel.uiState.value.message.isNotEmpty()) // Check the message is not empty
     }
 }

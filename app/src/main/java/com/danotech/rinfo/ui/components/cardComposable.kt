@@ -1,5 +1,6 @@
 package com.danotech.rinfo.ui.components
 
+import android.util.Log
 import androidx.annotation.DimenRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,8 @@ fun BusinessCard(
     @DimenRes paddingHorizontal: Int
 ) {
     val uiState = viewModel.uiState.collectAsState().value
+
+    Log.d("Business Image:", business.logo)
 
     Card(
         elevation = CardDefaults.cardElevation(

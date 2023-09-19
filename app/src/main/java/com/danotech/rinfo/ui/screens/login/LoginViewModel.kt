@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
-import com.danotech.rinfo.common.ext.isValidEmail
 import com.danotech.rinfo.common.ext.isValidPassword
 import com.danotech.rinfo.model.service.AccountService
 import com.danotech.rinfo.model.service.LogService
@@ -59,6 +58,10 @@ constructor(
         return emailValidator.isValidEmail(email)
     }
 
+    fun isPasswordValid(password: String): Boolean {
+        return emailValidator.isValidPassword(password)
+    }
+
     private val email: String
         get() = _uiState.value.email
 
@@ -83,7 +86,7 @@ constructor(
             return
         }
 
-        if (!password.isValidPassword()) {
+        if (!isPasswordValid(password)) {
             SnackbarManager.showMessage(R.string.password_error)
             _uiState.value = _uiState.value.copy(
                 hasMessage = true,

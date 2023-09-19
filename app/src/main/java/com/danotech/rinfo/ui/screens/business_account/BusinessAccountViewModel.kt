@@ -147,7 +147,7 @@ class BusinessAccountViewModel @Inject constructor(
         }
 
 
-        launchCatching {
+        viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = _uiState.value.copy(isLoading = true) // Set loading to true
 
             val updateUiState = uiState.value
@@ -166,6 +166,7 @@ class BusinessAccountViewModel @Inject constructor(
             )
 
             Log.d("Business: ", business.toString())
+            Log.d("Business: ", "You business account has been updated!")
 
             // Update information in the database
             businessAccountService.update(business)
@@ -202,7 +203,7 @@ class BusinessAccountViewModel @Inject constructor(
         }
     }
 
-    fun getBusinessAccount(userId: String) {
+    fun getBusinessAccount() {
         launchCatching {
             _uiState.value = _uiState.value.copy(
                 isLoading = true, imageLoading = true
@@ -251,9 +252,8 @@ class BusinessAccountViewModel @Inject constructor(
     /**
      * Uploads image to firebase storage
      * @param image takes in a image Bitmap
-     * @param userId the users id, this is used to name the image
      */
-    fun upLoadImageToFireBase(image: Bitmap, userId: String) {
+    fun upLoadImageToFireBase(image: Bitmap) {
         // Inside your Composable function
         val storageRef = Firebase.storage.reference
 
@@ -262,42 +262,42 @@ class BusinessAccountViewModel @Inject constructor(
                 // sets loading to true
                 _uiState.value = _uiState.value.copy(isLoading = true)
 
-                val imageName = "${userId}.jpg"
+                // Generate a unique ID for the image
+                val imageName =
+                    "${System.currentTimeMillis()}.jpg" // Using a timestamp as the image name
                 val imageRef = storageRef.child("logos/${imageName}")
 
                 val stream = ByteArrayOutputStream()
                 image.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-
                 val data = stream.toByteArray()
-
-//                // Convert ByteArray to Base64 string before storing
-//                val base64Logo = Base64.encodeToString(data, Base64.DEFAULT)
-//
-//                // Retrieve and decode from Base64 when reading from Firestore
-//                val logoByteArray = Base64.decode(base64Logo, Base64.DEFAULT)
 
                 val uploadTask = imageRef.putBytes(data)
 
                 // Assuming you are inside a coroutine scope or function
-                val downloadUri = try {
+                try {
                     val downloadUri = uploadTask.continueWithTask { task ->
                         if (!task.isSuccessful) {
                             throw task.exception ?: Exception("Image upload failed")
                         }
                         // Continue with the task to get the download URL
                         imageRef.downloadUrl
+                    }.await()
 
-                    }.await() // Call await() within a coroutine
+                    // Log the download URL
+                    Log.d(TAG, "Business Account Update $downloadUri")
 
-                    downloadUri // Assign to downloadUri
+                    // Update the UIState with the download URL
+                    _uiState.value = _uiState.value.copy(logo = downloadUri.toString())
+
+                    businessAccountService.upLoadImage(
+                        FirebaseAuth.getInstance().currentUser!!.email.toString(),
+                        downloadUri.toString()
+                    )
                 } catch (exception: Exception) {
-                    // Handle errors here, log or display an error message
                     Log.e("Business Account Update", "Error: ${exception.message}", exception)
-                    // Show an error message or update UI accordingly
                     _uiState.value = _uiState.value.copy(
                         hasMessage = true, message = "An error occurred"
                     )
-                    null // Assign null to downloadUri in case of an error
                 }
 
                 uploadTask.addOnSuccessListener {
@@ -306,8 +306,6 @@ class BusinessAccountViewModel @Inject constructor(
                     // Handle upload failure
                     SnackbarManager.showMessage(R.string.something_went_wrong)
                 }
-
-                _uiState.value = _uiState.value.copy(logo = downloadUri.toString())
             }
         }.invokeOnCompletion {
             _uiState.value = _uiState.value.copy(isLoading = false)
