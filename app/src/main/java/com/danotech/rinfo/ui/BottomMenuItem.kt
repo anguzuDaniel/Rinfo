@@ -9,7 +9,6 @@ import com.danotech.rinfo.ui.screens.RInfoScreen
  * @param selected is the item selected
  * @param selectedIcon is the icon of the item
  * @param label is the label of the item
- *
  */
 data class BottomMenuItem(
     val rinfoScreen: RInfoScreen,

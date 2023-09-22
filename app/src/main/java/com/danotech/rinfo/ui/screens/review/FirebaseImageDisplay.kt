@@ -47,7 +47,7 @@ fun FirebaseImageDisplay(
                 .crossfade(true)
                 .build(),
             contentDescription = description,
-            error = painterResource(R.drawable.no_image),
+            error = painterResource(R.drawable.profile_placeholder),
             placeholder = painterResource(R.drawable.loading_img),
             modifier = Modifier
                 .clip(shape)

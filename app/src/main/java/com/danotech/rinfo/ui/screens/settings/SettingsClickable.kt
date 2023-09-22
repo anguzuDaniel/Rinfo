@@ -4,26 +4,22 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -53,6 +49,7 @@ import com.danotech.rinfo.ui.screens.review.FirebaseImageDisplay
 fun SettingsClickableComp(
     modifier: Modifier = Modifier,
     hasImage: Boolean = false,
+    imageUrl: String = "",
     leadingIcon: ImageVector,
     description: String = "",
     @StringRes iconDesc: Int,
@@ -82,36 +79,18 @@ fun SettingsClickableComp(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (!hasImage) {
-
-                    Box(
-                        modifier = Modifier
-                            .clip(shape = MaterialTheme.shapes.medium)
-                    ) {
-                        IconButton(
-                            onClick = {},
-                            modifier = modifier
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                            colors = IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
-                            ),
-                            enabled = false
-                        ) {
-                            Icon(
-                                imageVector = leadingIcon,
-                                contentDescription = stringResource(id = iconDesc),
-                                tint = if (!opensDialogWhenClicked) MaterialTheme.colorScheme.onSurface.copy(
-                                    0.50f
-                                ) else MaterialTheme.colorScheme.error.copy(
-                                    0.50f
-                                )
-                            )
-                        }
-                    }
+                    Icon(
+                        imageVector = leadingIcon,
+                        contentDescription = stringResource(id = iconDesc),
+                        tint = if (!opensDialogWhenClicked)
+                            MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(80.dp)
+                    )
                 } else {
                     FirebaseImageDisplay(
                         imageSize = 50.dp,
-                        url = "https://firebasestorage.googleapis.com/v0/b/rinfo-5ee97.appspot.com/o/logos%2F1695129390062.jpg?alt=media&token=604b7c66-b0f5-42b9-9c26-ae30353dd4c8",
+                        url = imageUrl,
                         description = "User image",
                         shape = CircleShape
                     )

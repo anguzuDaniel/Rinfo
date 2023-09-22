@@ -69,10 +69,10 @@ fun ProfileContent(
                         modifier = Modifier.size(dimensionResource(id = R.dimen.profile_image_size_large)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.CameraAlt,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        ProfileImage(
+                            image = uiState.profileImage,
+                            size = imageSize,
+                            context = context
                         )
                     }
 
@@ -80,12 +80,13 @@ fun ProfileContent(
                         modifier = Modifier.size(dimensionResource(id = R.dimen.profile_image_size_large)),
                         contentAlignment = Alignment.Center
                     ) {
-                        ProfileImage(
-                            image = uiState.profileImage,
-                            size = imageSize,
-                            context = context
+                        Icon(
+                            imageVector = Icons.Outlined.CameraAlt,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
+
                 }
                 Text("Add photo")
             }

@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -34,7 +32,10 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.ThemeViewModel
+import com.danotech.rinfo.ui.components.Rinfo
 import com.danotech.rinfo.ui.components.centeredTopAppBar
+import com.danotech.rinfo.ui.components.rinfo.Delete
+import com.danotech.rinfo.ui.components.rinfo.Password
 import com.danotech.rinfo.ui.screens.RInfoScreen
 
 @RequiresApi(Build.VERSION_CODES.P)
@@ -131,7 +132,7 @@ fun AccountOptionsContent(
         )
 
         SettingsClickableComp(
-            leadingIcon = Icons.Filled.Password,
+            leadingIcon = Rinfo.Password,
             description = "Change your password",
             iconDesc = R.string.change_password,
             name = R.string.change_password,
@@ -142,7 +143,7 @@ fun AccountOptionsContent(
         )
 
         SettingsClickableComp(
-            leadingIcon = Icons.Filled.DeleteForever,
+            leadingIcon = Rinfo.Delete,
             iconDesc = R.string.delete_account,
             name = R.string.delete_account,
             settingType = settingType,

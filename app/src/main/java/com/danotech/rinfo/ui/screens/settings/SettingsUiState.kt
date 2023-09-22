@@ -4,6 +4,7 @@ data class SettingsUiState(
     val profile: String = "",
     val profileName: String = "",
     val profileEmail: String = "",
+    val profileImageUrl: String = "",
     val isLoading: Boolean = false,
     val isDarkTheme: Boolean = false,
     val isLogoutSuccess: Boolean = false,

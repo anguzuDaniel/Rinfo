@@ -4,27 +4,17 @@
 package com.danotech.rinfo.ui.components
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,9 +29,12 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -49,6 +42,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.BottomMenuItem
+import com.danotech.rinfo.ui.components.rinfo.Home
+import com.danotech.rinfo.ui.components.rinfo.Homesolid
+import com.danotech.rinfo.ui.components.rinfo.Notification
+import com.danotech.rinfo.ui.components.rinfo.Notificationsolid
+import com.danotech.rinfo.ui.components.rinfo.Search
+import com.danotech.rinfo.ui.components.rinfo.Settings
 import com.danotech.rinfo.ui.screens.RInfoScreen
 
 /**
@@ -87,6 +86,12 @@ fun RinfoBottomNavigation(
 ) {
     // items list
     val bottomMenuItemsList = prepareBottomMenu()
+    // Create an interaction source to disable interaction
+    val interactionSource = remember { MutableInteractionSource() }
+    var clicked by remember { mutableStateOf(false) }
+
+    // Use animateFloatAsState to animate the scale
+    val scale by animateFloatAsState(targetValue = if (clicked) 1.4f else 1.0f)
 
     Box(
         modifier = modifier
@@ -95,7 +100,6 @@ fun RinfoBottomNavigation(
         NavigationBar(
             modifier = Modifier
                 .align(alignment = Alignment.BottomCenter),
-//                .clip(shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             tonalElevation = 20.dp,
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.background
@@ -107,30 +111,25 @@ fun RinfoBottomNavigation(
                         onTabSelected(navigationItemContent.rinfoScreen)
                     },
                     icon = {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(3.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                imageVector =
-                                if (currentScreen == navigationItemContent.rinfoScreen)
-                                    navigationItemContent.selectedIcon
-                                else
-                                    navigationItemContent.unSelectedIcon,
-                                contentDescription = null
-                            )
-
-                            AnimatedVisibility(currentScreen == navigationItemContent.rinfoScreen) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(5.dp)
-                                        .background(
-                                            MaterialTheme.colorScheme.onSurfaceVariant,
-                                            CircleShape
-                                        )
-                                )
-                            }
-                        }
+                        // Wrap the Icon in a Box with a modifier to disable interaction
+                        Icon(
+                            imageVector =
+                            if (currentScreen == navigationItemContent.rinfoScreen)
+                                navigationItemContent.selectedIcon
+                            else
+                                navigationItemContent.unSelectedIcon,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(50.dp)
+                                .scale(if (currentScreen == navigationItemContent.rinfoScreen) scale else 1f)
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null
+                                ) {
+                                    clicked = !clicked
+                                    onTabSelected(navigationItemContent.rinfoScreen)
+                                }
+                        )
                     },
                     enabled = true,
                     alwaysShowLabel = false,
@@ -161,15 +160,15 @@ private fun prepareBottomMenu(): List<BottomMenuItem> {
         BottomMenuItem(
             rinfoScreen = RInfoScreen.Home,
             label = R.string.home,
-            selectedIcon = Icons.Filled.Home,
-            unSelectedIcon = Icons.Outlined.Home
+            selectedIcon = Rinfo.Homesolid,
+            unSelectedIcon = Rinfo.Home
         )
     )
     bottomMenuItemsList.add(
         BottomMenuItem(
             rinfoScreen = RInfoScreen.Search,
-            selectedIcon = Icons.Filled.Search,
-            unSelectedIcon = Icons.Outlined.Search,
+            selectedIcon = Rinfo.Search,
+            unSelectedIcon = Rinfo.Search,
             label = R.string.Search
         )
     )
@@ -177,15 +176,15 @@ private fun prepareBottomMenu(): List<BottomMenuItem> {
         BottomMenuItem(
             rinfoScreen = RInfoScreen.Notification,
             label = R.string.notifications,
-            selectedIcon = Icons.Filled.Notifications,
-            unSelectedIcon = Icons.Outlined.Notifications
+            selectedIcon = Rinfo.Notificationsolid,
+            unSelectedIcon = Rinfo.Notification
         )
     )
     bottomMenuItemsList.add(
         BottomMenuItem(
             rinfoScreen = RInfoScreen.Settings,
-            selectedIcon = Icons.Filled.Settings,
-            unSelectedIcon = Icons.Outlined.Settings,
+            selectedIcon = Rinfo.Settings,
+            unSelectedIcon = Rinfo.Settings,
             label = R.string.settings
         )
     )

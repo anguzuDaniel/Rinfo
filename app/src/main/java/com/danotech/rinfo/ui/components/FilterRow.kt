@@ -46,7 +46,7 @@ fun FilterRow(
         ) {
             Text(
                 text = stringResource(R.string.view_all),
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(0.44f),
             )
 

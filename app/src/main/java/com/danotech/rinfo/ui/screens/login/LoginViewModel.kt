@@ -53,27 +53,26 @@ constructor(
         }
     }
 
+    private val email: String
+        get() = _uiState.value.email.trim()
+
+    private val password: String
+        get() = _uiState.value.password.trim()
 
     fun isEmailValid(email: String): Boolean {
         return emailValidator.isValidEmail(email)
     }
 
-    fun isPasswordValid(password: String): Boolean {
+    private fun isPasswordValid(password: String): Boolean {
         return emailValidator.isValidPassword(password)
-    }
-
-    private val email: String
-        get() = _uiState.value.email
-
-    private val password: String
-        get() = _uiState.value.password
-
-    fun onEmailChange(email: String) {
-        _uiState.value = _uiState.value.copy(email = email)
     }
 
     fun onPasswordChange(password: String) {
         _uiState.value = _uiState.value.copy(password = password)
+    }
+
+    fun onEmailChange(email: String) {
+        _uiState.value = _uiState.value.copy(email = email)
     }
 
     fun signInClick(openAndPopUp: (String, String) -> Unit) {

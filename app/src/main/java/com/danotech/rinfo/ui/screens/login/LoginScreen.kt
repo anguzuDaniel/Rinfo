@@ -229,7 +229,7 @@ fun LoginForm(
             modifier = Modifier
                 .fillMaxWidth(),
             isLoading = uiState.isSignInLoading,
-            enabled = uiState.email.isValidEmail() && passwordCheck
+            enabled = uiState.email.trim().isValidEmail() && passwordCheck
         ) {
             viewModel.signInClick(openAndPopUp)
 //            userViewModel.login(uiState.email, uiState.password, openAndPopUp)

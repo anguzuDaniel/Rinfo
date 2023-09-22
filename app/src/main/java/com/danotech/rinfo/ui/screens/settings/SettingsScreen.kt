@@ -12,14 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ContactSupport
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Feedback
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.ModeNight
-import androidx.compose.material.icons.filled.NewLabel
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -40,11 +33,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.danotech.rinfo.BuildConfig
 import com.danotech.rinfo.R
 import com.danotech.rinfo.ui.ThemeViewModel
+import com.danotech.rinfo.ui.components.Rinfo
 import com.danotech.rinfo.ui.components.RinfoBottomNavigation
 import com.danotech.rinfo.ui.components.SectionHeading
 import com.danotech.rinfo.ui.components.centeredTopAppBar
+import com.danotech.rinfo.ui.components.rinfo.Contactus
+import com.danotech.rinfo.ui.components.rinfo.Dark
+import com.danotech.rinfo.ui.components.rinfo.Feed
+import com.danotech.rinfo.ui.components.rinfo.Feedback
+import com.danotech.rinfo.ui.components.rinfo.Light
+import com.danotech.rinfo.ui.components.rinfo.Logoout
+import com.danotech.rinfo.ui.components.rinfo.Notificationon
+import com.danotech.rinfo.ui.components.rinfo.Whatsnew
 import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
+import com.danotech.rinfo.ui.screens.profile.ProfileViewModel
 import java.time.Year
 
 @RequiresApi(Build.VERSION_CODES.P)
@@ -57,6 +60,7 @@ fun SettingsScreen(
     onNavClicked: (String) -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
     themeViewModel: ThemeViewModel = hiltViewModel(),
+    profileViewModel: ProfileViewModel = hiltViewModel(),
     window: Window,
 ) {
     BackHandler {
@@ -148,6 +152,7 @@ fun SettingsContent(
             item {
                 SettingsClickableComp(
                     hasImage = true,
+                    imageUrl = viewModel.uiState.value.profileImageUrl,
                     leadingIcon = Icons.Filled.AccountBox,
                     description = "Update, download, delete or deactivate your account.",
                     iconDesc = R.string.account,
@@ -172,7 +177,7 @@ fun SettingsContent(
 
             item {
                 SettingsClickableComp(
-                    leadingIcon = if (themeState.isDarkMode) Icons.Filled.ModeNight else Icons.Filled.LightMode,
+                    leadingIcon = if (themeState.isDarkMode) Rinfo.Dark else Rinfo.Light,
                     description = if (themeState.isDarkMode) "On" else "Off",
                     iconDesc = R.string.dark_mode,
                     name = R.string.dark_mode,
@@ -197,7 +202,7 @@ fun SettingsContent(
 
             item {
                 SettingsClickableComp(
-                    leadingIcon = Icons.Filled.Notifications,
+                    leadingIcon = Rinfo.Notificationon,
                     iconDesc = R.string.notifications,
                     name = R.string.notifications,
                     onClick = {},
@@ -217,7 +222,7 @@ fun SettingsContent(
 
             item {
                 SettingsClickableComp(
-                    leadingIcon = Icons.Filled.AccountBox,
+                    leadingIcon = Rinfo.Feed,
                     description = "Privacy policy, Terms of use, about app..",
                     iconDesc = R.string.about,
                     name = R.string.about,
@@ -230,7 +235,7 @@ fun SettingsContent(
 
             item {
                 SettingsClickableComp(
-                    leadingIcon = Icons.Filled.Feedback,
+                    leadingIcon = Rinfo.Feedback,
                     iconDesc = R.string.send_feed_back,
                     description = "We would like to be here from you.",
                     name = R.string.send_feed_back,
@@ -243,7 +248,7 @@ fun SettingsContent(
 
             item {
                 SettingsClickableComp(
-                    leadingIcon = Icons.Filled.NewLabel,
+                    leadingIcon = Rinfo.Whatsnew,
                     iconDesc = R.string.whats_new,
                     description = "See the latest features & feature updates.",
                     name = R.string.whats_new,
@@ -256,7 +261,7 @@ fun SettingsContent(
 
             item {
                 SettingsClickableComp(
-                    leadingIcon = Icons.AutoMirrored.Filled.ContactSupport,
+                    leadingIcon = Rinfo.Contactus,
                     iconDesc = R.string.contact_us,
                     name = R.string.contact_us,
                     settingType = settingType,
@@ -268,7 +273,7 @@ fun SettingsContent(
 
             item {
                 SettingsClickableComp(
-                    leadingIcon = Icons.AutoMirrored.Filled.Logout,
+                    leadingIcon = Rinfo.Logoout,
                     iconDesc = R.string.logout,
                     name = R.string.logout,
                     settingType = SettingType.BUTTON,

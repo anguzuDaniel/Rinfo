@@ -24,10 +24,10 @@ class CreateAccountViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private val email: String
-        get() = _uiState.value.email
+        get() = _uiState.value.email.trim()
 
     private val password: String
-        get() = _uiState.value.password
+        get() = _uiState.value.password.trim()
 
     /**
      * This function is called when the user changes the email field.

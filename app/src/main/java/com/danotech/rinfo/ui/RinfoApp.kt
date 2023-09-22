@@ -10,6 +10,8 @@ package com.danotech.rinfo.ui
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.res.Resources
@@ -82,7 +84,6 @@ import com.danotech.rinfo.ui.screens.settings.about.TermsOfUseScreen
 import com.danotech.rinfo.ui.screens.settings.contact_us.ContactUsScreen
 import com.danotech.rinfo.ui.screens.settings.feedback.FeedbackScreen
 import com.danotech.rinfo.ui.screens.settings.whats_new.WhatsNewPage
-import com.danotech.rinfo.ui.screens.splash.SplashScreen
 import com.danotech.rinfo.ui.theme.AppTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -153,7 +154,7 @@ fun RinfoApp(
             ) {
                 NavHost(
                     navController = appState.navController,
-                    startDestination = RInfoScreen.SplashScreen.name
+                    startDestination = RInfoScreen.Home.name
                 ) {
                     makeItSoGraph(
                         appState = appState,
@@ -210,34 +211,6 @@ fun NavGraphBuilder.makeItSoGraph(
 ) {
 //    appState.isLoggedIn = themeViewModel.isUserLoggedIn.value
 
-    composable(
-        route = RInfoScreen.SplashScreen.name,
-        enterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
-                animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                animationSpec = tween(
-                    durationMillis = 700,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-        },
-    ) {
-        SplashScreen(
-            navigateTo = {
-                appState.navigate(RInfoScreen.Home.name)
-            },
-            window = window
-        )
-    }
     composable(
         route = RInfoScreen.Home.name,
     ) {

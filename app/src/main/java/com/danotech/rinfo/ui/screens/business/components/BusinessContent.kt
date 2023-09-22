@@ -11,26 +11,22 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.ProductionQuantityLimits
+import androidx.compose.material.icons.filled.Reviews
+import androidx.compose.material.icons.filled.Tab
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -47,11 +43,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
@@ -61,6 +55,11 @@ import com.danotech.rinfo.ui.screens.business.BusinessTabs
 import com.danotech.rinfo.ui.screens.business.BusinessViewModel
 import com.danotech.rinfo.ui.screens.business.ImageItem
 import com.danotech.rinfo.ui.screens.review.ReviewScreenViewModel
+
+data class Tab(
+    val icon: ImageVector,
+    val title: String
+)
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -81,7 +80,20 @@ fun BusinessContent(
     val context = LocalContext.current
 
     var tabState by remember { mutableStateOf(0) }
-    val titles = listOf("About", "Gallery", "Reviews")
+    val tabs = listOf(
+        Tab(
+            icon = Icons.Default.Tab,
+            title = "About"
+        ),
+        Tab(
+            icon = Icons.Filled.ProductionQuantityLimits,
+            title = "Products"
+        ),
+        Tab(
+            icon = Icons.Filled.Reviews,
+            title = "Reviews"
+        )
+    )
 
     val defaultProfilePicture: Bitmap = BitmapFactory.decodeResource(
         context.resources,
@@ -136,6 +148,7 @@ fun BusinessContent(
     ) {
         item {
             val size = 300.dp
+
             Box(
                 modifier = modifier
                     .height(size)
@@ -179,93 +192,93 @@ fun BusinessContent(
             }
         }
 
-        item {
-            Column(
-                modifier = Modifier
-                    .padding(dimensionResource(id = R.dimen.body_padding)),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = business.name,
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-
-                    // if business is added to favorites then primary color is used for tint else white
-                    if (!addToFavorite) {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = stringResource(R.string.bookmark_business),
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.clickable {
-                                addToFavorite = !addToFavorite
-                            }
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = stringResource(R.string.bookmark_business),
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.clickable {
-                                addToFavorite = !addToFavorite
-                            }
-                        )
-                    }
-                }
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    IconAndText(
-                        icon = Icons.Filled.Star,
-                        iconDes = "ratings",
-                        text = "${business.reviews}.0 / 5.0 (${business.reviews} reviews)"
-                    )
-
-                    IconAndText(
-                        icon = Icons.Filled.LocationOn,
-                        iconDes = stringResource(id = R.string.location),
-                        text = business.address
-                    )
-
-                    IconAndText(
-                        icon = Icons.Filled.Favorite,
-                        iconDes = stringResource(id = R.string.favorites),
-                        text = "${business.reviews} recommendations"
-                    )
-                }
-            }
-        }
-
-        item {
-            Column(
-                modifier = Modifier
-                    .padding(
-                        vertical = 8.dp,
-                        horizontal = dimensionResource(id = R.dimen.body_padding)
-                    )
-                    .fillMaxWidth(),
-            ) {
-                ActionDetailsRow(
-                    businessName = business.name,
-                    email = business.email,
-                    phone = business.phone,
-                    whatsapp = business.phone,
-                    onDirectionClicked = {
-                        onDirectionClicked(business.address)
-                    },
-                )
-            }
-        }
-
-
+//        item {
+//            Column(
+//                modifier = Modifier
+//                    .padding(dimensionResource(id = R.dimen.body_padding)),
+//                verticalArrangement = Arrangement.spacedBy(5.dp)
+//            ) {
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth(),
+//                    horizontalArrangement = Arrangement.SpaceBetween,
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Text(
+//                        text = business.name,
+//                        style = MaterialTheme.typography.headlineLarge,
+//                        color = MaterialTheme.colorScheme.onSurface,
+//                        fontWeight = FontWeight.ExtraBold
+//                    )
+//
+//                    // if business is added to favorites then primary color is used for tint else white
+//                    if (!addToFavorite) {
+//                        Icon(
+//                            imageVector = Icons.Default.Favorite,
+//                            contentDescription = stringResource(R.string.bookmark_business),
+//                            tint = MaterialTheme.colorScheme.onBackground,
+//                            modifier = Modifier.clickable {
+//                                addToFavorite = !addToFavorite
+//                            }
+//                        )
+//                    } else {
+//                        Icon(
+//                            imageVector = Icons.Default.Favorite,
+//                            contentDescription = stringResource(R.string.bookmark_business),
+//                            tint = MaterialTheme.colorScheme.primary,
+//                            modifier = Modifier.clickable {
+//                                addToFavorite = !addToFavorite
+//                            }
+//                        )
+//                    }
+//                }
+//
+//                Column(
+//                    verticalArrangement = Arrangement.spacedBy(8.dp)
+//                ) {
+//                    IconAndText(
+//                        icon = Icons.Filled.Star,
+//                        iconDes = "ratings",
+//                        text = "${business.reviews}.0 / 5.0 (${business.reviews} reviews)"
+//                    )
+//
+//                    IconAndText(
+//                        icon = Icons.Filled.LocationOn,
+//                        iconDes = stringResource(id = R.string.location),
+//                        text = business.address
+//                    )
+//
+//                    IconAndText(
+//                        icon = Icons.Filled.Favorite,
+//                        iconDes = stringResource(id = R.string.favorites),
+//                        text = "${business.reviews} recommendations"
+//                    )
+//                }
+//            }
+//        }
+//
+//        item {
+//            Column(
+//                modifier = Modifier
+//                    .padding(
+//                        vertical = 8.dp,
+//                        horizontal = dimensionResource(id = R.dimen.body_padding)
+//                    )
+//                    .fillMaxWidth(),
+//            ) {
+//                ActionDetailsRow(
+//                    businessName = business.name,
+//                    email = business.email,
+//                    phone = business.phone,
+//                    whatsapp = business.phone,
+//                    onDirectionClicked = {
+//                        onDirectionClicked(business.address)
+//                    },
+//                )
+//            }
+//        }
+//
+//
         item {
             /**
              * Subsection tags
@@ -274,19 +287,25 @@ fun BusinessContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp)
             ) {
                 TabRow(selectedTabIndex = tabState) {
-                    titles.forEachIndexed { index, title ->
+                    tabs.forEachIndexed { index, tab ->
                         Tab(
                             selected = tabState == index,
                             onClick = { tabState = index },
                             text = {
                                 Text(
-                                    text = title,
+                                    text = tab.title,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = if (tabState == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = tab.icon,
+                                    contentDescription = tab.title,
+                                    tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         )
