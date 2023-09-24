@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
@@ -87,6 +88,12 @@ fun BusinessCard(
                 )
 
                 IconAndText(
+                    icon = Icons.Filled.Category,
+                    iconDes = stringResource(id = R.string.favorites),
+                    text = business.businessCategory
+                )
+
+                IconAndText(
                     icon = Icons.Filled.LocationOn,
                     iconDes = stringResource(id = R.string.location),
                     text = business.address
@@ -95,7 +102,7 @@ fun BusinessCard(
                 IconAndText(
                     icon = Icons.Filled.Favorite,
                     iconDes = stringResource(id = R.string.favorites),
-                    text = "${business.reviews} recommendations for this business."
+                    text = "${business.reviews} recommendations."
                 )
             }
         }

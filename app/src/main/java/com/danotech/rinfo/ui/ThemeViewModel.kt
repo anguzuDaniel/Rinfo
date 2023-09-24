@@ -3,10 +3,12 @@ package com.danotech.rinfo.ui
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.RinfoViewModel
+import com.danotech.rinfo.data.preferences.CardLayoutState
 import com.danotech.rinfo.data.preferences.ThemeState
 import com.danotech.rinfo.data.preferences.UserState
 import com.danotech.rinfo.model.service.LogService
 import com.danotech.rinfo.model.service.impl.DataStoreUtil
+import com.danotech.rinfo.model.service.impl.DataStoreUtil.Companion.CARD_LAYOUT_INDEX
 import com.danotech.rinfo.model.service.impl.DataStoreUtil.Companion.IS_DARK_MODE_KEY
 import com.danotech.rinfo.model.service.impl.DataStoreUtil.Companion.USER_EMAIL_KEY
 import com.danotech.rinfo.model.service.impl.DataStoreUtil.Companion.USER_ID_KEY
@@ -84,6 +86,28 @@ constructor(
                 // Remove more user data as needed
             }
             _userState.value = null
+        }
+    }
+
+    private val _cardLayoutState = MutableStateFlow(CardLayoutState(0))
+    val cardLayoutState: StateFlow<CardLayoutState> = _cardLayoutState
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStore.data.map { preferences ->
+                CardLayoutState(preferences[CARD_LAYOUT_INDEX] ?: 0)
+            }.collect {
+                _cardLayoutState.value = it
+            }
+        }
+    }
+
+    fun saveCardLayout(index: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStore.edit { preferences ->
+                preferences[CARD_LAYOUT_INDEX] = index
+            }
+            _cardLayoutState.value = CardLayoutState(index)
         }
     }
 }

@@ -35,6 +35,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,6 +63,7 @@ import com.danotech.rinfo.ui.screens.RInfoScreen
 import com.danotech.rinfo.ui.screens.appbars.CenteredBottomBarLayout
 import com.danotech.rinfo.ui.screens.appbars.RinfoTopAppBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.P)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -140,6 +145,7 @@ fun HomeScreen(
     ) { innerPadding ->
         HomePageContent(
             viewModel = viewModel,
+            themeViewModel = themeViewModel,
             innerPadding = innerPadding,
             onReviewCardClicked = onReviewCardClicked,
             modifier = Modifier.consumeWindowInsets(innerPadding)
@@ -165,16 +171,21 @@ fun HomeScreen(
 @Composable
 fun HomePageContent(
     viewModel: HomesScreenViewModel,
+    themeViewModel: ThemeViewModel,
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
     onReviewCardClicked: (Business) -> Unit = {},
     onCategoryClicked: () -> Unit = {},
 ) {
+    val layout = themeViewModel.cardLayoutState.value
+    val index = layout.tabTypeIndex
+
+    var tabIndex by remember {
+        mutableStateOf(index)
+    }
     viewModel.showReviews()
     val businesses = viewModel.businessFlow.collectAsState(initial = emptyList()).value
     val listState = rememberLazyListState()
-
-    val paddingVertical = R.dimen.body_padding
 
     Surface(
         modifier = Modifier.nestedScroll(rememberNestedScrollInteropConnection()),
@@ -196,7 +207,17 @@ fun HomePageContent(
             }
 
             item {
-                ChangeLayoutAction()
+                ChangeLayoutAction(
+                    onClick = {
+                        if (tabIndex >= 2) {
+                            tabIndex = 0
+                            themeViewModel.saveCardLayout(tabIndex)
+                        } else {
+                            tabIndex += 1
+                            themeViewModel.saveCardLayout(tabIndex)
+                        }
+                    }
+                )
             }
 
             item {
@@ -218,15 +239,45 @@ fun HomePageContent(
                 FilterRow(paddingHorizontal = R.dimen.body_padding)
             }
 
-            items(businesses) { business ->
-                BusinessCardShimmer(
-                    isLoading = viewModel.uiState.value.isLoading
-                ) {
-                    BusinessCard(
-                        business = business,
-                        onReviewCardClicked = onReviewCardClicked,
-                        paddingHorizontal = R.dimen.body_padding,
-                    )
+            when (tabIndex) {
+                0 -> {
+                    items(businesses) { business ->
+                        BusinessCardShimmer(
+                            isLoading = viewModel.uiState.value.isLoading
+                        ) {
+                            BusinessCard(
+                                business = business,
+                                onReviewCardClicked = onReviewCardClicked,
+                                paddingHorizontal = R.dimen.body_padding,
+                            )
+                        }
+                    }
+                }
+
+                1 -> {
+                    gridItems(
+                        data = businesses,
+                        columnCount = 2,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) { business ->
+                        BusinessGridCard(
+                            business = business,
+                            imageLoading = viewModel.uiState.value.imageLoading,
+                            onReviewCardClicked = { onReviewCardClicked(business) }
+                        )
+                    }
+                }
+
+                else -> {
+                    items(businesses) { business ->
+                        BusinessCardFullScreenDisplay(
+                            business = business,
+                            imageLoading = viewModel.uiState.value.imageLoading,
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            onReviewCardClicked = { onReviewCardClicked(business) }
+                        )
+                    }
                 }
             }
         }

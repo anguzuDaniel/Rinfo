@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.danotech.rinfo.model.local.UserData
@@ -22,6 +23,7 @@ class DataStoreUtil @Inject constructor(val context: Context) {
     companion object {
         val IS_DARK_MODE_KEY = booleanPreferencesKey("dark_mode")
         private val IS_LOGGED_KEY = booleanPreferencesKey("is_logged")
+        val CARD_LAYOUT_INDEX = intPreferencesKey("card_layout_index")
         val USER_EMAIL_KEY = stringPreferencesKey("user_email")
         val USER_ID_KEY = stringPreferencesKey("user_id")
         // Add more keys as needed to store user information
@@ -43,6 +45,12 @@ class DataStoreUtil @Inject constructor(val context: Context) {
             // Retrieve more data as needed
 
             return UserData(userEmail, userId) // Replace with your User data class
+        }
+
+        suspend fun saveCardLayout(context: Context, index: Int) {
+            context.dataStore.edit { preferences ->
+                preferences[CARD_LAYOUT_INDEX] = index
+            }
         }
     }
 

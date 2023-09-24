@@ -298,7 +298,8 @@ fun BusinessContent(
                                     text = tab.title,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = MaterialTheme.colorScheme.onBackground
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.headlineMedium
                                 )
                             },
                             icon = {

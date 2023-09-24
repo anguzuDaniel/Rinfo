@@ -15,24 +15,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
-fun ChangeLayoutAction() {
+fun ChangeLayoutAction(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
         ChangeLayoutIconItem(
             icon = Icons.AutoMirrored.Filled.ListAlt,
-            onClick = {}
+            onClick = onClick
         )
 
         ChangeLayoutIconItem(
             icon = Icons.Filled.FilterAlt,
-            onClick = {}
+            onClick = onClick
         )
 
         ChangeLayoutIconItem(
             icon = Icons.AutoMirrored.Filled.ViewList,
-            onClick = {}
+            onClick = onClick
         )
     }
 }

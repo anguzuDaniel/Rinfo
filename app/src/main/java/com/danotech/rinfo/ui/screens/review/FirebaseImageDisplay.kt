@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -13,6 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.danotech.rinfo.R
@@ -26,13 +28,19 @@ import com.danotech.rinfo.R
  */
 @Composable
 fun FirebaseImageDisplay(
-    imageSize: Dp,
     url: String,
     description: String,
-    shape: CornerBasedShape
+    modifier: Modifier = Modifier,
+    imageSize: Dp = 0.dp,
+    isFullScreen: Boolean = false,
+    shape: CornerBasedShape = RoundedCornerShape(0.dp),
 ) {
     Column(
-        modifier = Modifier.size(imageSize)
+        modifier = if (!isFullScreen)
+            modifier.size(imageSize)
+        else
+            modifier
+                .size(imageSize)
     ) {
         AsyncImage(
             model = ImageRequest
@@ -52,7 +60,7 @@ fun FirebaseImageDisplay(
             modifier = Modifier
                 .clip(shape)
                 .aspectRatio(1f),
-            contentScale = ContentScale.Crop,
+            contentScale = if (!isFullScreen) ContentScale.Crop else ContentScale.Crop,
         )
     }
 }
