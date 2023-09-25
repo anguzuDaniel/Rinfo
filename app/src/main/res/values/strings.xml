@@ -642,7 +642,7 @@
     <string name="review_statistics">Review Statistics</string>
     <string name="appearance">Appearance</string>
     <string name="remember_me">Remember Me</string>
-    <string name="reset_password">Reset passowrd</string>
+    <string name="reset_password">Reset password</string>
     <string name="failed_to_load_images">Failed to load images</string>
     <string name="retry">Retry</string>
     <string name="business_photos">Business photos</string>
@@ -652,4 +652,9 @@
     <string name="recommendations">Recommendations</string>
     <string name="feed_back">Feedback</string>
     <string name="About">About</string>
+    <string name="add_to_cart">add to cart</string>
+    <string name="similar_products">Similar products</string>
+    <string name="buy_now">Buy Now</string>
+    <string name="products">Products</string>
+    <string name="product">Product</string>
 </resources>

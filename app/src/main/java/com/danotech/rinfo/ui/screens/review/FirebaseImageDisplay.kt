@@ -60,7 +60,7 @@ fun FirebaseImageDisplay(
             modifier = Modifier
                 .clip(shape)
                 .aspectRatio(1f),
-            contentScale = if (!isFullScreen) ContentScale.Crop else ContentScale.Crop,
+            contentScale = if (!isFullScreen) ContentScale.Crop else ContentScale.FillWidth
         )
     }
 }

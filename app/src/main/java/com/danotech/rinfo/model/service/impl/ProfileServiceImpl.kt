@@ -50,9 +50,16 @@ constructor(
         fireStore.collection(PROFILE_COLLECTION).document(profileId).delete().await()
     }
 
+    override suspend fun upLoadImage(businessId: String, image: String) {
+        fireStore.collection(PROFILE_COLLECTION).document(businessId)
+            .update(PROFILE_IMAGE_URL_FIELD, image)
+            .await()
+    }
+
     companion object {
         private const val USER_ID_FIELD = "userId"
         private const val PROFILE_COLLECTION = "profile"
+        private const val PROFILE_IMAGE_URL_FIELD = "profileImageUrl"
         private const val SAVE_PROFILE_TRACE = "saveProfile"
         private const val UPDATE_PROFILE_TRACE = "updateProfile"
     }

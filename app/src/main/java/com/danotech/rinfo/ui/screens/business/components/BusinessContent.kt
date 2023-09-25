@@ -19,13 +19,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ProductionQuantityLimits
 import androidx.compose.material.icons.filled.Reviews
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Tab
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -51,9 +53,11 @@ import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
-import com.danotech.rinfo.ui.screens.business.BusinessTabs
 import com.danotech.rinfo.ui.screens.business.BusinessViewModel
 import com.danotech.rinfo.ui.screens.business.ImageItem
+import com.danotech.rinfo.ui.screens.business.subsections.BusinessAboutSection
+import com.danotech.rinfo.ui.screens.business.subsections.BusinessReviewSection
+import com.danotech.rinfo.ui.screens.home.staggeredItems
 import com.danotech.rinfo.ui.screens.review.ReviewScreenViewModel
 
 data class Tab(
@@ -76,6 +80,7 @@ fun BusinessContent(
     onAddReviewButtonClick: () -> Unit = {},
     reviews: List<Review>,
     onShowBusinessPhotos: () -> Unit = {},
+    onProductClick: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -86,7 +91,7 @@ fun BusinessContent(
             title = "About"
         ),
         Tab(
-            icon = Icons.Filled.ProductionQuantityLimits,
+            icon = Icons.Filled.ShoppingCart,
             title = "Products"
         ),
         Tab(
@@ -123,6 +128,8 @@ fun BusinessContent(
     }
 
     val downloadedImages = remember { mutableStateListOf<Bitmap>() }
+
+    val products = getProductList()
 
     LaunchedEffect(key1 = Unit) {
         downloadImages(
@@ -192,93 +199,6 @@ fun BusinessContent(
             }
         }
 
-//        item {
-//            Column(
-//                modifier = Modifier
-//                    .padding(dimensionResource(id = R.dimen.body_padding)),
-//                verticalArrangement = Arrangement.spacedBy(5.dp)
-//            ) {
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.SpaceBetween,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Text(
-//                        text = business.name,
-//                        style = MaterialTheme.typography.headlineLarge,
-//                        color = MaterialTheme.colorScheme.onSurface,
-//                        fontWeight = FontWeight.ExtraBold
-//                    )
-//
-//                    // if business is added to favorites then primary color is used for tint else white
-//                    if (!addToFavorite) {
-//                        Icon(
-//                            imageVector = Icons.Default.Favorite,
-//                            contentDescription = stringResource(R.string.bookmark_business),
-//                            tint = MaterialTheme.colorScheme.onBackground,
-//                            modifier = Modifier.clickable {
-//                                addToFavorite = !addToFavorite
-//                            }
-//                        )
-//                    } else {
-//                        Icon(
-//                            imageVector = Icons.Default.Favorite,
-//                            contentDescription = stringResource(R.string.bookmark_business),
-//                            tint = MaterialTheme.colorScheme.primary,
-//                            modifier = Modifier.clickable {
-//                                addToFavorite = !addToFavorite
-//                            }
-//                        )
-//                    }
-//                }
-//
-//                Column(
-//                    verticalArrangement = Arrangement.spacedBy(8.dp)
-//                ) {
-//                    IconAndText(
-//                        icon = Icons.Filled.Star,
-//                        iconDes = "ratings",
-//                        text = "${business.reviews}.0 / 5.0 (${business.reviews} reviews)"
-//                    )
-//
-//                    IconAndText(
-//                        icon = Icons.Filled.LocationOn,
-//                        iconDes = stringResource(id = R.string.location),
-//                        text = business.address
-//                    )
-//
-//                    IconAndText(
-//                        icon = Icons.Filled.Favorite,
-//                        iconDes = stringResource(id = R.string.favorites),
-//                        text = "${business.reviews} recommendations"
-//                    )
-//                }
-//            }
-//        }
-//
-//        item {
-//            Column(
-//                modifier = Modifier
-//                    .padding(
-//                        vertical = 8.dp,
-//                        horizontal = dimensionResource(id = R.dimen.body_padding)
-//                    )
-//                    .fillMaxWidth(),
-//            ) {
-//                ActionDetailsRow(
-//                    businessName = business.name,
-//                    email = business.email,
-//                    phone = business.phone,
-//                    whatsapp = business.phone,
-//                    onDirectionClicked = {
-//                        onDirectionClicked(business.address)
-//                    },
-//                )
-//            }
-//        }
-//
-//
         item {
             /**
              * Subsection tags
@@ -298,15 +218,16 @@ fun BusinessContent(
                                     text = tab.title,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.headlineMedium
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.bodySmall
                                 )
                             },
                             icon = {
                                 Icon(
                                     imageVector = tab.icon,
                                     contentDescription = tab.title,
-                                    tint = MaterialTheme.colorScheme.onBackground
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                         )
@@ -315,20 +236,175 @@ fun BusinessContent(
             }
         }
 
-        item {
-            BusinessTabs(
-                tabState = tabState,
-                viewModel = viewModel,
-                imageList = imageList,
-                business = business,
-                reviewScreenViewModel = reviewScreenViewModel,
-                onAddReviewButtonClick = onAddReviewButtonClick,
-                onShowReviewPageClicked = onShowReviewPageClicked,
-                reviews = reviews,
-                launchMultipleImages = launchMultipleImages,
-                loading = loading,
-                onShowBusinessPhotos = onShowBusinessPhotos
-            )
+        when (tabState) {
+            0 -> item {
+                BusinessAboutSection(business = business)
+            }
+
+//            1 -> BusinessGallerySection(
+//                viewModel = viewModel,
+//                business = business,
+//                imageList = imageList,
+//                launchMultipleImages = launchMultipleImages,
+//                loading = loading,
+//                onShowBusinessPhotos = onShowBusinessPhotos
+//            )
+
+            1 -> staggeredItems(
+                data = products,
+                columnCount = 2,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            ) { product ->
+                ProductCard(
+                    product = product,
+                    onProductCardClick = {
+                        onProductClick(product.productId)
+                    },
+                    onAddToCartClick = {
+
+                    }
+                )
+            }
+
+
+            2 -> item {
+                BusinessReviewSection(
+                    business = business,
+                    reviewScreenViewModel = reviewScreenViewModel,
+                    onAllButtonReviewClick = onShowReviewPageClicked,
+                    onAddReviewButtonClick = onAddReviewButtonClick,
+                    reviews = reviews
+                )
+            }
+
+            else -> item {
+                BusinessAboutSection(business = business)
+            }
         }
     }
+}
+
+fun getProductList(): List<Product> {
+    return listOf(
+        Product(
+            productId = "1",
+            BusinessId = "Business1",
+            image = "https://images.unsplash.com/photo-1602143407151-7111542de6e8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2487&q=80",
+            name = "stainless steel water bottle",
+            description = "Description for Product 1",
+            discount = "10%",
+            price = "$20.99",
+            rating = 4,
+            reviews = 25,
+            category = "Category A"
+        ),
+        Product(
+            productId = "2",
+            BusinessId = "Business2",
+            image = "https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2264&q=80",
+            name = "Product 2",
+            description = "Description for Product 2",
+            discount = "15%",
+            price = "$15.49",
+            rating = 4,
+            reviews = 30,
+            category = "Category B"
+        ),
+        Product(
+            productId = "3",
+            BusinessId = "Business3",
+            image = "https://images.unsplash.com/photo-1543512214-318c7553f230?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2487&q=80",
+            name = "BlueTooth Speaker",
+            description = "Description for Product 3",
+            discount = "20%",
+            price = "$25.99",
+            rating = 5,
+            reviews = 40,
+            category = "Category A"
+        ),
+        Product(
+            productId = "4",
+            BusinessId = "Business4",
+            image = "https://images.unsplash.com/photo-1564466809058-bf4114d55352?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2486&q=80",
+            name = "Nikon Camera",
+            description = "Description for Product 4",
+            discount = "12%",
+            price = "$18.75",
+            rating = 4,
+            reviews = 22,
+            category = "Category C"
+        ),
+        Product(
+            productId = "5",
+            BusinessId = "Business5",
+            image = "https://images.unsplash.com/photo-1524805444758-089113d48a6d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2488&q=80",
+            name = "Leather Watch",
+            description = "Description for Product 5",
+            discount = "8%",
+            price = "$30.00",
+            rating = 4,
+            reviews = 27,
+            category = "Category B"
+        ),
+        Product(
+            productId = "6",
+            BusinessId = "Business6",
+            image = "https://images.unsplash.com/photo-1571380401583-72ca84994796?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2264&q=80",
+            name = "Iphone 11",
+            description = "Description for Product 6",
+            discount = "10%",
+            price = "$22.99",
+            rating = 3,
+            reviews = 18,
+            category = "Category A"
+        ),
+        Product(
+            productId = "7",
+            BusinessId = "Business7",
+            image = "https://images.unsplash.com/photo-1612548403247-aa2873e9422d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2487&q=80",
+            name = "Video Camera",
+            description = "Description for Product 7",
+            discount = "5%",
+            price = "$40.49",
+            rating = 5,
+            reviews = 35,
+            category = "Category C"
+        ),
+        Product(
+            productId = "8",
+            BusinessId = "Business8",
+            image = "https://images.unsplash.com/photo-1589365278144-c9e705f843ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2487&q=80",
+            name = "Wooden Bottle",
+            description = "Description for Product 8",
+            discount = "18%",
+            price = "$14.99",
+            rating = 4,
+            reviews = 29,
+            category = "Category A"
+        ),
+        Product(
+            productId = "9",
+            BusinessId = "Business9",
+            image = "https://images.unsplash.com/photo-1584735174965-48c48d7edfde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2487&q=80",
+            name = "Cool sneaker",
+            description = "Description for Product 9",
+            discount = "25%",
+            price = "$19.99",
+            rating = 4,
+            reviews = 31,
+            category = "Category B"
+        ),
+        Product(
+            productId = "10",
+            BusinessId = "Business10",
+            image = "https://images.unsplash.com/photo-1603487742131-4160ec999306?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2487&q=80",
+            name = "Birkenstock Sandals",
+            description = "Description for Product 10",
+            discount = "15%",
+            price = "$24.49",
+            rating = 5,
+            reviews = 45,
+            category = "Category C"
+        )
+    )
 }

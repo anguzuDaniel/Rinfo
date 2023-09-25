@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -53,7 +54,7 @@ fun SignUpButton(
         name = R.string.sign_in,
         isLoading = isLoading,
         enabled = enabled,
-        onClicked = action,
+        onClick = action,
         modifier = modifier
     )
 }
@@ -69,7 +70,7 @@ fun SignInButton(
         name = R.string.sign_in,
         isLoading = isLoading,
         enabled = enabled,
-        onClicked = action,
+        onClick = action,
         modifier = modifier
     )
 }
@@ -103,7 +104,7 @@ fun FeedbackButton(
         name = R.string.sign_in,
         isLoading = isLoading,
         enabled = enabled,
-        onClicked = action,
+        onClick = action,
         modifier = modifier
     )
 }
@@ -156,12 +157,12 @@ private fun ButtonWithLoader(
 fun RinfoButton(
     modifier: Modifier = Modifier,
     @StringRes name: Int,
-    onClicked: () -> Unit = {},
+    onClick: () -> Unit = {},
     isLoading: Boolean = false,
     enabled: Boolean = false
 ) {
     Button(
-        onClick = onClicked,
+        onClick = onClick,
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         shape = MaterialTheme.shapes.small,
@@ -171,8 +172,57 @@ fun RinfoButton(
             Text(
                 text = stringResource(id = name),
                 style = MaterialTheme.typography.bodyMedium,
+                color = Color.White,
+            )
+        } else {
+            CircularProgressIndicator(
+                modifier = Modifier.size(15.dp),
+                strokeWidth = 2.dp,
                 color = Color.White
             )
+        }
+    }
+}
+
+/**
+ * reusable button
+ * provide a string resource for the button name
+ * provide a click handler
+ */
+@Composable
+fun RinfoButtonWithIcon(
+    modifier: Modifier = Modifier,
+    @StringRes name: Int,
+    icon: ImageVector,
+    onClick: () -> Unit = {},
+    isLoading: Boolean = false,
+    enabled: Boolean = false
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        shape = MaterialTheme.shapes.small,
+        enabled = enabled
+    ) {
+        if (!isLoading) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = Color.White
+                )
+
+                Text(
+                    text = stringResource(id = name),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White
+                )
+            }
         } else {
             CircularProgressIndicator(
                 modifier = Modifier.size(15.dp),

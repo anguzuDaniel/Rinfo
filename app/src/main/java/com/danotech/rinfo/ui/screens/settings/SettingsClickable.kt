@@ -108,7 +108,10 @@ fun SettingsClickableComp(
                 Text(
                     text = stringResource(id = name),
                     style = MaterialTheme.typography.headlineSmall.copy(
-                        color = if (!opensDialogWhenClicked) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
+                        color = if (!opensDialogWhenClicked)
+                            MaterialTheme.colorScheme.onSurface
+                        else
+                            MaterialTheme.colorScheme.error
                     ),
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
@@ -120,7 +123,7 @@ fun SettingsClickableComp(
                     TruncateText(
                         text = description,
                         maxWords = 20,  // Set the desired maximum number of words
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
                     )
                 }

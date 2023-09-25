@@ -1,7 +1,10 @@
 package com.danotech.rinfo.ui.screens.profile
 
+import android.content.ContentValues
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.SnackbarManager
 import com.danotech.rinfo.model.Profile
@@ -13,8 +16,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
@@ -51,7 +58,7 @@ class ProfileViewModel @Inject constructor(
                 profileName = _uiState.value.profileName,
                 firstName = _uiState.value.profileFirstName,
                 lastName = _uiState.value.profileLastName,
-                profileImageUrl = _uiState.value.profileImage
+                profileImageUrl = _uiState.value.profileImageUrl
             )
             if (profileService.getProfile(FirebaseAuth.getInstance().currentUser!!.email.toString()) == null) {
                 profileService.create(profile)
@@ -78,7 +85,7 @@ class ProfileViewModel @Inject constructor(
                     profileName = profile.profileName,
                     profileFirstName = profile.firstName,
                     profileLastName = profile.lastName,
-                    profileImage = profile.profileImageUrl
+                    profileImageUrl = profile.profileImageUrl
                 )
             }
         }.invokeOnCompletion {
@@ -103,37 +110,64 @@ class ProfileViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(imageLoading = false)
         }
     }
-
     /**
      * Uploads image to firebase storage
-     * @param image
-     * uses the user id as the name of the image
+     * @param image takes in a image Bitmap
      */
-    fun upLoadImageToFireBase(image: Bitmap, userId: String) {
+    fun upLoadImageToFireBase(image: Bitmap) {
         // Inside your Composable function
         val storageRef = Firebase.storage.reference
 
-        launchCatching {
-            // sets loading to true
-            _uiState.value = _uiState.value.copy(isLoading = true)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                // sets loading to true
+                _uiState.value = _uiState.value.copy(isLoading = true)
 
-            val imageName = "${userId}_${System.currentTimeMillis()}.jpg"
-            val imageRef = storageRef.child("logos/${imageName}")
+                // Generate a unique ID for the image
+                val imageName =
+                    "${System.currentTimeMillis()}.jpg" // Using a timestamp as the image name
+                val imageRef = storageRef.child("profile_pictures/${imageName}")
 
-            val stream = ByteArrayOutputStream()
-            image.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                val stream = ByteArrayOutputStream()
+                image.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                val data = stream.toByteArray()
 
-            val data = stream.toByteArray()
-            val uploadTask = imageRef.putBytes(data)
+                val uploadTask = imageRef.putBytes(data)
 
-            uploadTask.addOnSuccessListener {
-                SnackbarManager.showMessage(R.string.image_uploaded_successfully)
-            }.addOnFailureListener {
-                // Handle upload failure
-                SnackbarManager.showMessage(R.string.something_went_wrong)
+                // Assuming you are inside a coroutine scope or function
+                try {
+                    val downloadUri = uploadTask.continueWithTask { task ->
+                        if (!task.isSuccessful) {
+                            throw task.exception ?: Exception("Image upload failed")
+                        }
+                        // Continue with the task to get the download URL
+                        imageRef.downloadUrl
+                    }.await()
+
+                    // Log the download URL
+                    Log.d(ContentValues.TAG, "Business Account Update $downloadUri")
+
+                    // Update the UIState with the download URL
+                    _uiState.value = _uiState.value.copy(profileImageUrl = downloadUri.toString())
+
+                    profileService.upLoadImage(
+                        FirebaseAuth.getInstance().currentUser!!.email.toString(),
+                        downloadUri.toString()
+                    )
+                } catch (exception: Exception) {
+                    Log.e("Business Account Update", "Error: ${exception.message}", exception)
+                    _uiState.value = _uiState.value.copy(
+                        hasMessage = true, message = "An error occurred"
+                    )
+                }
+
+                uploadTask.addOnSuccessListener {
+                    SnackbarManager.showMessage(R.string.image_uploaded_successfully)
+                }.addOnFailureListener {
+                    // Handle upload failure
+                    SnackbarManager.showMessage(R.string.something_went_wrong)
+                }
             }
-
-            _uiState.value = _uiState.value.copy(profileImage = data.toString())
         }.invokeOnCompletion {
             _uiState.value = _uiState.value.copy(isLoading = false)
         }

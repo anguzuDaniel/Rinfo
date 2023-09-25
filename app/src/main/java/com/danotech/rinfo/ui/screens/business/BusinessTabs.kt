@@ -4,14 +4,12 @@ import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import com.danotech.rinfo.model.Business
 import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.ui.screens.business.subsections.BusinessAboutSection
-import com.danotech.rinfo.ui.screens.business.subsections.BusinessGallerySection
 import com.danotech.rinfo.ui.screens.business.subsections.BusinessReviewSection
+import com.danotech.rinfo.ui.screens.product.BusinessProductSection
 import com.danotech.rinfo.ui.screens.review.ReviewScreenViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -29,28 +27,30 @@ fun BusinessTabs(
     launchMultipleImages: ManagedActivityResultLauncher<String, List<Uri>>,
     onShowBusinessPhotos: () -> Unit
 ) {
-    Column {
-        when (tabState) {
-            0 -> BusinessAboutSection(business = business)
+    when (tabState) {
+        0 -> BusinessAboutSection(business = business)
 
-            1 -> BusinessGallerySection(
-                viewModel = viewModel,
-                business = business,
-                imageList = imageList,
-                launchMultipleImages = launchMultipleImages,
-                loading = loading,
-                onShowBusinessPhotos = onShowBusinessPhotos
-            )
+//            1 -> BusinessGallerySection(
+//                viewModel = viewModel,
+//                business = business,
+//                imageList = imageList,
+//                launchMultipleImages = launchMultipleImages,
+//                loading = loading,
+//                onShowBusinessPhotos = onShowBusinessPhotos
+//            )
 
-            2 -> BusinessReviewSection(
-                business = business,
-                reviewScreenViewModel = reviewScreenViewModel,
-                onAllButtonReviewClick = onShowReviewPageClicked,
-                onAddReviewButtonClick = onAddReviewButtonClick,
-                reviews = reviews
-            )
+        1 -> BusinessProductSection(
+            business = business,
+        )
 
-            else -> BusinessAboutSection(business = business)
-        }
+        2 -> BusinessReviewSection(
+            business = business,
+            reviewScreenViewModel = reviewScreenViewModel,
+            onAllButtonReviewClick = onShowReviewPageClicked,
+            onAddReviewButtonClick = onAddReviewButtonClick,
+            reviews = reviews
+        )
+
+        else -> BusinessAboutSection(business = business)
     }
 }

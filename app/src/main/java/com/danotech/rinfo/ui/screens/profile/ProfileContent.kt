@@ -70,7 +70,7 @@ fun ProfileContent(
                         contentAlignment = Alignment.Center
                     ) {
                         ProfileImage(
-                            image = uiState.profileImage,
+                            image = uiState.profileImageUrl,
                             size = imageSize,
                             context = context
                         )
@@ -129,6 +129,7 @@ fun ProfileContent(
                     .fillMaxWidth(),
                 isLoading = uiState.isLoading,
             ) {
+                viewModel.upLoadImageToFireBase(bitmap.value)
                 viewModel.saveProfile()
             }
         }

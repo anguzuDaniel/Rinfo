@@ -41,6 +41,7 @@ fun BusinessScreen(
     onShowBusinessPhotos: () -> Unit = {},
     window: Window,
     onDirectionClicked: (String) -> Unit = {},
+    onProductClick: (String) -> Unit = {},
 ) {
     BackHandler {
         onBackPressed()
@@ -107,7 +108,8 @@ fun BusinessScreen(
                 onAddReviewButtonClick = onAddReviewClick,
                 reviews = reviews,
                 loading = uiState.imagesLoading,
-                onShowBusinessPhotos = onShowBusinessPhotos
+                onShowBusinessPhotos = onShowBusinessPhotos,
+                onProductClick = onProductClick
             )
         }
     }

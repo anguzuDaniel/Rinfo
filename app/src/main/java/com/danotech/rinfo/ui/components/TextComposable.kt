@@ -58,7 +58,7 @@ fun ClickableTextRow(
         Text(
             text = stringResource(id = noneClickableText),
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(0.44f)
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -66,7 +66,9 @@ fun ClickableTextRow(
         ClickableText(
             text = AnnotatedString(text = stringResource(id = clickableText)),
             onClick = { onSignUpTextClicked() },
-            style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.primary),
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         )
     }
 }

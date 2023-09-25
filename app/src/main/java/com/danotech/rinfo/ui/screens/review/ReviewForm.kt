@@ -38,6 +38,10 @@ fun ReviewForm(
     onSubmit: () -> Unit = {},
     onBackPressed: () -> Unit
 ) {
+    LaunchedEffect(viewModel) {
+        viewModel.getProfile()
+    }
+
     if (reviewId.isNotEmpty()) {
         LaunchedEffect(viewModel) {
             viewModel.getReview(reviewId)

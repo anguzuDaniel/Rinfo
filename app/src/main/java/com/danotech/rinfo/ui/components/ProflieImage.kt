@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.danotech.rinfo.R
 
 /**
@@ -50,7 +48,7 @@ fun ProfileImage(
         // Load the image using AsyncImage and the custom ImageLoader
         AsyncImage(
             model = image,
-            error = painterResource(R.drawable.ic_broken_image),
+            error = painterResource(R.drawable.profile_placeholder),
             placeholder = painterResource(R.drawable.loading_img),
             contentDescription = stringResource(R.string.description),
             contentScale = ContentScale.Crop,
@@ -75,7 +73,7 @@ fun PhotoItemBitmap(
         // Load the image using AsyncImage and the custom ImageLoader
         AsyncImage(
             model = image,
-            error = painterResource(R.drawable.ic_broken_image),
+            error = painterResource(R.drawable.profile_placeholder),
             placeholder = painterResource(R.drawable.loading_img),
             contentDescription = stringResource(R.string.description),
             contentScale = ContentScale.Crop,

@@ -1,28 +1,32 @@
 package com.danotech.rinfo.ui.screens.review
 
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.viewModelScope
 import com.danotech.rinfo.R
 import com.danotech.rinfo.common.snackbar.SnackbarManager
 import com.danotech.rinfo.model.Review
 import com.danotech.rinfo.model.service.LogService
+import com.danotech.rinfo.model.service.ProfileService
 import com.danotech.rinfo.model.service.ReviewService
 import com.danotech.rinfo.ui.screens.RinfoViewModel
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ReviewFormViewModel @Inject constructor(
     private val reviewService: ReviewService,
+    private val profileService: ProfileService,
     logService: LogService
 ) : RinfoViewModel(logService) {
     private val _uiState = MutableStateFlow(ReviewFormUiState())
     val uiState = _uiState.asStateFlow()
 
     // Function to reset state when entering edit mode
-    fun resetStateForEdit() {
+    private fun resetStateForEdit() {
         // Reset the necessary state variables to initial values for editing
         val initialUiState = ReviewFormUiState() // You need to define this appropriately
         _uiState.value = initialUiState
@@ -54,7 +58,7 @@ class ReviewFormViewModel @Inject constructor(
     }
 
     fun getReview(reviewId: String) {
-        launchCatching {
+        viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = _uiState.value.copy(
                 isLoading = true
             )
@@ -65,6 +69,10 @@ class ReviewFormViewModel @Inject constructor(
                 title = review.title,
                 review = review.review,
                 rating = review.rating,
+                name = review.name,
+                reviewedBusinessId = review.reviewedBusinessId,
+                reviewerUserId = review.reviewerUserId,
+                profileUrl = review.userImageUrl,
             )
         }.invokeOnCompletion {
             _uiState.value = _uiState.value.copy(
@@ -83,6 +91,26 @@ class ReviewFormViewModel @Inject constructor(
             date = "",
             isLoading = false
         )
+    }
+
+    fun getProfile() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val profile =
+                    profileService.getProfile(FirebaseAuth.getInstance().currentUser!!.email.toString())
+
+                if (profile != null) {
+                    _uiState.value = _uiState.value.copy(
+                        name = profile.profileName,
+                        profileUrl = profile.profileImageUrl
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    message = "Only user that have profiles can review",
+                )
+            }
+        }
     }
 
     fun updateReview(reviewId: String) {
@@ -114,6 +142,7 @@ class ReviewFormViewModel @Inject constructor(
                     rating = _uiState.value.rating,
                     review = _uiState.value.review,
                     postive = _uiState.value.isPositive,
+                    name = _uiState.value.name,
                     date = _uiState.value.date,
                     edited = true
                 )
@@ -152,7 +181,9 @@ class ReviewFormViewModel @Inject constructor(
                     rating = _uiState.value.rating,
                     review = _uiState.value.review,
                     postive = _uiState.value.isPositive,
-                    date = _uiState.value.date
+                    date = _uiState.value.date,
+                    name = _uiState.value.name,
+                    userImageUrl = _uiState.value.profileUrl
                 )
             )
         }.invokeOnCompletion {

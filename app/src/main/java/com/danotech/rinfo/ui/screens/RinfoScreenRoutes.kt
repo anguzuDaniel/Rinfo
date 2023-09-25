@@ -38,5 +38,7 @@ enum class RInfoScreen(@StringRes val title: Int) {
     FeedBack(title = R.string.send_feed_back),
     ResetPassword(title = R.string.reset_password),
     Chats(title = R.string.chats),
-    Conversation(title = R.string.conversation)
+    Conversation(title = R.string.conversation),
+    Products(title = R.string.products),
+    Product(title = R.string.product),
 }

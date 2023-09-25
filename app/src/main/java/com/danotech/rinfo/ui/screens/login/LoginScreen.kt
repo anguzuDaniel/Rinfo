@@ -38,7 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -265,10 +264,9 @@ fun LoginForm(
                 onClick = {
                     onResetPassword()
                 },
-                style = TextStyle(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
-                ),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             )
         }
 

@@ -19,8 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.danotech.rinfo.ui.screens.business.components.RatingRow
-import com.danotech.rinfo.ui.screens.business.components.StarRating
+import com.danotech.rinfo.ui.components.rating_stars.RatingRowWithProgressBar
+import com.danotech.rinfo.ui.components.rating_stars.StarRating
+
 
 @Composable
 fun ReviewStatisticsScreen(
@@ -56,7 +57,7 @@ fun ReviewStatisticsScreen(
         Spacer(modifier = Modifier.height(spaceSmall))
 
         for (i in 5 downTo 1) {
-            RatingRow(i, rating)
+            RatingRowWithProgressBar(i, rating)
         }
     }
 }

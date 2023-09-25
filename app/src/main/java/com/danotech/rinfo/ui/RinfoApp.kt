@@ -69,6 +69,7 @@ import com.danotech.rinfo.ui.screens.home.HomeScreen
 import com.danotech.rinfo.ui.screens.login.LoginScreen
 import com.danotech.rinfo.ui.screens.map.MapScreen
 import com.danotech.rinfo.ui.screens.notification.NotificationPage
+import com.danotech.rinfo.ui.screens.product.BusinessProductScreen
 import com.danotech.rinfo.ui.screens.profile.ProfileScreen
 import com.danotech.rinfo.ui.screens.reset_password.ResetPassword
 import com.danotech.rinfo.ui.screens.review.ReviewForm
@@ -633,10 +634,53 @@ fun NavGraphBuilder.makeItSoGraph(
                 onShowBusinessPhotos = {
                     appState.navigate("${RInfoScreen.BusinessPhotos.name}/$businessId")
                 },
+                onProductClick = { productId ->
+                    appState.navigate("${RInfoScreen.Product.name}/$productId")
+                },
+                window = window,
+                onDirectionClicked = { location ->
+                    appState.navigate("${RInfoScreen.Map.name}/$location")
+                }
+            )
+        } else {
+            // Handle the case where businessId is null
+        }
+    }
+
+
+    composable(
+        route = "${RInfoScreen.Product.name}/{productId}",
+        arguments = listOf(navArgument("productId") { type = NavType.StringType }),
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = FastOutSlowInEasing
+                )
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                animationSpec = tween(
+                    durationMillis = 150,
+                    easing = LinearOutSlowInEasing
+                )
+            )
+        },
+    ) { backStackEntry ->
+        val businessId = backStackEntry.arguments?.getString("productId")
+
+        if (businessId != null) {
+            // Use the businessId to fetch data or perform other operations
+            BusinessProductScreen(
+                productId = businessId,
+                onBackClick = {
+                    appState.popUp()
+                },
                 window = window
-            ) { location ->
-                appState.navigate("${RInfoScreen.Map.name}/$location")
-            }
+            )
         } else {
             // Handle the case where businessId is null
         }

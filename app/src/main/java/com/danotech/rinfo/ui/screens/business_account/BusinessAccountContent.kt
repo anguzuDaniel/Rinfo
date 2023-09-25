@@ -178,7 +178,7 @@ fun BusinessAccountContent(
                 RinfoButton(
                     name = R.string.next_page,
                     modifier = Modifier.fillMaxWidth(),
-                    onClicked = onNextButtonClick,
+                    onClick = onNextButtonClick,
                     enabled = true
                 )
             }

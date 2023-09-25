@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,27 +16,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.danotech.rinfo.R
 import com.danotech.rinfo.helpers.timeAgo
 import com.danotech.rinfo.model.Review
-import com.danotech.rinfo.ui.components.ProfileImageBitmap
+import com.danotech.rinfo.ui.components.ProfileImage
 import com.danotech.rinfo.ui.components.ProfileImageShimmer
-import com.danotech.rinfo.ui.components.RatingStars
-import com.danotech.rinfo.ui.screens.business.components.StarRating
+import com.danotech.rinfo.ui.components.rating_stars.StarRating
 import com.google.firebase.auth.FirebaseAuth
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -78,13 +72,15 @@ fun ReviewItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val imageSize = 35.dp
+
             ProfileImageShimmer(
                 size = imageSize,
                 isLoading = uiState.imageLoading
             ) {
-                ProfileImageBitmap(
-                    size = 35.dp,
-                    bitmap = bitmap.value
+                ProfileImage(
+                    image = review.userImageUrl,
+                    size = imageSize,
+                    context = context
                 )
             }
 
@@ -98,7 +94,7 @@ fun ReviewItem(
                     verticalAlignment = Alignment.Bottom
                 ) {
                     Text(
-                        text = review.reviewerUserId,
+                        text = review.name,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                     )
@@ -211,42 +207,4 @@ fun ReviewItem(
     }
 
     Spacer(modifier = Modifier.height(15.dp))
-}
-
-@Composable
-fun ExpandableReviewText(review: String) {
-    var isExpanded by remember { mutableStateOf(false) }
-
-    val maxWords = 50
-    val wordsToShow = if (isExpanded) {
-        review.split(" ").joinToString(" ") // Show the entire review when expanded
-    } else {
-        review.split(" ").take(maxWords).joinToString(" ") // Show the first 50 words
-    }
-
-    Text(
-        text = AnnotatedString(wordsToShow),
-        style = MaterialTheme.typography.bodySmall,
-        modifier = Modifier.clickable { isExpanded = !isExpanded }
-    )
-
-    if (!isExpanded && review.split(" ").size > maxWords) {
-        Text(
-            text = AnnotatedString("... Read More"),
-            style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.primary,
-                textDecoration = TextDecoration.Underline
-            ),
-            modifier = Modifier.clickable { isExpanded = true }
-        )
-    } else if (isExpanded) {
-        Text(
-            text = AnnotatedString(" Read Less"),
-            style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.primary,
-                textDecoration = TextDecoration.Underline
-            ),
-            modifier = Modifier.clickable { isExpanded = false }
-        )
-    }
 }

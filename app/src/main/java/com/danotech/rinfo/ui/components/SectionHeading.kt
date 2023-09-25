@@ -24,3 +24,19 @@ fun SectionHeading(
         )
     }
 }
+
+@Composable
+fun SectionHeadingString(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth(),
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineMedium,
+        )
+    }
+}
