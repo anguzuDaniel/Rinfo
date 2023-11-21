@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,14 +28,13 @@ import androidx.compose.ui.unit.dp
  * @param size
  * @param onProfileImageClick
  *
- * reuseable profile image
+ * reusable profile image
  */
 @Composable
 fun ProfileImage(
     size: Dp,
     @DrawableRes imageUrI: Int,
-    onProfileImageClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onProfileImageClick: () -> Unit = {}
 ) {
     val borderWidth = 1.dp
     Image(
@@ -104,20 +101,9 @@ fun OrFormDiver() {
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp)
     ) {
-        HorizontalDivider(
-            modifier = Modifier
-                .weight(1f)
-                .padding(vertical = 10.dp)
-        )
         Text(
             text = "OR", modifier = Modifier.padding(10.dp)
-        )
-        HorizontalDivider(
-            modifier = Modifier
-                .weight(1f)
-                .padding(vertical = 10.dp)
         )
     }
 }

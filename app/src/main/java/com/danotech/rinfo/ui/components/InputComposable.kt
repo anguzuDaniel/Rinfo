@@ -186,7 +186,7 @@ fun EmailField(
             Icon(
                 imageVector = Icons.Default.Email,
                 contentDescription = "Email",
-                tint = MaterialTheme.colorScheme.onSurface
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     )

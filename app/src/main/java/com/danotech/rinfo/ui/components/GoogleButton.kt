@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -44,7 +45,14 @@ fun GoogleButton(
             onClick()
         },
         shape = MaterialTheme.shapes.small,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+        modifier = Modifier
+            .shadow(
+                elevation = 10.dp,
+                ambientColor = MaterialTheme.colorScheme.primary,
+                spotColor = MaterialTheme.colorScheme.primary,
+//                clip = true
+            ) // create a shadow on the button
     ) {
         Row(
             modifier = modifier
@@ -65,7 +73,10 @@ fun GoogleButton(
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-            Text(text = if (isLoading) loadingText else text)
+            Text(
+                text = if (isLoading) loadingText else text,
+                color = MaterialTheme.colorScheme.primary
+            )
             if (isLoading) {
                 Spacer(modifier = Modifier.padding(horizontal = 8.dp))
                 CircularProgressIndicator(

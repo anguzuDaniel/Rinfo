@@ -42,7 +42,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.danotech.rinfo.R
 
-
 @Composable
 fun SignUpButton(
     modifier: Modifier = Modifier,

@@ -84,6 +84,8 @@ fun LoginScreen(
 
     val viewModel = viewModel<SignInViewModel>()
     val state by viewModel.state.collectAsState()
+
+
     LaunchedEffect(key1 = Unit) {
         if (googleAuthUiClient.getSignedInUser() != null) {
             openAndPopUp(RInfoScreen.Login.name, RInfoScreen.Home.name)
@@ -176,6 +178,7 @@ fun LoginForm(
     val uiState = viewModel.uiState.collectAsState().value
 
     val spaceLarge = 16.dp
+    val spaceExtraLarge = 20.dp
 
     // checks if length of password and if password is empty
     // used to enable the submit button
@@ -200,7 +203,10 @@ fun LoginForm(
     ) {
         Spacer(modifier = Modifier.height(spaceLarge))
         // page title
-        HeadingText(text = R.string.sign_in)
+        HeadingText(
+            text = R.string.login,
+            modifier = Modifier.align(Alignment.Start)
+        )
 
         Spacer(modifier = Modifier.height(spaceLarge))
 
@@ -215,26 +221,15 @@ fun LoginForm(
 
         EmailField(
             value = email,
-            onValueChanged = viewModel::onEmailChange,
+            onValueChanged = viewModel::onEmailChange
         )
 
         PasswordField(
             value = password,
-            onValueChanged = viewModel::onPasswordChange,
+            onValueChanged = viewModel::onPasswordChange
         )
 
-
-        SignInButton(
-            modifier = Modifier
-                .fillMaxWidth(),
-            isLoading = uiState.isSignInLoading,
-            enabled = uiState.email.trim().isValidEmail() && passwordCheck
-        ) {
-            viewModel.signInClick(openAndPopUp)
-//            userViewModel.login(uiState.email, uiState.password, openAndPopUp)
-        }
-
-        Spacer(modifier = Modifier.height(spaceLarge))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -244,23 +239,8 @@ fun LoginForm(
             Box {
 
             }
-//            Row(
-//                horizontalArrangement = Arrangement.spacedBy(3.dp),
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Checkbox(
-//                    checked = isRememberMeChecked,
-//                    onCheckedChange = {
-//                        isRememberMeChecked = true
-//                    },
-//                    modifier = Modifier.size(10.dp)
-//                )
-//
-//                Text(text = stringResource(id = R.string.remember_me))
-//            }
-
             ClickableText(
-                text = AnnotatedString(text = stringResource(id = R.string.reset_password)),
+                text = AnnotatedString(text = stringResource(id = R.string.forgot_your_password)),
                 onClick = {
                     onResetPassword()
                 },
@@ -272,9 +252,17 @@ fun LoginForm(
 
         Spacer(modifier = Modifier.height(spaceLarge))
 
-        OrFormDiver()
+        SignInButton(
+            modifier = Modifier
+                .fillMaxWidth(),
+            isLoading = uiState.isSignInLoading,
+            enabled = uiState.email.trim().isValidEmail() && passwordCheck
+        ) {
+            viewModel.signInClick(openAndPopUp)
+//            userViewModel.login(uiState.email, uiState.password, openAndPopUp)
+        }
 
-        Spacer(modifier = Modifier.height(spaceLarge))
+        OrFormDiver()
 
         val state = rememberOneTapSignInState()
 
@@ -305,12 +293,11 @@ fun LoginForm(
             modifier = modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(spaceLarge))
+        Spacer(modifier = Modifier.height(spaceExtraLarge))
 
         ClickableTextRow(
             clickableText = R.string.sign_up,
             noneClickableText = R.string.dont_have_an_account,
-
             modifier = Modifier
                 .fillMaxWidth()
                 .height(20.dp),
